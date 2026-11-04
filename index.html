@@ -1,0 +1,588 @@
+<title>Soʻz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#EEF3F4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&display=swap">
+<style>
+/* Layout: one-screen app — counters on top, a single card stack in the middle, hint at the bottom. Accent = Samarkand majolica blue. */
+:root{
+  --bg:#EEF3F4; --surface:#FFFFFF; --fg:#0F232A; --muted:#3E555D; --line:#D5E1E4;
+  --accent:#17698A; --good:#1E9A55; --bad:#D23F3F; --chip:#E1ECEF;
+  --font:"Onest", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C181D; --surface:#152730; --fg:#EAF2F4; --muted:#B3C6CC; --line:#233A43;
+  --accent:#5DB9DA; --good:#3DCB80; --bad:#FF6A6A; --chip:#1E343D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C181D; --surface:#152730; --fg:#EAF2F4; --muted:#B3C6CC; --line:#233A43;
+  --accent:#5DB9DA; --good:#3DCB80; --bad:#FF6A6A; --chip:#1E343D; color-scheme:dark}
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font:400 16px/1.4 var(--font);overflow:hidden;
+  -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.app{height:100%;display:flex;flex-direction:column;gap:16px;padding-block:16px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  max-width:480px;margin:0 auto;box-sizing:border-box}
+
+/* top: the "known" folder */
+.top{display:flex;justify-content:flex-end;min-height:48px}
+.folder{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 14px;border-radius:12px;border:0;
+  background:transparent;color:var(--fg);font:600 20px var(--font);font-variant-numeric:tabular-nums;cursor:pointer}
+.folder svg{width:26px;height:26px;color:var(--good)}
+.folder:hover{background:var(--chip)}
+.folder:active{transform:scale(.96)}
+.folder.bump svg{animation:bump .4s ease}
+@keyframes bump{40%{transform:scale(1.25)}}
+
+.banner{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-radius:12px;background:var(--chip);font-size:16px}
+.link{background:none;border:0;padding:4px 0;color:var(--accent);font:600 16px var(--font);cursor:pointer}
+.link:hover{color:var(--fg)}
+
+/* stage + cards: outer .card moves with the finger, inner .flip turns over */
+.stage{flex:1;position:relative;min-height:0}
+.card{position:absolute;inset:0;margin:auto;width:100%;height:min(100%,520px);touch-action:none;cursor:grab;
+  perspective:1400px;transition:transform .26s cubic-bezier(.2,.8,.2,1),opacity .26s}
+.card.next{transform:translateY(14px) scale(.94);opacity:.7;pointer-events:none}
+.flip{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.3,.7,.2,1)}
+.card.open .flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-sizing:border-box;
+  background:var(--surface);border-radius:24px;box-shadow:0 8px 28px rgba(15,35,42,.10);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
+.face.rear{transform:rotateY(180deg)}
+.pic{font-family:var(--emoji);font-size:136px;line-height:1;display:grid;place-items:center}
+.pic img.gen{width:240px;height:240px;border-radius:24px}
+.rear .pic img.gen{width:120px;height:120px;border-radius:16px}
+.row .e img.gen{border-radius:8px}
+.pic img{width:176px;height:176px;max-width:100%;object-fit:contain;-webkit-user-drag:none;pointer-events:none}
+.pic.num{font-family:var(--font);font-weight:600;font-size:112px;color:var(--accent)}
+.en{font-size:24px;color:var(--muted);text-wrap:balance}
+.rear .pic{font-size:64px}
+.rear .pic img{width:96px;height:96px}
+.rear .pic.num{font-size:56px}
+.uz{font-size:40px;font-weight:600;line-height:1.15;text-wrap:balance}
+.ru{font-size:24px;color:var(--muted);text-wrap:balance;margin-top:-8px}
+.say{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:12px;border:0;
+  background:var(--chip);color:var(--fg);font:600 16px var(--font);cursor:pointer}
+.say:hover{background:var(--line)}
+.say:active{transform:scale(.96)}
+.stamp{position:absolute;top:24px;padding:4px 14px;border-radius:12px;border:2px solid;font:600 20px var(--font);opacity:0;pointer-events:none}
+.stamp.yes{left:24px;color:var(--good);transform:rotate(-8deg)}
+.stamp.no{right:24px;color:var(--bad);transform:rotate(8deg)}
+
+.tint{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .26s}
+.hint{display:flex;justify-content:space-between;color:var(--muted);font-size:16px;padding:0 8px}
+.hint .l{color:var(--bad)} .hint .r{color:var(--good)}
+
+.done{text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;padding:24px}
+.done .big{font-size:20px;font-weight:600}
+.done p{margin:0;color:var(--muted)}
+
+/* archive sheet */
+.scrim{position:fixed;inset:0;background:rgba(5,15,20,.45);display:flex;align-items:flex-end;justify-content:center;z-index:5}
+.sheet{background:var(--surface);width:100%;max-width:480px;max-height:80%;border-radius:24px 24px 0 0;display:flex;flex-direction:column;
+  padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-sizing:border-box;gap:12px}
+.sheet h2{margin:0;font-size:20px;font-weight:600}
+.sheet .sub{color:var(--muted)}
+.list{overflow:auto;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(127,127,127,.35) transparent}
+.row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.row .e{font-family:var(--emoji);font-size:28px;width:40px;text-align:center;display:grid;place-items:center}
+.row .e img{width:40px;height:40px}
+.row .e.num{font-family:var(--font);font-weight:600;font-size:18px;color:var(--accent)}
+.row .w{display:flex;flex-direction:column;min-width:0}
+.row .w b{font-weight:600;font-size:18px}
+.row .w span{color:var(--muted)}
+.btn{height:48px;border-radius:12px;border:0;background:var(--accent);color:#fff;font:600 16px var(--font);cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:scale(.98)}
+:root[data-theme="dark"] .btn{color:#0C181D}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#0C181D}}
+button:focus{outline:none}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.card,.flip,.tint{transition:none!important}}
+</style>
+
+<div class="app">
+  <div class="top"><button class="folder" id="openArchive" type="button" aria-label="Знаю"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><span id="cKnown">0</span></button></div>
+  <div class="banner" id="banner" hidden><span id="bannerText"></span><button class="link" id="exitArchive" type="button">Выйти</button></div>
+  <div class="stage" id="stage"></div>
+  <div class="hint" id="hint" hidden><span class="l">← Не знаю</span><span>Тап — перевернуть</span><span class="r">Знаю →</span></div>
+</div>
+<div class="tint" id="tint"></div>
+<div class="scrim" id="scrim" hidden><div class="sheet" id="sheet">
+  <h2>Знаю</h2>
+  <div class="sub" id="archSub"></div>
+  <div class="list" id="archList"></div>
+  <button class="btn" id="reviewArchive" type="button">Повторить</button>
+</div></div>
+
+<script>
+// uz | ru | picture | topic | english caption (only where the picture is ambiguous) — simple to complex
+const RAW = `
+Salom|Привет|👋|Знакомство|Hi
+Rahmat|Спасибо|🙏|Знакомство|Thank you
+Ha|Да|✅|Основа|Yes
+Yoʻq|Нет|❌|Основа|No
+Assalomu alaykum|Здравствуйте|🤝|Знакомство|Hello (formal)
+Xayr|До свидания|🚶|Знакомство|Goodbye
+Yaxshi|Хорошо|👍|Основа|Good
+Yomon|Плохо|👎|Основа|Bad
+bir|один|1|Числа|
+ikki|два|2|Числа|
+uch|три|3|Числа|
+suv|вода|💧|Еда|water
+non|лепёшка, хлеб|🫓|Еда|bread
+choy|чай|🍵|Еда|tea
+Iltimos|Пожалуйста (просьба)|🙇|Основа|Please
+Kechirasiz|Извините|😔|Основа|Excuse me
+Qalaysiz?|Как вы?|🙂|Знакомство|How are you?
+Yaxshimisiz?|Как дела? (всё хорошо?)|😊|Знакомство|Are you well?
+toʻrt|четыре|4|Числа|
+besh|пять|5|Числа|
+taksi|такси|🚕|Такси|
+bozor|рынок, базар|🧺|Рынок|market
+pul|деньги|💰|Рынок|money
+Qancha turadi?|Сколько стоит?|🏷️|Рынок|How much is it?
+Mayli|Ладно|🆗|Основа|Okay
+Albatta|Конечно|💯|Основа|Of course
+olti|шесть|6|Числа|
+yetti|семь|7|Числа|
+sakkiz|восемь|8|Числа|
+toʻqqiz|девять|9|Числа|
+oʻn|десять|10|Числа|
+Tushunmadim|Я не понял|🤷|Основа|I didn't understand
+Tushundim|Понял|💡|Основа|I understand
+Bilmayman|Не знаю|❓|Основа|I don't know
+chapga|налево|⬅️|Такси|to the left
+oʻngga|направо|➡️|Такси|to the right
+toʻgʻriga|прямо|⬆️|Такси|straight ahead
+Shu yerda toʻxtang|Остановите здесь|🛑|Такси|Stop here
+men|я|🙋|Люди|I
+siz|вы|🫵|Люди|you
+biz|мы|👫|Люди|we
+ota|отец, папа|👨|Люди|father
+ona|мать, мама|👩|Люди|mother
+doʻst|друг|🫂|Люди|friend
+goʻsht|мясо|🥩|Еда|meat
+tovuq|курица|🍗|Еда|chicken
+osh|плов|🍛|Еда|plov
+olma|яблоко|🍎|Еда|
+uzum|виноград|🍇|Еда|
+qovun|дыня|🍈|Еда|melon
+tarvuz|арбуз|🍉|Еда|
+tennis|теннис|🎾|Теннис|tennis
+toʻp|мяч|⚽|Теннис|ball
+kort|корт|🏟️|Теннис|court
+Ismingiz nima?|Как вас зовут?|🏷️|Знакомство|What's your name?
+Mening ismim…|Меня зовут…|🙋‍♂️|Знакомство|My name is…
+Tanishganimdan xursandman|Рад знакомству|🤗|Знакомство|Nice to meet you
+Xush kelibsiz|Добро пожаловать|🚪|Знакомство|Welcome
+Koʻrishguncha|До встречи|👀|Знакомство|See you
+Xayrli tong|Доброе утро|🌅|Знакомство|Good morning
+Xayrli kech|Добрый вечер|🌆|Знакомство|Good evening
+Xayrli tun|Спокойной ночи|🌙|Знакомство|Good night
+Sekinroq gapiring|Говорите медленнее|🐢|Основа|Speak slower
+Ruscha bilasizmi?|Вы говорите по-русски?|🗣️|Основа|Do you speak Russian?
+Kerak|Нужно|☝️|Основа|I need
+Kerak emas|Не нужно|✋|Основа|I don't need
+arzon|дешёвый|🪙|Рынок|cheap
+qimmat|дорогой|💎|Рынок|expensive
+Arzonroq qiling|Сделайте дешевле|🤝|Рынок|Make it cheaper
+bitta|одна штука|☝🏻|Рынок|one piece
+kilo|килограмм|⚖️|Рынок|kilogram
+naqd|наличные|💵|Рынок|cash
+qaytim|сдача|🔁|Рынок|change (money)
+Karta bilan toʻlasam boʻladimi?|Можно оплатить картой?|💳|Рынок|Can I pay by card?
+pomidor|помидор|🍅|Еда|
+bodring|огурец|🥒|Еда|
+kartoshka|картошка|🥔|Еда|
+piyoz|лук|🧅|Еда|
+sabzi|морковь|🥕|Еда|
+guruch|рис|🍚|Еда|rice
+tuz|соль|🧂|Еда|salt
+sut|молоко|🥛|Еда|milk
+tuxum|яйцо|🥚|Еда|
+Qayerga?|Куда?|🧭|Такси|Where to?
+Qayerda?|Где?|📌|Город|Where?
+manzil|адрес|📍|Такси|address
+uzoq|далеко|🛣️|Такси|far
+yaqin|близко|👣|Такси|near
+Necha pul?|Сколько денег? (цена поездки)|💸|Такси|How much is the ride?
+Olib boring|Отвезите|🚖|Такси|Take me there
+tezroq|быстрее|⚡|Такси|faster
+orqaga|назад|↩️|Такси|back
+mashina|машина|🚗|Такси|
+yigirma|двадцать|20|Числа|
+oʻttiz|тридцать|30|Числа|
+qirq|сорок|40|Числа|
+ellik|пятьдесят|50|Числа|
+yuz|сто|100|Числа|
+ming|тысяча|1000|Числа|
+nima?|что?|❔|Вопросы|what?
+kim?|кто?|👤|Вопросы|who?
+qachon?|когда?|⏰|Вопросы|when?
+nega?|почему?|🤔|Вопросы|why?
+qanday?|как?|🌀|Вопросы|how?
+nechta?|сколько (штук)?|🔢|Вопросы|how many?
+uy|дом|🏠|Город|home
+doʻkon|магазин|🏪|Город|shop
+dorixona|аптека|⚕️|Город|pharmacy
+kasalxona|больница|🏥|Клиника|hospital
+mehmonxona|гостиница|🏨|Город|hotel
+bank|банк|🏦|Город|
+masjid|мечеть|🕌|Город|mosque
+bekat|остановка|🚏|Город|bus stop
+metro|метро|🚇|Город|
+avtobus|автобус|🚌|Город|
+aeroport|аэропорт|✈️|Город|
+Hojatxona qayerda?|Где туалет?|🚻|Город|Where is the toilet?
+ovqat|еда|🍽️|Еда|food
+menyu|меню|📋|Еда|menu
+Hisobni bering|Принесите счёт|🧾|Еда|The bill, please
+mazali|вкусный|😋|Еда|tasty
+achchiq|острый|🌶️|Еда|spicy
+shirin|сладкий|🍰|Еда|sweet
+issiq|горячий, жаркий|🔥|Основа|hot
+sovuq|холодный|🧊|Основа|cold
+katta|большой|🐘|Основа|big
+kichik|маленький|🐭|Основа|small
+koʻp|много|📚|Основа|a lot
+ozgina|немного|🤏|Основа|a little
+juda|очень|❗|Основа|very
+yangi|новый|✨|Основа|new
+eski|старый (о вещи)|🏚️|Основа|old
+chiroyli|красивый|🌸|Основа|beautiful
+bugun|сегодня|📅|Время|today
+ertaga|завтра|🌄|Время|tomorrow
+kecha|вчера|🌃|Время|yesterday
+hozir|сейчас|⏱️|Время|now
+keyin|потом|⏭️|Время|later
+Soat necha?|Который час?|⌚|Время|What time is it?
+daqiqa|минута|⏲️|Время|minute
+kun|день|🌞|Время|day
+hafta|неделя|🗓️|Время|week
+oy|месяц|🌕|Время|month
+yil|год|🎆|Время|year
+ertalab|утром|🐓|Время|in the morning
+kechqurun|вечером|🌇|Время|in the evening
+Bir daqiqa kuting|Подождите минуту|⏳|Основа|Wait a minute
+shifokor|врач|🧑‍⚕️|Клиника|doctor
+dori|лекарство|💊|Клиника|medicine
+ogʻriq|боль|🤕|Клиника|pain
+Boshim ogʻriyapti|У меня болит голова|🤯|Клиника|I have a headache
+tish|зуб|🦷|Клиника|tooth
+qorin|живот|🫃|Клиника|stomach
+isitma|температура (жар)|🌡️|Клиника|fever
+kasal|больной|🤒|Клиника|sick
+Yordam bering!|Помогите!|🆘|Клиника|Help!
+tez yordam|скорая помощь|🚑|Клиника|ambulance
+yurak|сердце|❤️|Клиника|heart
+koʻz|глаз|👁️|Клиника|eye
+quloq|ухо|👂|Клиника|ear
+oyoq|нога|🦵|Клиника|leg
+qoʻl|рука|🫱|Клиника|hand
+tomoq|горло|🗣|Клиника|throat
+yoʻtal|кашель|😷|Клиника|cough
+Allergiyam bor|У меня аллергия|🤧|Клиника|I have an allergy
+Oʻynaymizmi?|Сыграем?|🎾|Теннис|Shall we play?
+Kim boshlaydi?|Кто начинает?|🙋|Теннис|Who starts?
+Tayyormisiz?|Готовы?|🏁|Теннис|Ready?
+zarba|удар|💥|Теннис|shot
+Zoʻr!|Отлично! Круто!|🔥|Теннис|Awesome!
+navbat|очередь|🔄|Теннис|turn
+Sizning navbatingiz|Ваша очередь|👉|Теннис|Your turn
+Yutdim|Я выиграл|🥇|Теннис|I won
+Yutqazdim|Я проиграл|😩|Теннис|I lost
+gʻalaba|победа|🏆|Теннис|victory
+Charchadim|Я устал|😮‍💨|Теннис|I'm tired
+Dam olamiz|Сделаем перерыв|☕|Теннис|Let's take a break
+Yana bir oʻyin?|Ещё одну игру?|🔁|Теннис|One more game?
+ota-ona|родители|👨‍👩‍👦|Люди|parents
+aka|старший брат|🧔|Люди|older brother
+uka|младший брат|👦|Люди|younger brother
+opa|старшая сестра|👩‍🦰|Люди|older sister
+singil|младшая сестра|👧|Люди|younger sister
+oʻgʻil|сын|🧒|Люди|son
+qiz|дочь, девушка|👱‍♀️|Люди|daughter, girl
+bola|ребёнок|👶|Люди|child
+oila|семья|🏡|Люди|family
+xotin|жена|👰|Люди|wife
+er|муж|🤵|Люди|husband
+u|он, она|🧍|Люди|he / she
+ular|они|👥|Люди|they
+bormoq|идти, ехать|🚶‍♂️|Глаголы|to go
+kelmoq|приходить|🏃|Глаголы|to come
+yemoq|есть (кушать)|🍴|Глаголы|to eat
+ichmoq|пить|🥤|Глаголы|to drink
+uxlamoq|спать|😴|Глаголы|to sleep
+gapirmoq|говорить|💬|Глаголы|to speak
+bilmoq|знать|🧠|Глаголы|to know
+koʻrmoq|видеть|🔭|Глаголы|to see
+ishlamoq|работать|💼|Глаголы|to work
+kutmoq|ждать|⌛|Глаголы|to wait
+olmoq|брать|🤲|Глаголы|to take
+bermoq|давать|🎁|Глаголы|to give
+yozmoq|писать|✍️|Глаголы|to write
+oʻqimoq|читать, учиться|📖|Глаголы|to read, to study
+qilmoq|делать|🛠️|Глаголы|to do
+ochmoq|открывать|🔓|Глаголы|to open
+yopmoq|закрывать|🔒|Глаголы|to close
+oʻtirmoq|садиться, сидеть|🪑|Глаголы|to sit
+tushmoq|выходить (из машины)|⬇️|Глаголы|to get out
+sotib olmoq|покупать|🛒|Глаголы|to buy
+sotmoq|продавать|🏬|Глаголы|to sell
+Menga yoqadi|Мне нравится|😍|Фразы|I like it
+Menga yoqmaydi|Мне не нравится|😒|Фразы|I don't like it
+Mumkinmi?|Можно?|🤞|Фразы|May I?
+Boʻladi|Хорошо, договорились|👌|Фразы|Deal
+Boʻlmaydi|Нельзя, не получится|🚫|Фразы|Not possible
+Muammo yoʻq|Без проблем|😎|Фразы|No problem
+Hech gap emas|Не за что|🤲🏻|Фразы|You're welcome
+Juda yaxshi|Очень хорошо|🌟|Фразы|Very good
+Qayerdansiz?|Откуда вы?|🌍|Фразы|Where are you from?
+Toshkentda yashayman|Я живу в Ташкенте|🏙️|Фразы|I live in Tashkent
+Telefon raqamingiz?|Ваш номер телефона?|📱|Фразы|Your phone number?
+Yana bir marta ayting|Скажите ещё раз|🔂|Фразы|Say it again
+havo|погода, воздух|🌤️|Погода|weather
+yomgʻir|дождь|🌧️|Погода|rain
+qor|снег|❄️|Погода|snow
+quyosh|солнце|☀️|Погода|sun
+shamol|ветер|💨|Погода|wind
+oq|белый|⚪|Цвета|white
+qora|чёрный|⚫|Цвета|black
+qizil|красный|🔴|Цвета|red
+koʻk|синий, голубой|🔵|Цвета|blue
+yashil|зелёный|🟢|Цвета|green
+sariq|жёлтый|🟡|Цвета|yellow
+`;
+
+const hash = s => { let h = 5381; for (const c of s) h = (h * 33 + c.codePointAt(0)) >>> 0; return 'w' + h.toString(36); };
+const WORDS = RAW.trim().split('\n').map(l => { const [uz, ru, img, topic, en] = l.split('|').map(s => s.trim()); return { id: hash(uz), uz, ru, img, topic, en }; });
+const BY = Object.fromEntries(WORDS.map(w => [w.id, w]));
+// 3D pictures: Microsoft Fluent Emoji (MIT), shipped in img/
+const IMG = {"👋": "1f44b.webp", "🙏": "1f64f.webp", "✅": "2705.webp", "❌": "274c.webp", "🤝": "1f91d.webp", "🚶": "1f6b6.webp", "👍": "1f44d.webp", "👎": "1f44e.webp", "💧": "1f4a7.webp", "🫓": "1fad3.webp", "🍵": "1f375.webp", "🙇": "1f647.webp", "😔": "1f614.webp", "🙂": "1f642.webp", "😊": "1f60a.webp", "🚕": "1f695.webp", "🧺": "1f9fa.webp", "💰": "1f4b0.webp", "🏷️": "1f3f7-fe0f.webp", "🆗": "1f197.webp", "💯": "1f4af.webp", "🤷": "1f937.webp", "💡": "1f4a1.webp", "❓": "2753.webp", "⬅️": "2b05-fe0f.webp", "➡️": "27a1-fe0f.webp", "⬆️": "2b06-fe0f.webp", "🛑": "1f6d1.webp", "🙋": "1f64b.webp", "🫵": "1faf5.webp", "👫": "1f46b.webp", "👨": "1f468.webp", "👩": "1f469.webp", "🫂": "1fac2.webp", "🥩": "1f969.webp", "🍗": "1f357.webp", "🍛": "1f35b.webp", "🍎": "1f34e.webp", "🍇": "1f347.webp", "🍈": "1f348.webp", "🍉": "1f349.webp", "🎾": "1f3be.webp", "⚽": "26bd.webp", "🏟️": "1f3df-fe0f.webp", "🙋‍♂️": "1f64b-200d-2642-fe0f.webp", "🤗": "1f917.webp", "🚪": "1f6aa.webp", "👀": "1f440.webp", "🌅": "1f305.webp", "🌆": "1f306.webp", "🌙": "1f319.webp", "🐢": "1f422.webp", "🗣️": "1f5e3-fe0f.webp", "☝️": "261d-fe0f.webp", "✋": "270b.webp", "🪙": "1fa99.webp", "💎": "1f48e.webp", "☝🏻": "261d-1f3fb.webp", "⚖️": "2696-fe0f.webp", "💵": "1f4b5.webp", "🔁": "1f501.webp", "💳": "1f4b3.webp", "🍅": "1f345.webp", "🥒": "1f952.webp", "🥔": "1f954.webp", "🧅": "1f9c5.webp", "🥕": "1f955.webp", "🍚": "1f35a.webp", "🧂": "1f9c2.webp", "🥛": "1f95b.webp", "🥚": "1f95a.webp", "🧭": "1f9ed.webp", "📌": "1f4cc.webp", "📍": "1f4cd.webp", "🛣️": "1f6e3-fe0f.webp", "👣": "1f463.webp", "💸": "1f4b8.webp", "🚖": "1f696.webp", "⚡": "26a1.webp", "↩️": "21a9-fe0f.webp", "🚗": "1f697.webp", "❔": "2754.webp", "👤": "1f464.webp", "⏰": "23f0.webp", "🤔": "1f914.webp", "🌀": "1f300.webp", "🔢": "1f522.webp", "🏠": "1f3e0.webp", "🏪": "1f3ea.webp", "⚕️": "2695-fe0f.webp", "🏥": "1f3e5.webp", "🏨": "1f3e8.webp", "🏦": "1f3e6.webp", "🕌": "1f54c.webp", "🚏": "1f68f.webp", "🚇": "1f687.webp", "🚌": "1f68c.webp", "✈️": "2708-fe0f.webp", "🚻": "1f6bb.webp", "🍽️": "1f37d-fe0f.webp", "📋": "1f4cb.webp", "🧾": "1f9fe.webp", "😋": "1f60b.webp", "🌶️": "1f336-fe0f.webp", "🍰": "1f370.webp", "🔥": "1f525.webp", "🧊": "1f9ca.webp", "🐘": "1f418.webp", "🐭": "1f42d.webp", "📚": "1f4da.webp", "🤏": "1f90f.webp", "❗": "2757.webp", "✨": "2728.webp", "🏚️": "1f3da-fe0f.webp", "🌸": "1f338.webp", "📅": "1f4c5.webp", "🌄": "1f304.webp", "🌃": "1f303.webp", "⏱️": "23f1-fe0f.webp", "⏭️": "23ed-fe0f.webp", "⌚": "231a.webp", "⏲️": "23f2-fe0f.webp", "🌞": "1f31e.webp", "🗓️": "1f5d3-fe0f.webp", "🌕": "1f315.webp", "🎆": "1f386.webp", "🐓": "1f413.webp", "🌇": "1f307.webp", "⏳": "23f3.webp", "🧑‍⚕️": "1f9d1-200d-2695-fe0f.webp", "💊": "1f48a.webp", "🤕": "1f915.webp", "🤯": "1f92f.webp", "🦷": "1f9b7.webp", "🫃": "1fac3.webp", "🌡️": "1f321-fe0f.webp", "🤒": "1f912.webp", "🆘": "1f198.webp", "🚑": "1f691.webp", "❤️": "2764-fe0f.webp", "👁️": "1f441-fe0f.webp", "👂": "1f442.webp", "🦵": "1f9b5.webp", "🫱": "1faf1.webp", "🗣": "1f5e3-fe0f.webp", "😷": "1f637.webp", "🤧": "1f927.webp", "🏁": "1f3c1.webp", "💥": "1f4a5.webp", "🔄": "1f504.webp", "👉": "1f449.webp", "🥇": "1f947.webp", "😩": "1f629.webp", "🏆": "1f3c6.webp", "😮‍💨": "1f62e-200d-1f4a8.webp", "☕": "2615.webp", "👨‍👩‍👦": "1f468-200d-1f469-200d-1f466.webp", "🧔": "1f9d4.webp", "👦": "1f466.webp", "👩‍🦰": "1f469-200d-1f9b0.webp", "👧": "1f467.webp", "🧒": "1f9d2.webp", "👱‍♀️": "1f471-200d-2640-fe0f.webp", "👶": "1f476.webp", "🏡": "1f3e1.webp", "👰": "1f470.webp", "🤵": "1f935.webp", "🧍": "1f9cd.webp", "👥": "1f465.webp", "🚶‍♂️": "1f6b6-200d-2642-fe0f.webp", "🏃": "1f3c3.webp", "🍴": "1f374.webp", "🥤": "1f964.webp", "😴": "1f634.webp", "💬": "1f4ac.webp", "🧠": "1f9e0.webp", "🔭": "1f52d.webp", "💼": "1f4bc.webp", "⌛": "231b.webp", "🤲": "1f932.webp", "🎁": "1f381.webp", "✍️": "270d-fe0f.webp", "📖": "1f4d6.webp", "🛠️": "1f6e0-fe0f.webp", "🔓": "1f513.webp", "🔒": "1f512.webp", "🪑": "1fa91.webp", "⬇️": "2b07-fe0f.webp", "🛒": "1f6d2.webp", "🏬": "1f3ec.webp", "😍": "1f60d.webp", "😒": "1f612.webp", "🤞": "1f91e.webp", "👌": "1f44c.webp", "🚫": "1f6ab.webp", "😎": "1f60e.webp", "🤲🏻": "1f932-1f3fb.webp", "🌟": "1f31f.webp", "🌍": "1f30d.webp", "🏙️": "1f3d9-fe0f.webp", "📱": "1f4f1.webp", "🔂": "1f502.webp", "🌤️": "1f324-fe0f.webp", "🌧️": "1f327-fe0f.webp", "❄️": "2744-fe0f.webp", "☀️": "2600-fe0f.webp", "💨": "1f4a8.webp", "⚪": "26aa.webp", "⚫": "26ab.webp", "🔴": "1f534.webp", "🔵": "1f535.webp", "🟢": "1f7e2.webp", "🟡": "1f7e1.webp"};
+// Generated illustrations (5×5 sheets, sliced) — take priority over emoji
+const GEN = {"Salom": "g4be1041e.webp", "Rahmat": "g22edede4.webp", "Ha": "g4bf3fd6a.webp", "Yoʻq": "g70d4a6a0.webp", "Assalomu alaykum": "gb567a20a.webp", "Xayr": "g7c1778b9.webp", "Yaxshi": "g73d7c866.webp", "Yomon": "g360a0d3a.webp", "suv": "gc0276be2.webp", "non": "g14b8f049.webp", "choy": "ge3536300.webp", "Iltimos": "g82b24985.webp", "Kechirasiz": "g7e2e5e72.webp", "Qalaysiz?": "g85116ccc.webp", "Yaxshimisiz?": "g89b39500.webp", "taksi": "gb0b6fc9f.webp", "bozor": "g0e955ad3.webp", "pul": "gd09e4671.webp", "Qancha turadi?": "g90c401f0.webp", "Mayli": "ge3dd5699.webp", "Albatta": "ga2610b88.webp", "Tushunmadim": "gbc50ad03.webp", "Tushundim": "g987b6bf1.webp", "Bilmayman": "g676bbbaa.webp", "chapga": "g944a5f55.webp"};
+const picFor = w => GEN[w.uz] ? `<img class="gen" src="gen/${GEN[w.uz]}" alt="" draggable="false" onerror="this.outerHTML=picInner('${w.img}')">` : picInner(w.img);
+const picInner = e => IMG[e] ? `<img src="img/${IMG[e]}" alt="" draggable="false" onerror="this.replaceWith(document.createTextNode('${e}'))">` : e;
+
+const MIN = 6e4, DAY = 864e5;
+const WAIT = { 2: DAY, 3: 3 * DAY, 4: 7 * DAY, 5: 30 * DAY };   // stage → interval
+const KEY = 'soz-progress-v1';
+
+let S = { st: {}, updated: 0 };
+try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && v.st) S = v; } catch (e) {}
+
+let queue = [], mode = 'learn', archTotal = 0;
+const $ = id => document.getElementById(id);
+
+/* ---------- spaced repetition ---------- */
+function refill() {
+  const now = Date.now(), inQ = new Set(queue);
+  const due = WORDS.filter(w => { const r = S.st[w.id]; return r && !r.arch && r.due <= now && !inQ.has(w.id); })
+                   .sort((a, b) => S.st[a.id].due - S.st[b.id].due);
+  queue.push(...due.map(w => w.id));
+  if (queue.length < 3) {
+    const fresh = WORDS.filter(w => !S.st[w.id] && !inQ.has(w.id)).slice(0, 5);
+    queue.push(...fresh.map(w => w.id));
+  }
+}
+function requeue(id, pos) { queue.splice(Math.min(pos, queue.length), 0, id); }
+
+function answer(know) {
+  const id = queue.shift(), now = Date.now();
+  const r = S.st[id] || { s: 0, lap: 0, str: 0 };
+  if (mode === 'archive') {
+    if (!know) { r.arch = 0; r.s = 0; r.lap++; r.str = 0; r.due = now; }
+  } else if (know) {
+    r.str++;
+    if (r.lap === 0) {                                                     // never missed: knew it from the start
+      if (r.str >= 3) r.arch = 1;                                          // 3 × «знаю» in a row → folder
+      else { r.due = now; requeue(id, r.str === 1 ? 5 : 12); }             // check again later this session
+    } else {                                                               // was missed once: spaced repetition
+      r.s++;
+      if (r.s >= 6) r.arch = 1;                                            // survived the 30-day check → folder
+      else if (r.s === 1) { r.due = now; requeue(id, 7); }                 // once more this session
+      else r.due = now + WAIT[r.s];                                        // 1 → 3 → 7 → 30 days
+    }
+  } else {
+    r.lap++; r.str = 0; r.s = 0; r.due = now; requeue(id, 3);             // back in 3 cards
+  }
+  r.t = now; S.st[id] = r;
+  save();
+  if (mode === 'archive' && !queue.length) exitArchive();
+  render(true);
+}
+
+/* ---------- storage: phone + account sync ---------- */
+let remote = null, pushing = false, pendingPush = false, pushTimer = 0;
+function save() {
+  S.updated = Date.now();
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  clearTimeout(pushTimer); pushTimer = setTimeout(push, 1500);
+}
+async function push() {
+  if (!remote) return;
+  if (pushing) { pendingPush = true; return; }
+  pushing = true;
+  try { await remote.set({ st: S.st, updated: S.updated }); } catch (e) {}
+  pushing = false;
+  if (pendingPush) { pendingPush = false; push(); }
+}
+(async () => {
+  if (!window.claude || !claude.use) return;
+  try {
+    const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
+    if (!db || !user) return;
+    const uid = await user.id(); if (!uid) return;
+    const ref = db.collection('data/users/' + uid).doc('progress');
+    const snap = await ref.get();
+    remote = ref;
+    let changed = false, localNewer = false;
+    const rs = (snap.exists && snap.data().st) || {};
+    for (const id in rs) { if (!S.st[id] || (rs[id].t || 0) > (S.st[id].t || 0)) { S.st[id] = rs[id]; changed = true; } }
+    for (const id in S.st) { if (!rs[id] || (S.st[id].t || 0) > (rs[id].t || 0)) localNewer = true; }
+    if (changed) { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} if (mode === 'learn') { queue = queue.slice(0, 1); } render(false); }
+    if (localNewer) push();
+  } catch (e) {}
+})();
+
+/* ---------- speech (only if the device has an Uzbek voice) ---------- */
+let uzVoice = null;
+function findVoice() { try { uzVoice = speechSynthesis.getVoices().find(v => /^uz/i.test(v.lang)) || null; } catch (e) {} }
+if ('speechSynthesis' in window) { findVoice(); speechSynthesis.onvoiceschanged = () => { findVoice(); render(false); }; }
+function speak(t) { const u = new SpeechSynthesisUtterance(t.replace('…', '')); u.voice = uzVoice; u.lang = uzVoice.lang; speechSynthesis.cancel(); speechSynthesis.speak(u); }
+
+/* ---------- render ---------- */
+const isNum = s => /^[0-9]+$/.test(s);
+function cardHTML(w, next) {
+  const pic = `<div class="pic${isNum(w.img) ? ' num' : ''}">${picFor(w)}</div>`;
+  return `<div class="card${next ? ' next' : ''}" ${next ? '' : 'id="cur" tabindex="0"'}>
+    <div class="flip">
+      <div class="face">${pic}${w.en ? `<div class="en">${w.en}</div>` : ''}</div>
+      ${next ? '' : `<div class="face rear">${pic}<div class="uz">${w.uz}</div><div class="ru">${w.ru}</div>
+        ${uzVoice ? '<button class="say" type="button" data-say>🔊 Послушать</button>' : ''}</div>`}
+    </div>
+    <span class="stamp yes">Знаю</span><span class="stamp no">Не знаю</span>
+  </div>`;
+}
+let lastKnown = -1;
+function counters() {
+  const k = WORDS.filter(w => S.st[w.id] && S.st[w.id].arch).length;
+  $('cKnown').textContent = k;
+  const f = $('openArchive');
+  if (lastKnown >= 0 && k > lastKnown) { f.classList.remove('bump'); void f.offsetWidth; f.classList.add('bump'); }
+  lastKnown = k;
+}
+function nextDueText() {
+  const ds = Object.values(S.st).filter(r => !r.arch).map(r => r.due); if (!ds.length) return '';
+  const ms = Math.min(...ds) - Date.now(), h = Math.round(ms / 36e5);
+  return h < 1 ? 'Следующее повторение — меньше чем через час.' : h < 24 ? `Следующее повторение — через ${h} ч.` : `Следующее повторение — через ${Math.round(h / 24)} дн.`;
+}
+function render() {
+  if (mode === 'learn' && queue.length < 3) refill();
+  counters();
+  const stage = $('stage');
+  $('banner').hidden = mode !== 'archive';
+  if (mode === 'archive') $('bannerText').textContent = `Повторяем выученное · осталось ${queue.length}`;
+  if (!queue.length) {
+    $('hint').hidden = true;
+    stage.innerHTML = `<div class="done"><div class="big">На сегодня всё</div><p>${nextDueText() || 'Все слова выучены.'}</p></div>`;
+    return;
+  }
+  $('hint').hidden = Object.keys(S.st).length > 2;
+  stage.innerHTML = (queue[1] ? cardHTML(BY[queue[1]], true) : '') + cardHTML(BY[queue[0]], false);
+  bind($('cur'));
+}
+
+/* ---------- gestures ---------- */
+const tint = $('tint');
+function setTint(dx) {
+  const a = Math.min(Math.abs(dx) / 220, 1);
+  tint.style.transition = 'none';
+  tint.style.background = dx > 0 ? 'var(--good)' : 'var(--bad)';
+  tint.style.opacity = (a * 0.22).toFixed(3);
+}
+function clearTint() { tint.style.transition = ''; tint.style.opacity = 0; }
+
+function bind(card) {
+  const yes = card.querySelector('.stamp.yes'), no = card.querySelector('.stamp.no');
+  let x0 = 0, y0 = 0, t0 = 0, dx = 0, dy = 0, down = false, moved = false;
+  card.addEventListener('pointerdown', e => {
+    if (e.target.closest('[data-say]')) return;
+    down = true; moved = false; x0 = e.clientX; y0 = e.clientY; t0 = performance.now(); dx = dy = 0;
+    card.setPointerCapture(e.pointerId); card.style.transition = 'none'; card.style.cursor = 'grabbing';
+  });
+  card.addEventListener('pointermove', e => {
+    if (!down) return;
+    dx = e.clientX - x0; dy = e.clientY - y0;
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
+    if (!moved) return;
+    card.style.transform = `translate(${dx}px, ${dy * 0.25}px) rotate(${dx / 18}deg)`;
+    yes.style.opacity = Math.max(0, Math.min(dx / 100, 1));
+    no.style.opacity = Math.max(0, Math.min(-dx / 100, 1));
+    setTint(dx);
+  });
+  const up = () => {
+    if (!down) return; down = false; card.style.cursor = '';
+    if (!moved) { card.style.transition = ''; card.classList.toggle('open'); return; }
+    const v = Math.abs(dx) / (performance.now() - t0);
+    if (Math.abs(dx) > 90 || (v > 0.6 && Math.abs(dx) > 30)) fling(card, dx > 0);
+    else { card.style.transition = ''; card.style.transform = ''; yes.style.opacity = no.style.opacity = 0; clearTint(); }
+  };
+  card.addEventListener('pointerup', up);
+  card.addEventListener('pointercancel', up);
+  const say = card.querySelector('[data-say]');
+  if (say) say.addEventListener('click', e => { e.stopPropagation(); speak(BY[queue[0]].uz); });
+}
+let flying = false;
+function fling(card, know) {
+  if (flying) return; flying = true;
+  setTint(know ? 220 : -220);
+  card.querySelector(know ? '.stamp.yes' : '.stamp.no').style.opacity = 1;
+  card.style.transition = 'transform .24s ease-in, opacity .24s ease-in';
+  card.style.transform = `translate(${know ? 140 : -140}vw, 0) rotate(${know ? 24 : -24}deg)`;
+  card.style.opacity = 0;
+  const back = document.querySelector('.card.next');
+  if (back) { back.style.transform = 'none'; back.style.opacity = 1; }
+  setTimeout(() => { clearTint(); flying = false; answer(know); }, 240);
+}
+document.addEventListener('keydown', e => {
+  if (!$('scrim').hidden) { if (e.key === 'Escape') closeArchive(); return; }
+  const c = $('cur'); if (!c) return;
+  if (e.key === 'ArrowRight') fling(c, true);
+  else if (e.key === 'ArrowLeft') fling(c, false);
+  else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); c.classList.toggle('open'); }
+  else if (e.key === 'Escape' && mode === 'archive') exitArchive(), render();
+});
+
+/* ---------- archive ---------- */
+function archived() { return WORDS.filter(w => S.st[w.id] && S.st[w.id].arch); }
+function openArchive() {
+  const a = archived();
+  $('archSub').textContent = a.length ? `${a.length} слов. Они больше не показываются, пока ты сам не захочешь повторить.` : 'Пока пусто. Слово попадает сюда, когда ты уверенно его знаешь.';
+  $('archList').innerHTML = a.map(w => `<div class="row"><div class="e${isNum(w.img) ? ' num' : ''}">${picFor(w)}</div><div class="w"><b>${w.uz}</b><span>${w.ru}</span></div></div>`).join('');
+  $('reviewArchive').hidden = !a.length;
+  $('reviewArchive').textContent = `Повторить ${a.length} слов`;
+  $('scrim').hidden = false;
+}
+function closeArchive() { $('scrim').hidden = true; }
+function startArchive() {
+  const ids = archived().map(w => w.id);
+  for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; }
+  mode = 'archive'; queue = ids; closeArchive(); render();
+}
+function exitArchive() { mode = 'learn'; queue = []; }
+$('openArchive').onclick = openArchive;
+$('scrim').addEventListener('click', e => { if (e.target === $('scrim')) closeArchive(); });
+$('reviewArchive').onclick = startArchive;
+$('exitArchive').onclick = () => { exitArchive(); render(); };
+
+render();
+// Offline mode when hosted on its own site (does nothing inside Claude)
+try { if ('serviceWorker' in navigator && location.protocol === 'https:' && !/claude/.test(location.hostname)) navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
+</script>
