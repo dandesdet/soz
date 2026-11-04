@@ -236,6 +236,56 @@ qizil|красный|🔴|Цвета|red
 koʻk|синий, голубой|🔵|Цвета|blue
 yashil|зелёный|🟢|Цвета|green
 sariq|жёлтый|🟡|Цвета|yellow
+kofe|кофе|☕|Кафе|
+shakar|сахар|🍬|Кафе|sugar
+qoshiq|ложка|🥄|Кафе|
+vilka|вилка|🍴|Кафе|
+pichoq|нож|🔪|Кафе|
+stakan|стакан|🥛|Кафе|glass
+piyola|пиала|🍵|Кафе|tea bowl
+somsa|самса|🥟|Кафе|samsa pastry
+lagʻmon|лагман|🍜|Кафе|lagman noodles
+shashlik|шашлык|🍢|Кафе|kebab skewers
+salat|салат|🥗|Кафе|
+ofitsiant|официант|🧑‍🍳|Кафе|waiter
+raketka|ракетка|🎾|Теннис|racket
+toʻr|сетка|🥅|Теннис|net
+murabbiy|тренер|🧑‍🏫|Теннис|coach
+krossovka|кроссовки|👟|Теннис|sneakers
+hisob|счёт (в игре)|🔢|Теннис|score
+nol|ноль|0|Числа|zero
+teng|поровну, ровно|🟰|Теннис|equal / tied
+set|сет|🎾|Теннис|set (in tennis)
+aut|аут|🚫|Теннис|out (ball)
+xursand|радостный, довольный|😄|Чувства|glad
+xafa|расстроенный, обиженный|😞|Чувства|upset
+baxtli|счастливый|🥰|Чувства|happy
+choychaqa|чаевые|💵|Кафе|tip
+Koʻk choy bering|Дайте зелёного чаю|🍵|Кафе|Green tea, please
+Joy bormi?|Есть свободные места?|🪑|Кафе|Is there a free table?
+Qornim och|Я голоден|🍽️|Чувства|I'm hungry
+Chanqadim|Я хочу пить|🥤|Чувства|I'm thirsty
+Zerikdim|Мне скучно|🥱|Чувства|I'm bored
+Qoʻrqdim|Я испугался|😨|Чувства|I got scared
+Kayfiyatim yaxshi|У меня хорошее настроение|😊|Чувства|I'm in a good mood
+Xavotir olmang|Не волнуйтесь|🤗|Чувства|Don't worry
+Sogʻindim|Я соскучился|🥺|Чувства|I missed you
+Jahlim chiqdi|Я разозлился|😠|Чувства|I got angry
+Bordim|Я пошёл / сходил|🚶|Прошедшее|I went
+Keldim|Я пришёл|🚪|Прошедшее|I came
+Yedim|Я поел|🍛|Прошедшее|I ate
+Ichdim|Я выпил|🥤|Прошедшее|I drank
+Koʻrdim|Я увидел|👀|Прошедшее|I saw
+Oldim|Я купил / взял|🛍️|Прошедшее|I bought / took
+Aytdim|Я сказал|🗣️|Прошедшее|I said
+Unutdim|Я забыл|🤦|Прошедшее|I forgot
+Kechikdim|Я опоздал|⏰|Прошедшее|I'm late
+Yoʻqotdim|Я потерял|🔍|Прошедшее|I lost it
+Qoʻngʻiroq qildim|Я позвонил|📞|Прошедшее|I called
+Yaxshi zarba!|Хороший удар!|👏|Теннис|Nice shot!
+Isinib olaylik|Давайте разомнёмся|🤸|Теннис|Let's warm up
+Soat nechada oʻynaymiz?|Во сколько играем?|🕒|Теннис|What time do we play?
+Kortni band qildim|Я забронировал корт|📅|Теннис|I booked the court
 `;
 // Generated illustrations (from 5×5 sheets): uz word → file in gen/
 window.SOZ_GEN = {
@@ -263,7 +313,57 @@ window.SOZ_GEN = {
  "Tushunmadim": "gbc50ad03.webp",
  "Tushundim": "g987b6bf1.webp",
  "Bilmayman": "g676bbbaa.webp",
- "chapga": "g944a5f55.webp"
+ "chapga": "g944a5f55.webp",
+ "kofe": "g81dba3da.webp",
+ "shakar": "g7d892d7f.webp",
+ "qoshiq": "ge2b57ab1.webp",
+ "vilka": "g1f1f59c9.webp",
+ "pichoq": "g2011be1e.webp",
+ "stakan": "gc8c8bba0.webp",
+ "piyola": "gcef6ccce.webp",
+ "somsa": "g7b8acc67.webp",
+ "lagʻmon": "gdbd17d80.webp",
+ "shashlik": "g903c9082.webp",
+ "salat": "g16a15b15.webp",
+ "ofitsiant": "g90329f0e.webp",
+ "raketka": "g7e5df783.webp",
+ "toʻr": "g2077da5f.webp",
+ "murabbiy": "gb5902b13.webp",
+ "krossovka": "g7f7cbb06.webp",
+ "hisob": "gfc30d075.webp",
+ "nol": "g0c72a0cc.webp",
+ "teng": "g5608f7ab.webp",
+ "set": "gcdaeeeba.webp",
+ "aut": "g131d5a3d.webp",
+ "xursand": "g9015ab92.webp",
+ "xafa": "g993d7fe7.webp",
+ "baxtli": "gd1df59e9.webp",
+ "choychaqa": "gfeac7928.webp",
+ "Koʻk choy bering": "g37d2965d.webp",
+ "Joy bormi?": "gbbe1194a.webp",
+ "Qornim och": "g7d08440e.webp",
+ "Chanqadim": "ged6651d0.webp",
+ "Zerikdim": "g1109ca88.webp",
+ "Qoʻrqdim": "g10e6945f.webp",
+ "Kayfiyatim yaxshi": "ga436e97a.webp",
+ "Xavotir olmang": "g3012f5d6.webp",
+ "Sogʻindim": "g708a9190.webp",
+ "Jahlim chiqdi": "g7dc3ec9c.webp",
+ "Bordim": "g3d65eb83.webp",
+ "Keldim": "g7e42c660.webp",
+ "Yedim": "g98453e4f.webp",
+ "Ichdim": "g8bfb2316.webp",
+ "Koʻrdim": "g2d133997.webp",
+ "Oldim": "gcaf2a403.webp",
+ "Aytdim": "g18e0672f.webp",
+ "Unutdim": "g5132fde0.webp",
+ "Kechikdim": "gfff7269c.webp",
+ "Yoʻqotdim": "gc1fd3a41.webp",
+ "Qoʻngʻiroq qildim": "g65fae6cd.webp",
+ "Yaxshi zarba!": "g69d5c1e3.webp",
+ "Isinib olaylik": "g55466180.webp",
+ "Soat nechada oʻynaymiz?": "g4381a797.webp",
+ "Kortni band qildim": "g46c3c730.webp"
 };
 // Same words in other languages, keyed by the uz word (same pictures, same order).
 window.SOZ_TR = {
@@ -502,7 +602,57 @@ window.SOZ_TR = {
   "qizil": "rojo",
   "koʻk": "azul",
   "yashil": "verde",
-  "sariq": "amarillo"
+  "sariq": "amarillo",
+  "kofe": "el café",
+  "shakar": "el azúcar",
+  "qoshiq": "la cuchara",
+  "vilka": "el tenedor",
+  "pichoq": "el cuchillo",
+  "stakan": "el vaso",
+  "piyola": "el cuenco de té",
+  "somsa": "la samsa (empanada uzbeka)",
+  "lagʻmon": "el lagmán (sopa de fideos)",
+  "shashlik": "las brochetas",
+  "salat": "la ensalada",
+  "ofitsiant": "el camarero",
+  "raketka": "la raqueta",
+  "toʻr": "la red",
+  "murabbiy": "el entrenador",
+  "krossovka": "las zapatillas",
+  "hisob": "el marcador",
+  "nol": "cero",
+  "teng": "iguales",
+  "set": "el set",
+  "aut": "fuera",
+  "xursand": "contento",
+  "xafa": "triste, disgustado",
+  "baxtli": "feliz",
+  "choychaqa": "la propina",
+  "Koʻk choy bering": "Un té verde, por favor",
+  "Joy bormi?": "¿Hay sitio libre?",
+  "Qornim och": "Tengo hambre",
+  "Chanqadim": "Tengo sed",
+  "Zerikdim": "Me aburro",
+  "Qoʻrqdim": "Me asusté",
+  "Kayfiyatim yaxshi": "Estoy de buen humor",
+  "Xavotir olmang": "No se preocupe",
+  "Sogʻindim": "Te he echado de menos",
+  "Jahlim chiqdi": "Me enfadé",
+  "Bordim": "Fui",
+  "Keldim": "Vine",
+  "Yedim": "Comí",
+  "Ichdim": "Bebí",
+  "Koʻrdim": "Vi",
+  "Oldim": "Compré",
+  "Aytdim": "Dije",
+  "Unutdim": "Se me olvidó",
+  "Kechikdim": "Llegué tarde",
+  "Yoʻqotdim": "Lo perdí",
+  "Qoʻngʻiroq qildim": "Llamé por teléfono",
+  "Yaxshi zarba!": "¡Buen golpe!",
+  "Isinib olaylik": "Vamos a calentar",
+  "Soat nechada oʻynaymiz?": "¿A qué hora jugamos?",
+  "Kortni band qildim": "He reservado la pista"
  },
  "en": {
   "Salom": "Hi!",
@@ -739,6 +889,56 @@ window.SOZ_TR = {
   "qizil": "red",
   "koʻk": "blue",
   "yashil": "green",
-  "sariq": "yellow"
+  "sariq": "yellow",
+  "kofe": "coffee",
+  "shakar": "sugar",
+  "qoshiq": "spoon",
+  "vilka": "fork",
+  "pichoq": "knife",
+  "stakan": "glass",
+  "piyola": "tea bowl",
+  "somsa": "samsa",
+  "lagʻmon": "lagman noodles",
+  "shashlik": "kebab skewers",
+  "salat": "salad",
+  "ofitsiant": "waiter",
+  "raketka": "racket",
+  "toʻr": "net",
+  "murabbiy": "coach",
+  "krossovka": "sneakers",
+  "hisob": "score",
+  "nol": "zero",
+  "teng": "tied",
+  "set": "set",
+  "aut": "out",
+  "xursand": "glad",
+  "xafa": "upset",
+  "baxtli": "happy",
+  "choychaqa": "tip",
+  "Koʻk choy bering": "Green tea, please",
+  "Joy bormi?": "Is there a free table?",
+  "Qornim och": "I'm hungry",
+  "Chanqadim": "I'm thirsty",
+  "Zerikdim": "I'm bored",
+  "Qoʻrqdim": "I got scared",
+  "Kayfiyatim yaxshi": "I'm in a good mood",
+  "Xavotir olmang": "Don't worry",
+  "Sogʻindim": "I missed you",
+  "Jahlim chiqdi": "I got angry",
+  "Bordim": "I went",
+  "Keldim": "I came",
+  "Yedim": "I ate",
+  "Ichdim": "I drank",
+  "Koʻrdim": "I saw",
+  "Oldim": "I bought",
+  "Aytdim": "I said",
+  "Unutdim": "I forgot",
+  "Kechikdim": "I'm late",
+  "Yoʻqotdim": "I lost it",
+  "Qoʻngʻiroq qildim": "I called",
+  "Yaxshi zarba!": "Nice shot!",
+  "Isinib olaylik": "Let's warm up",
+  "Soat nechada oʻynaymiz?": "What time do we play?",
+  "Kortni band qildim": "I booked the court"
  }
 };
