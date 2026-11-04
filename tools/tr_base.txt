@@ -1,0 +1,235 @@
+¡Hola!|Hi!
+Gracias|Thank you
+Sí|Yes
+No|No
+Buenos días (saludo formal)|Hello (formal)
+Adiós|Goodbye
+Bien|Good
+Mal|Bad
+uno|one
+dos|two
+tres|three
+el agua|water
+el pan|bread
+el té|tea
+Por favor|Please
+Perdón|Excuse me
+¿Cómo está?|How are you?
+¿Todo bien?|Are you doing well?
+cuatro|four
+cinco|five
+el taxi|taxi
+el mercado|market
+el dinero|money
+¿Cuánto cuesta?|How much is it?
+Vale|Okay
+Claro|Of course
+seis|six
+siete|seven
+ocho|eight
+nueve|nine
+diez|ten
+No entendí|I didn't understand
+Entiendo|I understand
+No sé|I don't know
+a la izquierda|to the left
+a la derecha|to the right
+todo recto|straight ahead
+Pare aquí|Stop here
+yo|I
+usted|you
+nosotros|we
+el padre|father
+la madre|mother
+el amigo|friend
+la carne|meat
+el pollo|chicken
+el plov (arroz con carne)|plov (rice pilaf)
+la manzana|apple
+las uvas|grapes
+el melón|melon
+la sandía|watermelon
+el tenis|tennis
+la pelota|ball
+la pista|court
+¿Cómo se llama?|What's your name?
+Me llamo…|My name is…
+Encantado|Nice to meet you
+Bienvenido|Welcome
+Hasta luego|See you
+Buenos días|Good morning
+Buenas tardes|Good evening
+Buenas noches|Good night
+Hable más despacio|Please speak more slowly
+¿Habla ruso?|Do you speak Russian?
+Necesito|I need
+No necesito|I don't need
+barato|cheap
+caro|expensive
+Hágame un descuento|Can you make it cheaper?
+una pieza|one piece
+el kilo|kilogram
+en efectivo|cash
+el cambio|change (money)
+¿Puedo pagar con tarjeta?|Can I pay by card?
+el tomate|tomato
+el pepino|cucumber
+la patata|potato
+la cebolla|onion
+la zanahoria|carrot
+el arroz|rice
+la sal|salt
+la leche|milk
+el huevo|egg
+¿Adónde?|Where to?
+¿Dónde?|Where?
+la dirección|address
+lejos|far
+cerca|near
+¿Cuánto es el viaje?|How much is the ride?
+Lléveme allí|Take me there
+más rápido|faster
+atrás|back
+el coche|car
+veinte|twenty
+treinta|thirty
+cuarenta|forty
+cincuenta|fifty
+cien|one hundred
+mil|one thousand
+¿qué?|what?
+¿quién?|who?
+¿cuándo?|when?
+¿por qué?|why?
+¿cómo?|how?
+¿cuántos?|how many?
+la casa|home
+la tienda|shop
+la farmacia|pharmacy
+el hospital|hospital
+el hotel|hotel
+el banco|bank
+la mezquita|mosque
+la parada|bus stop
+el metro|metro
+el autobús|bus
+el aeropuerto|airport
+¿Dónde está el baño?|Where is the toilet?
+la comida|food
+el menú|menu
+La cuenta, por favor|The bill, please
+rico|tasty
+picante|spicy
+dulce|sweet
+caliente|hot
+frío|cold
+grande|big
+pequeño|small
+mucho|a lot
+un poco|a little
+muy|very
+nuevo|new
+viejo|old
+bonito|beautiful
+hoy|today
+mañana|tomorrow
+ayer|yesterday
+ahora|now
+luego|later
+¿Qué hora es?|What time is it?
+el minuto|minute
+el día|day
+la semana|week
+el mes|month
+el año|year
+por la mañana|in the morning
+por la tarde|in the evening
+Espere un minuto|Wait a minute
+el médico|doctor
+el medicamento|medicine
+el dolor|pain
+Me duele la cabeza|I have a headache
+el diente|tooth
+el estómago|stomach
+la fiebre|fever
+enfermo|sick
+¡Ayuda!|Help!
+la ambulancia|ambulance
+el corazón|heart
+el ojo|eye
+la oreja|ear
+la pierna|leg
+la mano|hand
+la garganta|throat
+la tos|cough
+Tengo alergia|I have an allergy
+¿Jugamos?|Shall we play?
+¿Quién empieza?|Who starts?
+¿Listo?|Ready?
+el golpe|shot
+¡Genial!|Awesome!
+el turno|turn
+Le toca a usted|Your turn
+Gané|I won
+Perdí|I lost
+la victoria|victory
+Estoy cansado|I'm tired
+Hacemos una pausa|Let's take a break
+¿Otro partido?|One more game?
+los padres|parents
+el hermano mayor|older brother
+el hermano menor|younger brother
+la hermana mayor|older sister
+la hermana menor|younger sister
+el hijo|son
+la hija|daughter
+el niño|child
+la familia|family
+la esposa|wife
+el marido|husband
+él / ella|he / she
+ellos|they
+ir|to go
+venir|to come
+comer|to eat
+beber|to drink
+dormir|to sleep
+hablar|to speak
+saber|to know
+ver|to see
+trabajar|to work
+esperar|to wait
+tomar|to take
+dar|to give
+escribir|to write
+leer|to read
+hacer|to do
+abrir|to open
+cerrar|to close
+sentarse|to sit down
+bajarse|to get out
+comprar|to buy
+vender|to sell
+Me gusta|I like it
+No me gusta|I don't like it
+¿Se puede?|May I?
+De acuerdo|Deal
+No se puede|Not possible
+No hay problema|No problem
+De nada|You're welcome
+Muy bien|Very good
+¿De dónde es?|Where are you from?
+Vivo en Taskent|I live in Tashkent
+¿Su número de teléfono?|Your phone number?
+Repita, por favor|Say it again, please
+el tiempo|weather
+la lluvia|rain
+la nieve|snow
+el sol|sun
+el viento|wind
+blanco|white
+negro|black
+rojo|red
+azul|blue
+verde|green
+amarillo|yellow

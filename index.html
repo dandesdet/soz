@@ -36,7 +36,25 @@ body{background:var(--bg);color:var(--fg);font:400 16px/1.4 var(--font);overflow
   max-width:480px;margin:0 auto;box-sizing:border-box}
 
 /* top: the "known" folder */
-.top{display:flex;justify-content:flex-end;min-height:48px}
+.top{display:flex;justify-content:space-between;align-items:center;min-height:48px}
+.backbtn{display:inline-flex;align-items:center;gap:4px;height:48px;padding:0 14px 0 6px;border-radius:12px;border:0;background:transparent;color:var(--fg);font:600 18px var(--font);cursor:pointer}
+.backbtn svg{width:24px;height:24px}
+.backbtn:hover{background:var(--chip)}
+.backbtn:active{transform:scale(.96)}
+/* language picker */
+.picker{height:100%;display:flex;flex-direction:column;justify-content:center;gap:24px;max-width:480px;margin:0 auto;box-sizing:border-box;
+  padding-top:max(16px,env(safe-area-inset-top,0px));padding-bottom:max(16px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.picker h1{margin:0;font-size:32px;font-weight:600;text-align:center}
+.langs{display:flex;flex-direction:column;gap:12px}
+.lang{display:flex;align-items:center;justify-content:space-between;gap:16px;height:88px;padding:0 24px;border-radius:24px;border:0;
+  background:var(--surface);color:var(--fg);box-shadow:0 8px 28px rgba(15,35,42,.08);cursor:pointer;font:inherit}
+.lang:hover{box-shadow:0 8px 28px rgba(15,35,42,.16)}
+.lang:active{transform:scale(.98)}
+.ln{font-size:24px;font-weight:600}
+.lk{display:inline-flex;align-items:center;gap:8px;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.lk svg{width:24px;height:24px;color:var(--good)}
+.lk .of{font-size:16px;font-weight:400;color:var(--muted)}
 .folder{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 14px;border-radius:12px;border:0;
   background:transparent;color:var(--fg);font:600 20px var(--font);font-variant-numeric:tabular-nums;cursor:pointer}
 .folder svg{width:26px;height:26px;color:var(--good)}
@@ -114,8 +132,16 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </head>
 <body>
 
-<div class="app">
-  <div class="top"><button class="folder" id="openArchive" type="button" aria-label="Знаю"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><span id="cKnown">0</span></button></div>
+<div class="picker" id="picker" hidden>
+  <h1>Учим слова</h1>
+  <div class="langs">
+    <button class="lang" type="button" data-lang="uz"><span class="ln">Oʻzbekcha</span><span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><b id="k-uz">0</b><span class="of">из <span id="n-uz">0</span></span></span></button>
+    <button class="lang" type="button" data-lang="es"><span class="ln">Español</span><span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><b id="k-es">0</b><span class="of">из <span id="n-es">0</span></span></span></button>
+    <button class="lang" type="button" data-lang="en"><span class="ln">English</span><span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><b id="k-en">0</b><span class="of">из <span id="n-en">0</span></span></span></button>
+  </div>
+</div>
+<div class="app" id="app" hidden>
+  <div class="top"><button class="backbtn" id="back" type="button" aria-label="Языки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span id="langName">Oʻzbekcha</span></button><button class="folder" id="openArchive" type="button" aria-label="Знаю"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><span id="cKnown">0</span></button></div>
   <div class="banner" id="banner" hidden><span id="bannerText"></span><button class="link" id="exitArchive" type="button">Выйти</button></div>
   <div class="stage" id="stage"></div>
   <div class="hint" id="hint" hidden><span class="l">← Не знаю</span><span>Тап — перевернуть</span><span class="r">Знаю →</span></div>
@@ -133,8 +159,23 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 const RAW = window.SOZ_WORDS || '';
 
 const hash = s => { let h = 5381; for (const c of s) h = (h * 33 + c.codePointAt(0)) >>> 0; return 'w' + h.toString(36); };
-const WORDS = RAW.trim().split('\n').map(l => { const [uz, ru, img, topic, en] = l.split('|').map(s => s.trim()); return { id: hash(uz), uz, ru, img, topic, en }; });
-const BY = Object.fromEntries(WORDS.map(w => [w.id, w]));
+const BASE = RAW.trim().split('\n').map(l => { const [uz, ru, img, topic, en] = l.split('|').map(s => s.trim()); return { id: hash(uz), uz, ru, img, topic, en }; });
+const TR = window.SOZ_TR || {};
+// Each language: same words and pictures. t = word to learn, cap = hint under an ambiguous picture.
+const LANGS = {
+  uz: { name: 'Oʻzbekcha', key: 'soz-progress-v1', doc: 'progress', voice: /^uz/i },
+  es: { name: 'Español', key: 'soz-progress-es', doc: 'progress-es', voice: /^es/i },
+  en: { name: 'English', key: 'soz-progress-en', doc: 'progress-en', voice: /^en/i }
+};
+function buildWords(lang) {
+  return BASE.map(b => {
+    const t = lang === 'uz' ? b.uz : (TR[lang] || {})[b.uz];
+    if (!t) return null;                                         // not translated yet → skip in this language
+    const cap = !b.en ? '' : lang === 'en' ? b.ru : lang === 'es' ? ((TR.en || {})[b.uz] || b.en) : b.en;
+    return { ...b, t, cap };
+  }).filter(Boolean);
+}
+let LANG = 'uz', WORDS = [], BY = {};
 // 3D pictures: Microsoft Fluent Emoji (MIT), shipped in img/
 const IMG = {"👋": "1f44b.webp", "🙏": "1f64f.webp", "✅": "2705.webp", "❌": "274c.webp", "🤝": "1f91d.webp", "🚶": "1f6b6.webp", "👍": "1f44d.webp", "👎": "1f44e.webp", "💧": "1f4a7.webp", "🫓": "1fad3.webp", "🍵": "1f375.webp", "🙇": "1f647.webp", "😔": "1f614.webp", "🙂": "1f642.webp", "😊": "1f60a.webp", "🚕": "1f695.webp", "🧺": "1f9fa.webp", "💰": "1f4b0.webp", "🏷️": "1f3f7-fe0f.webp", "🆗": "1f197.webp", "💯": "1f4af.webp", "🤷": "1f937.webp", "💡": "1f4a1.webp", "❓": "2753.webp", "⬅️": "2b05-fe0f.webp", "➡️": "27a1-fe0f.webp", "⬆️": "2b06-fe0f.webp", "🛑": "1f6d1.webp", "🙋": "1f64b.webp", "🫵": "1faf5.webp", "👫": "1f46b.webp", "👨": "1f468.webp", "👩": "1f469.webp", "🫂": "1fac2.webp", "🥩": "1f969.webp", "🍗": "1f357.webp", "🍛": "1f35b.webp", "🍎": "1f34e.webp", "🍇": "1f347.webp", "🍈": "1f348.webp", "🍉": "1f349.webp", "🎾": "1f3be.webp", "⚽": "26bd.webp", "🏟️": "1f3df-fe0f.webp", "🙋‍♂️": "1f64b-200d-2642-fe0f.webp", "🤗": "1f917.webp", "🚪": "1f6aa.webp", "👀": "1f440.webp", "🌅": "1f305.webp", "🌆": "1f306.webp", "🌙": "1f319.webp", "🐢": "1f422.webp", "🗣️": "1f5e3-fe0f.webp", "☝️": "261d-fe0f.webp", "✋": "270b.webp", "🪙": "1fa99.webp", "💎": "1f48e.webp", "☝🏻": "261d-1f3fb.webp", "⚖️": "2696-fe0f.webp", "💵": "1f4b5.webp", "🔁": "1f501.webp", "💳": "1f4b3.webp", "🍅": "1f345.webp", "🥒": "1f952.webp", "🥔": "1f954.webp", "🧅": "1f9c5.webp", "🥕": "1f955.webp", "🍚": "1f35a.webp", "🧂": "1f9c2.webp", "🥛": "1f95b.webp", "🥚": "1f95a.webp", "🧭": "1f9ed.webp", "📌": "1f4cc.webp", "📍": "1f4cd.webp", "🛣️": "1f6e3-fe0f.webp", "👣": "1f463.webp", "💸": "1f4b8.webp", "🚖": "1f696.webp", "⚡": "26a1.webp", "↩️": "21a9-fe0f.webp", "🚗": "1f697.webp", "❔": "2754.webp", "👤": "1f464.webp", "⏰": "23f0.webp", "🤔": "1f914.webp", "🌀": "1f300.webp", "🔢": "1f522.webp", "🏠": "1f3e0.webp", "🏪": "1f3ea.webp", "⚕️": "2695-fe0f.webp", "🏥": "1f3e5.webp", "🏨": "1f3e8.webp", "🏦": "1f3e6.webp", "🕌": "1f54c.webp", "🚏": "1f68f.webp", "🚇": "1f687.webp", "🚌": "1f68c.webp", "✈️": "2708-fe0f.webp", "🚻": "1f6bb.webp", "🍽️": "1f37d-fe0f.webp", "📋": "1f4cb.webp", "🧾": "1f9fe.webp", "😋": "1f60b.webp", "🌶️": "1f336-fe0f.webp", "🍰": "1f370.webp", "🔥": "1f525.webp", "🧊": "1f9ca.webp", "🐘": "1f418.webp", "🐭": "1f42d.webp", "📚": "1f4da.webp", "🤏": "1f90f.webp", "❗": "2757.webp", "✨": "2728.webp", "🏚️": "1f3da-fe0f.webp", "🌸": "1f338.webp", "📅": "1f4c5.webp", "🌄": "1f304.webp", "🌃": "1f303.webp", "⏱️": "23f1-fe0f.webp", "⏭️": "23ed-fe0f.webp", "⌚": "231a.webp", "⏲️": "23f2-fe0f.webp", "🌞": "1f31e.webp", "🗓️": "1f5d3-fe0f.webp", "🌕": "1f315.webp", "🎆": "1f386.webp", "🐓": "1f413.webp", "🌇": "1f307.webp", "⏳": "23f3.webp", "🧑‍⚕️": "1f9d1-200d-2695-fe0f.webp", "💊": "1f48a.webp", "🤕": "1f915.webp", "🤯": "1f92f.webp", "🦷": "1f9b7.webp", "🫃": "1fac3.webp", "🌡️": "1f321-fe0f.webp", "🤒": "1f912.webp", "🆘": "1f198.webp", "🚑": "1f691.webp", "❤️": "2764-fe0f.webp", "👁️": "1f441-fe0f.webp", "👂": "1f442.webp", "🦵": "1f9b5.webp", "🫱": "1faf1.webp", "🗣": "1f5e3-fe0f.webp", "😷": "1f637.webp", "🤧": "1f927.webp", "🏁": "1f3c1.webp", "💥": "1f4a5.webp", "🔄": "1f504.webp", "👉": "1f449.webp", "🥇": "1f947.webp", "😩": "1f629.webp", "🏆": "1f3c6.webp", "😮‍💨": "1f62e-200d-1f4a8.webp", "☕": "2615.webp", "👨‍👩‍👦": "1f468-200d-1f469-200d-1f466.webp", "🧔": "1f9d4.webp", "👦": "1f466.webp", "👩‍🦰": "1f469-200d-1f9b0.webp", "👧": "1f467.webp", "🧒": "1f9d2.webp", "👱‍♀️": "1f471-200d-2640-fe0f.webp", "👶": "1f476.webp", "🏡": "1f3e1.webp", "👰": "1f470.webp", "🤵": "1f935.webp", "🧍": "1f9cd.webp", "👥": "1f465.webp", "🚶‍♂️": "1f6b6-200d-2642-fe0f.webp", "🏃": "1f3c3.webp", "🍴": "1f374.webp", "🥤": "1f964.webp", "😴": "1f634.webp", "💬": "1f4ac.webp", "🧠": "1f9e0.webp", "🔭": "1f52d.webp", "💼": "1f4bc.webp", "⌛": "231b.webp", "🤲": "1f932.webp", "🎁": "1f381.webp", "✍️": "270d-fe0f.webp", "📖": "1f4d6.webp", "🛠️": "1f6e0-fe0f.webp", "🔓": "1f513.webp", "🔒": "1f512.webp", "🪑": "1fa91.webp", "⬇️": "2b07-fe0f.webp", "🛒": "1f6d2.webp", "🏬": "1f3ec.webp", "😍": "1f60d.webp", "😒": "1f612.webp", "🤞": "1f91e.webp", "👌": "1f44c.webp", "🚫": "1f6ab.webp", "😎": "1f60e.webp", "🤲🏻": "1f932-1f3fb.webp", "🌟": "1f31f.webp", "🌍": "1f30d.webp", "🏙️": "1f3d9-fe0f.webp", "📱": "1f4f1.webp", "🔂": "1f502.webp", "🌤️": "1f324-fe0f.webp", "🌧️": "1f327-fe0f.webp", "❄️": "2744-fe0f.webp", "☀️": "2600-fe0f.webp", "💨": "1f4a8.webp", "⚪": "26aa.webp", "⚫": "26ab.webp", "🔴": "1f534.webp", "🔵": "1f535.webp", "🟢": "1f7e2.webp", "🟡": "1f7e1.webp"};
 // Generated illustrations (5×5 sheets, sliced) — take priority over emoji
@@ -144,10 +185,9 @@ const picInner = e => IMG[e] ? `<img src="img/${IMG[e]}" alt="" draggable="false
 
 const MIN = 6e4, DAY = 864e5;
 const WAIT = { 2: DAY, 3: 3 * DAY, 4: 7 * DAY, 5: 30 * DAY };   // stage → interval
-const KEY = 'soz-progress-v1';
-
+let KEY = LANGS.uz.key;
+function loadState(key) { try { const v = JSON.parse(localStorage.getItem(key)); if (v && v.st) return v; } catch (e) {} return { st: {}, updated: 0 }; }
 let S = { st: {}, updated: 0 };
-try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && v.st) S = v; } catch (e) {}
 
 let queue = [], mode = 'learn', archTotal = 0;
 const $ = id => document.getElementById(id);
@@ -173,8 +213,7 @@ function answer(know) {
   } else if (know) {
     r.str++;
     if (r.lap === 0) {                                                     // never missed: knew it from the start
-      if (r.str >= 3) r.arch = 1;                                          // 3 × «знаю» in a row → folder
-      else { r.due = now; requeue(id, r.str === 1 ? 5 : 12); }             // check again later this session
+      r.arch = 1;                                                          // known from the start → straight to the folder
     } else {                                                               // was missed once: spaced repetition
       r.s++;
       if (r.s >= 6) r.arch = 1;                                            // survived the 30-day check → folder
@@ -205,14 +244,16 @@ async function push() {
   pushing = false;
   if (pendingPush) { pendingPush = false; push(); }
 }
-(async () => {
+async function syncRemote(lang) {
+  remote = null;
   if (!window.claude || !claude.use) return;
   try {
     const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
-    if (!db || !user) return;
-    const uid = await user.id(); if (!uid) return;
-    const ref = db.collection('data/users/' + uid).doc('progress');
+    if (!db || !user || lang !== LANG) return;
+    const uid = await user.id(); if (!uid || lang !== LANG) return;
+    const ref = db.collection('data/users/' + uid).doc(LANGS[lang].doc);
     const snap = await ref.get();
+    if (lang !== LANG) return;
     remote = ref;
     let changed = false, localNewer = false;
     const rs = (snap.exists && snap.data().st) || {};
@@ -221,13 +262,13 @@ async function push() {
     if (changed) { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} if (mode === 'learn') { queue = queue.slice(0, 1); } render(false); }
     if (localNewer) push();
   } catch (e) {}
-})();
+}
 
 /* ---------- speech (only if the device has an Uzbek voice) ---------- */
-let uzVoice = null;
-function findVoice() { try { uzVoice = speechSynthesis.getVoices().find(v => /^uz/i.test(v.lang)) || null; } catch (e) {} }
-if ('speechSynthesis' in window) { findVoice(); speechSynthesis.onvoiceschanged = () => { findVoice(); render(false); }; }
-function speak(t) { const u = new SpeechSynthesisUtterance(t.replace('…', '')); u.voice = uzVoice; u.lang = uzVoice.lang; speechSynthesis.cancel(); speechSynthesis.speak(u); }
+let voice = null;
+function findVoice() { try { voice = speechSynthesis.getVoices().find(v => LANGS[LANG].voice.test(v.lang)) || null; } catch (e) { voice = null; } }
+if ('speechSynthesis' in window) { speechSynthesis.onvoiceschanged = () => { const had = !!voice; findVoice(); if (!had && voice && !$('app').hidden) render(); }; }
+function speak(t) { const u = new SpeechSynthesisUtterance(t.replace('…', '').replace(/\s*\(.*?\)/g, '')); u.voice = voice; u.lang = voice.lang; speechSynthesis.cancel(); speechSynthesis.speak(u); }
 
 /* ---------- render ---------- */
 const isNum = s => /^[0-9]+$/.test(s);
@@ -235,9 +276,9 @@ function cardHTML(w, next) {
   const pic = `<div class="pic${isNum(w.img) ? ' num' : ''}">${picFor(w)}</div>`;
   return `<div class="card${next ? ' next' : ''}" ${next ? '' : 'id="cur" tabindex="0"'}>
     <div class="flip">
-      <div class="face">${pic}${w.en ? `<div class="en">${w.en}</div>` : ''}</div>
-      ${next ? '' : `<div class="face rear">${pic}<div class="uz">${w.uz}</div><div class="ru">${w.ru}</div>
-        ${uzVoice ? '<button class="say" type="button" data-say>🔊 Послушать</button>' : ''}</div>`}
+      <div class="face">${pic}${w.cap ? `<div class="en">${w.cap}</div>` : ''}</div>
+      ${next ? '' : `<div class="face rear">${pic}<div class="uz">${w.t}</div><div class="ru">${w.ru}</div>
+        ${voice ? '<button class="say" type="button" data-say>🔊 Послушать</button>' : ''}</div>`}
     </div>
     <span class="stamp yes">Знаю</span><span class="stamp no">Не знаю</span>
   </div>`;
@@ -310,7 +351,7 @@ function bind(card) {
   card.addEventListener('pointerup', up);
   card.addEventListener('pointercancel', up);
   const say = card.querySelector('[data-say]');
-  if (say) say.addEventListener('click', e => { e.stopPropagation(); speak(BY[queue[0]].uz); });
+  if (say) say.addEventListener('click', e => { e.stopPropagation(); speak(BY[queue[0]].t); });
 }
 let flying = false;
 function fling(card, know) {
@@ -325,12 +366,13 @@ function fling(card, know) {
   setTimeout(() => { clearTint(); flying = false; answer(know); }, 240);
 }
 document.addEventListener('keydown', e => {
+  if ($('app').hidden) { const k = { '1': 'uz', '2': 'es', '3': 'en' }[e.key]; if (k) openLang(k); return; }
   if (!$('scrim').hidden) { if (e.key === 'Escape') closeArchive(); return; }
   const c = $('cur'); if (!c) return;
   if (e.key === 'ArrowRight') fling(c, true);
   else if (e.key === 'ArrowLeft') fling(c, false);
   else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); c.classList.toggle('open'); }
-  else if (e.key === 'Escape' && mode === 'archive') exitArchive(), render();
+  else if (e.key === 'Escape') { if (mode === 'archive') { exitArchive(); render(); } else showPicker(); }
 });
 
 /* ---------- archive ---------- */
@@ -338,7 +380,7 @@ function archived() { return WORDS.filter(w => S.st[w.id] && S.st[w.id].arch); }
 function openArchive() {
   const a = archived();
   $('archSub').textContent = a.length ? `${a.length} слов. Они больше не показываются, пока ты сам не захочешь повторить.` : 'Пока пусто. Слово попадает сюда, когда ты уверенно его знаешь.';
-  $('archList').innerHTML = a.map(w => `<div class="row"><div class="e${isNum(w.img) ? ' num' : ''}">${picFor(w)}</div><div class="w"><b>${w.uz}</b><span>${w.ru}</span></div></div>`).join('');
+  $('archList').innerHTML = a.map(w => `<div class="row"><div class="e${isNum(w.img) ? ' num' : ''}">${picFor(w)}</div><div class="w"><b>${w.t}</b><span>${w.ru}</span></div></div>`).join('');
   $('reviewArchive').hidden = !a.length;
   $('reviewArchive').textContent = `Повторить ${a.length} слов`;
   $('scrim').hidden = false;
@@ -355,7 +397,30 @@ $('scrim').addEventListener('click', e => { if (e.target === $('scrim')) closeAr
 $('reviewArchive').onclick = startArchive;
 $('exitArchive').onclick = () => { exitArchive(); render(); };
 
-render();
+/* ---------- language picker ---------- */
+function knownCount(lang) {
+  const st = loadState(LANGS[lang].key).st, ws = buildWords(lang);
+  return ws.filter(w => st[w.id] && st[w.id].arch).length;
+}
+function showPicker() {
+  closeArchive(); mode = 'learn'; queue = [];
+  for (const l in LANGS) { $('k-' + l).textContent = knownCount(l); $('n-' + l).textContent = buildWords(l).length; }
+  $('app').hidden = true; $('picker').hidden = false;
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+}
+function openLang(lang) {
+  LANG = lang; KEY = LANGS[lang].key; S = loadState(KEY);
+  WORDS = buildWords(lang); BY = Object.fromEntries(WORDS.map(w => [w.id, w]));
+  queue = []; mode = 'learn'; lastKnown = -1; findVoice();
+  $('langName').textContent = LANGS[lang].name;
+  $('picker').hidden = true; $('app').hidden = false;
+  if (location.hash !== '#' + lang) history.pushState(null, '', '#' + lang);
+  render(); syncRemote(lang);
+}
+document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => openLang(b.dataset.lang));
+$('back').onclick = () => history.state === null && location.hash ? history.back() : showPicker();
+window.addEventListener('popstate', () => { if (!location.hash) showPicker(); else if (LANGS[location.hash.slice(1)]) openLang(location.hash.slice(1)); });
+showPicker();
 // Offline mode when hosted on its own site (does nothing inside Claude)
 try { if ('serviceWorker' in navigator && location.protocol === 'https:' && !/claude/.test(location.hostname)) navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
 </script>
