@@ -127,6 +127,18 @@ body{background:var(--bg);color:var(--fg);font:400 16px/1.4 var(--font);overflow
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#0C181D}}
 button:focus{outline:none}
 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.picker .sync{align-self:center}
+.link.center{align-self:center}
+.field{height:48px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--fg);font:400 16px var(--font);padding:0 14px;box-sizing:border-box;width:100%;user-select:text;-webkit-user-select:text}
+.field:focus{outline:none;border-color:var(--accent)}
+.qr{align-self:center;width:192px;height:192px;display:grid;place-items:center;background:#fff;border-radius:16px}
+.qr img,.qr canvas{display:block}
+.muted{color:var(--muted);text-align:center;margin:0;padding:16px}
+.coderow{display:flex;justify-content:center;align-items:center;gap:16px}
+.code{font:600 20px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;user-select:text;-webkit-user-select:text}
+.join{display:flex;gap:8px}
+.join .btn{padding:0 16px;flex:none}
+.err{color:var(--bad)}
 @media (prefers-reduced-motion:reduce){.card,.flip,.tint{transition:none!important}}
 </style>
 </head>
@@ -138,6 +150,28 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <button class="lang" type="button" data-lang="uz"><span class="ln">Oʻzbekcha</span><span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><b id="k-uz">0</b><span class="of">из <span id="n-uz">0</span></span></span></button>
     <button class="lang" type="button" data-lang="es"><span class="ln">Español</span><span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><b id="k-es">0</b><span class="of">из <span id="n-es">0</span></span></span></button>
     <button class="lang" type="button" data-lang="en"><span class="ln">English</span><span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><b id="k-en">0</b><span class="of">из <span id="n-en">0</span></span></span></button>
+  </div>
+  <button class="link sync" id="openSync" type="button">Синхронизация</button>
+</div>
+<div class="scrim" id="pscrim" hidden>
+  <div class="sheet psheet" id="nameSheet" hidden>
+    <h2>Как тебя зовут?</h2>
+    <div class="sub">Чтобы мы знали, кто учит слова. Можно ник.</div>
+    <input class="field" id="nameInput" type="text" maxlength="40" autocomplete="given-name" placeholder="Имя">
+    <button class="btn" id="nameSave" type="button">Готово</button>
+    <button class="link center" id="nameSkip" type="button">Пропустить</button>
+  </div>
+  <div class="sheet psheet" id="syncSheet" hidden>
+    <h2>Синхронизация</h2>
+    <div class="sub">Отсканируй QR камерой другого устройства или введи там этот код. Прогресс станет общим.</div>
+    <div class="qr" id="qr"></div>
+    <div class="coderow"><span class="code" id="codeText"></span><button class="link" id="copyCode" type="button">Копировать</button></div>
+    <div class="sub" id="syncStatus"></div>
+    <div class="join">
+      <input class="field" id="codeInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ввести код">
+      <button class="btn" id="codeJoin" type="button">Подключить</button>
+    </div>
+    <div class="err" id="codeErr" hidden>Код из 16 букв и цифр, например ABCD-EFGH-JKLM-NPQR</div>
   </div>
 </div>
 <div class="app" id="app" hidden>
@@ -230,39 +264,68 @@ function answer(know) {
   render(true);
 }
 
-/* ---------- storage: phone + account sync ---------- */
-let remote = null, pushing = false, pendingPush = false, pushTimer = 0;
+/* ---------- storage: phone first, then sync through a personal code ---------- */
+const SB = 'https://vhkzkqacljuvnepbcywg.supabase.co', SBK = 'sb_publishable_wkZ5YttQxR6B0S-uhOEP5w_SLDqsL4k';
+const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const CODE_RE = /^[A-Z0-9]{16}$/;
+function newCode() { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', b = new Uint8Array(16); crypto.getRandomValues(b); return Array.from(b, x => a[x % a.length]).join(''); }
+let CODE = ls.get('soz-code'); if (!CODE_RE.test(CODE || '')) { CODE = newCode(); ls.set('soz-code', CODE); }
+const fmtCode = c => c.match(/.{4}/g).join('-');
+async function rpc(fn, args) {
+  const r = await fetch(SB + '/rest/v1/rpc/' + fn, { method: 'POST', headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
+  if (!r.ok) throw new Error(fn + ' ' + r.status);
+  const t = await r.text(); return t ? JSON.parse(t) : null;
+}
+let syncState = 'idle', lastSync = Number(ls.get('soz-last-sync')) || 0, pushTimer = 0;
 function save() {
   S.updated = Date.now();
-  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
-  clearTimeout(pushTimer); pushTimer = setTimeout(push, 1500);
+  ls.set(KEY, JSON.stringify(S));
+  ls.set('soz-pending-' + LANG, String((Number(ls.get('soz-pending-' + LANG)) || 0) + 1));
+  clearTimeout(pushTimer); pushTimer = setTimeout(() => pushLang(LANG), 2000);
 }
-async function push() {
-  if (!remote) return;
-  if (pushing) { pendingPush = true; return; }
-  pushing = true;
-  try { await remote.set({ st: S.st, updated: S.updated }); } catch (e) {}
-  pushing = false;
-  if (pendingPush) { pendingPush = false; push(); }
-}
-async function syncRemote(lang) {
-  remote = null;
-  if (!window.claude || !claude.use) return;
+const stats = st => { let k = 0, l = 0; for (const id in st) st[id].arch ? k++ : l++; return [k, l]; };
+async function pushLang(lang) {
+  if (!navigator.onLine) return;
+  const st = loadState(LANGS[lang].key).st, [known, learning] = stats(st), n = Number(ls.get('soz-pending-' + lang)) || 0;
   try {
-    const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
-    if (!db || !user || lang !== LANG) return;
-    const uid = await user.id(); if (!uid || lang !== LANG) return;
-    const ref = db.collection('data/users/' + uid).doc(LANGS[lang].doc);
-    const snap = await ref.get();
-    if (lang !== LANG) return;
-    remote = ref;
-    let changed = false, localNewer = false;
-    const rs = (snap.exists && snap.data().st) || {};
-    for (const id in rs) { if (!S.st[id] || (rs[id].t || 0) > (S.st[id].t || 0)) { S.st[id] = rs[id]; changed = true; } }
-    for (const id in S.st) { if (!rs[id] || (S.st[id].t || 0) > (rs[id].t || 0)) localNewer = true; }
-    if (changed) { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} if (mode === 'learn') { queue = queue.slice(0, 1); } render(false); }
-    if (localNewer) push();
-  } catch (e) {}
+    await rpc('soz_push', { p_code: CODE, p_lang: lang, p_data: st, p_known: known, p_learning: learning, p_answers: n });
+    ls.set('soz-pending-' + lang, String(Math.max(0, (Number(ls.get('soz-pending-' + lang)) || 0) - n)));
+    markSynced();
+  } catch (e) { syncState = 'offline'; paintSync(); }
+}
+function markSynced() { syncState = 'ok'; lastSync = Date.now(); ls.set('soz-last-sync', String(lastSync)); paintSync(); }
+// Pull everything, merge word by word (newer answer wins), push back what this device has newer.
+let syncing = false;
+async function syncAll() {
+  if (syncing || !navigator.onLine) { if (!navigator.onLine) { syncState = 'offline'; paintSync(); } return; }
+  syncing = true;
+  try {
+    await rpc('soz_hello', { p_code: CODE, p_name: ls.get('soz-name') || null, p_platform: /iPhone|iPad/.test(navigator.userAgent) ? 'iOS' : /Android/.test(navigator.userAgent) ? 'Android' : 'Desktop' });
+    const rows = await rpc('soz_pull', { p_code: CODE }) || [];
+    const remote = Object.fromEntries(rows.map(r => [r.lang, r.data || {}]));
+    for (const lang in LANGS) {
+      const key = LANGS[lang].key, loc = loadState(key), rs = remote[lang] || {};
+      let pulled = false, localNewer = false;
+      for (const id in rs) if (!loc.st[id] || (rs[id].t || 0) > (loc.st[id].t || 0)) { loc.st[id] = rs[id]; pulled = true; }
+      for (const id in loc.st) if (!rs[id] || (loc.st[id].t || 0) > (rs[id].t || 0)) localNewer = true;
+      if (pulled) {
+        ls.set(key, JSON.stringify(loc));
+        if (lang === LANG && !$('app').hidden) { S = loc; if (mode === 'learn') queue = queue.slice(0, 1); render(); }
+      }
+      if (localNewer || Number(ls.get('soz-pending-' + lang))) await pushLang(lang);
+    }
+    if ($('app').hidden) refreshPicker();
+    markSynced();
+  } catch (e) { syncState = 'offline'; paintSync(); }
+  syncing = false;
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncAll(); else { clearTimeout(pushTimer); if (!$('app').hidden) pushLang(LANG); } });
+window.addEventListener('online', syncAll);
+function paintSync() {
+  const el = $('syncStatus'); if (!el) return;
+  if (syncState === 'offline') el.textContent = 'Нет связи. Всё сохраняется на этом устройстве и отправится, когда появится интернет.';
+  else if (lastSync) el.textContent = 'Синхронизировано в ' + new Date(lastSync).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  else el.textContent = 'Ещё не синхронизировано';
 }
 
 /* ---------- speech (only if the device has an Uzbek voice) ---------- */
@@ -367,7 +430,7 @@ function fling(card, know) {
   setTimeout(() => { clearTint(); flying = false; answer(know); }, 240);
 }
 document.addEventListener('keydown', e => {
-  if ($('app').hidden) { const k = { '1': 'uz', '2': 'es', '3': 'en' }[e.key]; if (k) openLang(k); return; }
+  if ($('app').hidden) { if (!$('pscrim').hidden) return; const k = { '1': 'uz', '2': 'es', '3': 'en' }[e.key]; if (k) openLang(k); return; }
   if (!$('scrim').hidden) { if (e.key === 'Escape') closeArchive(); return; }
   const c = $('cur'); if (!c) return;
   if (e.key === 'ArrowRight') fling(c, true);
@@ -403,9 +466,10 @@ function knownCount(lang) {
   const st = loadState(LANGS[lang].key).st, ws = buildWords(lang);
   return ws.filter(w => st[w.id] && st[w.id].arch).length;
 }
+function refreshPicker() { for (const l in LANGS) { $('k-' + l).textContent = knownCount(l); $('n-' + l).textContent = buildWords(l).length; } }
 function showPicker() {
-  closeArchive(); mode = 'learn'; queue = [];
-  for (const l in LANGS) { $('k-' + l).textContent = knownCount(l); $('n-' + l).textContent = buildWords(l).length; }
+  closeArchive(); closeSheet(); mode = 'learn'; queue = [];
+  refreshPicker();
   $('app').hidden = true; $('picker').hidden = false;
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
 }
@@ -416,12 +480,51 @@ function openLang(lang) {
   $('langName').textContent = LANGS[lang].name;
   $('picker').hidden = true; $('app').hidden = false;
   if (location.hash !== '#' + lang) history.pushState(null, '', '#' + lang);
-  render(); syncRemote(lang);
+  render();
 }
 document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => openLang(b.dataset.lang));
 $('back').onclick = () => history.state === null && location.hash ? history.back() : showPicker();
 window.addEventListener('popstate', () => { if (!location.hash) showPicker(); else if (LANGS[location.hash.slice(1)]) openLang(location.hash.slice(1)); });
+/* ---------- name + sync sheets ---------- */
+function openSheet(id) { document.querySelectorAll('.psheet').forEach(s => s.hidden = s.id !== id); $('pscrim').hidden = false; }
+function closeSheet() { $('pscrim').hidden = true; }
+$('pscrim').addEventListener('click', e => { if (e.target === $('pscrim')) closeSheet(); });
+function askName() { $('nameInput').value = ls.get('soz-name') || ''; openSheet('nameSheet'); }
+$('nameSave').onclick = () => { const v = $('nameInput').value.trim().slice(0, 40); ls.set('soz-name', v); ls.set('soz-name-asked', '1'); closeSheet(); syncAll(); };
+$('nameSkip').onclick = () => { ls.set('soz-name-asked', '1'); closeSheet(); };
+$('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('nameSave').click(); });
+let qrLib = null;
+function loadQR() {
+  if (window.QRCode) return Promise.resolve();
+  if (!qrLib) qrLib = new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
+  return qrLib;
+}
+function openSync() {
+  $('codeText').textContent = fmtCode(CODE); $('codeInput').value = ''; $('codeErr').hidden = true; paintSync();
+  openSheet('syncSheet');
+  const link = location.origin + location.pathname + '#sync=' + CODE, box = $('qr'); box.innerHTML = '';
+  loadQR().then(() => { box.innerHTML = ''; new QRCode(box, { text: link, width: 176, height: 176, colorDark: '#0F232A', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M }); }).catch(() => { box.innerHTML = '<p class="muted">QR появится, когда будет интернет</p>'; });
+  syncAll();
+}
+$('openSync').onclick = openSync;
+$('copyCode').onclick = () => { const t = fmtCode(CODE); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { $('copyCode').textContent = 'Скопировано'; setTimeout(() => $('copyCode').textContent = 'Копировать', 1500); }).catch(() => {}); };
+function adoptCode(raw) {
+  const c = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (!CODE_RE.test(c)) return false;
+  if (c !== CODE) { CODE = c; ls.set('soz-code', c); }
+  syncAll(); return true;
+}
+$('codeJoin').onclick = () => { if (adoptCode($('codeInput').value)) { $('codeText').textContent = fmtCode(CODE); $('codeErr').hidden = true; $('codeInput').value = ''; $('codeInput').blur(); } else $('codeErr').hidden = false; };
+$('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('codeJoin').click(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('pscrim').hidden) closeSheet(); });
+
+/* ---------- boot ---------- */
+const m = location.hash.match(/^#sync=([A-Za-z0-9-]+)/);
+let joined = false; if (m) joined = adoptCode(m[1]);
 showPicker();
+if (joined) { openSync(); }
+else if (!ls.get('soz-name-asked')) askName();
+syncAll();
 // Offline mode when hosted on its own site (does nothing inside Claude)
 try { if ('serviceWorker' in navigator && location.protocol === 'https:' && !/claude/.test(location.hostname)) navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
 </script>
