@@ -193,13 +193,14 @@ let queue = [], mode = 'learn', archTotal = 0;
 const $ = id => document.getElementById(id);
 
 /* ---------- spaced repetition ---------- */
+const QMIN = 10;   // cards kept in the queue
 function refill() {
   const now = Date.now(), inQ = new Set(queue);
   const due = WORDS.filter(w => { const r = S.st[w.id]; return r && !r.arch && r.due <= now && !inQ.has(w.id); })
                    .sort((a, b) => S.st[a.id].due - S.st[b.id].due);
   queue.push(...due.map(w => w.id));
-  if (queue.length < 3) {
-    const fresh = WORDS.filter(w => !S.st[w.id] && !inQ.has(w.id)).slice(0, 5);
+  if (queue.length < QMIN) {                                       // always mix in new words, so a missed word
+    const fresh = WORDS.filter(w => !S.st[w.id] && !inQ.has(w.id)).slice(0, QMIN - queue.length);  // comes back after other cards, not in a loop
     queue.push(...fresh.map(w => w.id));
   }
 }
@@ -221,7 +222,7 @@ function answer(know) {
       else r.due = now + WAIT[r.s];                                        // 1 → 3 → 7 → 30 days
     }
   } else {
-    r.lap++; r.str = 0; r.s = 0; r.due = now; requeue(id, 3);             // back in 3 cards
+    r.lap++; r.str = 0; r.s = 0; r.due = now; requeue(id, Math.min(3 * r.lap, 15)); // back in 3, 6, 9… cards — others get through
   }
   r.t = now; S.st[id] = r;
   save();
@@ -297,7 +298,7 @@ function nextDueText() {
   return h < 1 ? 'Следующее повторение — меньше чем через час.' : h < 24 ? `Следующее повторение — через ${h} ч.` : `Следующее повторение — через ${Math.round(h / 24)} дн.`;
 }
 function render() {
-  if (mode === 'learn' && queue.length < 3) refill();
+  if (mode === 'learn' && queue.length < QMIN) refill();
   counters();
   const stage = $('stage');
   $('banner').hidden = mode !== 'archive';
