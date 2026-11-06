@@ -131,6 +131,9 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .link.center{align-self:center}
 .field{height:48px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--fg);font:400 16px var(--font);padding:0 14px;box-sizing:border-box;width:100%;user-select:text;-webkit-user-select:text}
 .field:focus{outline:none;border-color:var(--accent)}
+.codeblock{display:flex;flex-direction:column;gap:12px}
+.qrwrap{display:none;flex-direction:column;gap:8px}
+@media (min-width:700px) and (pointer:fine){.qrwrap{display:flex}}
 .qr{align-self:center;width:192px;height:192px;display:grid;place-items:center;background:#fff;border-radius:16px}
 .qr img,.qr canvas{display:block}
 .muted{color:var(--muted);text-align:center;margin:0;padding:16px}
@@ -153,7 +156,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <button class="lang" type="button" data-lang="es"><span class="ln">Español</span><span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><b id="k-es">0</b><span class="of">из <span id="n-es">0</span></span></span></button>
     <button class="lang" type="button" data-lang="en"><span class="ln">English</span><span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><b id="k-en">0</b><span class="of">из <span id="n-en">0</span></span></span></button>
   </div>
-  <button class="link sync" id="openSync" type="button">Синхронизация</button>
+  <button class="link sync" id="openSync" type="button">Телефон и компьютер</button>
 </div>
 <div class="scrim" id="pscrim" hidden>
   <div class="sheet psheet" id="nameSheet" hidden>
@@ -166,18 +169,21 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <button class="link center" id="nameSkip" type="button">Пропустить</button>
   </div>
   <div class="sheet psheet" id="syncSheet" hidden>
-    <h2>Синхронизация</h2>
+    <h2>Телефон и компьютер</h2>
     <div class="sub" id="accText" hidden></div>
-    <div id="accLogin"><div class="sub">Войди через Telegram на каждом устройстве — прогресс будет общим и не потеряется.</div><div class="tgbox" data-tg></div><div class="err sub center" data-tgerr hidden>Не получилось войти. Проверь интернет и попробуй ещё раз.</div></div>
-    <div class="sub" id="qrText">Без входа: отсканируй QR камерой другого устройства или введи там этот код. Прогресс станет общим.</div>
-    <div class="qr" id="qr"></div>
-    <div class="coderow"><span class="code" id="codeText"></span><button class="link" id="copyCode" type="button">Копировать</button></div>
-    <div class="sub" id="syncStatus"></div>
-    <div class="join">
-      <input class="field" id="codeInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ввести код">
-      <button class="btn" id="codeJoin" type="button">Подключить</button>
+    <div id="accLogin"><div class="sub">Войди через Telegram здесь и на другом устройстве — слова будут общими.</div><div class="tgbox" data-tg></div><div class="err sub center" data-tgerr hidden>Не получилось войти. Проверь интернет и попробуй ещё раз.</div></div>
+    <button class="link center" id="noTg" type="button">Без Telegram</button>
+    <div class="codeblock" id="codeBlock" hidden>
+      <div class="sub">На другом устройстве открой «Телефон и компьютер» → «Без Telegram» и введи этот код:</div>
+      <div class="coderow"><span class="code" id="codeText"></span><button class="link" id="copyCode" type="button">Копировать</button></div>
+      <div class="qrwrap"><div class="qr" id="qr"></div><div class="sub center">или наведи на него камеру телефона</div></div>
+      <div class="join">
+        <input class="field" id="codeInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ввести код">
+        <button class="btn" id="codeJoin" type="button">Подключить</button>
+      </div>
+      <div class="err" id="codeErr" hidden>Код — 16 букв и цифр, например ABCD-EFGH-JKLM-NPQR</div>
     </div>
-    <div class="err" id="codeErr" hidden>Код из 16 букв и цифр, например ABCD-EFGH-JKLM-NPQR</div>
+    <div class="err sub" id="syncStatus" hidden></div>
   </div>
 </div>
 <div class="app" id="app" hidden>
@@ -329,9 +335,8 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 window.addEventListener('online', syncAll);
 function paintSync() {
   const el = $('syncStatus'); if (!el) return;
-  if (syncState === 'offline') el.textContent = 'Нет связи. Всё сохраняется на этом устройстве и отправится, когда появится интернет.';
-  else if (lastSync) el.textContent = 'Синхронизировано в ' + new Date(lastSync).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-  else el.textContent = 'Ещё не синхронизировано';
+  el.hidden = syncState !== 'offline';
+  el.textContent = 'Нет интернета. Слова сохраняются на этом устройстве и отправятся, когда сеть появится.';
 }
 
 /* ---------- speech (only if the device has an Uzbek voice) ---------- */
@@ -507,12 +512,13 @@ function loadQR() {
 }
 function openSync() {
   $('codeText').textContent = fmtCode(CODE); $('codeInput').value = ''; $('codeErr').hidden = true; paintSync();
-  openSheet('syncSheet'); paintAccount(); mountTelegram();
+  $('codeBlock').hidden = true; openSheet('syncSheet'); paintAccount(); mountTelegram();
   const link = location.origin + location.pathname + '#sync=' + CODE, box = $('qr'); box.innerHTML = '';
   loadQR().then(() => { box.innerHTML = ''; new QRCode(box, { text: link, width: 176, height: 176, colorDark: '#0F232A', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M }); }).catch(() => { box.innerHTML = '<p class="muted">QR появится, когда будет интернет</p>'; });
   syncAll();
 }
 $('openSync').onclick = openSync;
+$('noTg').onclick = () => { $('codeBlock').hidden = !$('codeBlock').hidden; };
 $('copyCode').onclick = () => { const t = fmtCode(CODE); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { $('copyCode').textContent = 'Скопировано'; setTimeout(() => $('copyCode').textContent = 'Копировать', 1500); }).catch(() => {}); };
 function adoptCode(raw) {
   const c = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -529,8 +535,8 @@ const account = () => { try { return JSON.parse(ls.get('soz-account') || 'null')
 function paintAccount() {
   const a = account();
   $('accLogin').hidden = !!a; $('accText').hidden = !a;
-  $('qrText').textContent = a ? 'На другом устройстве войди так же или отсканируй QR камерой — прогресс станет общим.' : 'Без входа: отсканируй QR камерой другого устройства или введи там этот код. Прогресс станет общим.';
-  if (a) $('accText').textContent = 'Ты вошёл через Telegram' + (a.username ? ' · @' + a.username : a.name ? ' · ' + a.name : '') + '. Прогресс сохранён.';
+  $('noTg').hidden = !!a; if (a) $('codeBlock').hidden = true;
+  if (a) $('accText').textContent = 'Ты вошёл через Telegram' + (a.username ? ' · @' + a.username : a.name ? ' · ' + a.name : '') + '. На другом устройстве войди так же — слова будут общими.';
 }
 function mountTelegram() {
   if (account()) return;
