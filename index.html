@@ -131,6 +131,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .link.center{align-self:center}
 .field{height:48px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--fg);font:400 16px var(--font);padding:0 14px;box-sizing:border-box;width:100%;user-select:text;-webkit-user-select:text}
 .field:focus{outline:none;border-color:var(--accent)}
+.danger{display:flex;flex-direction:column;gap:4px;padding-top:8px;border-top:1px solid var(--line)}
+.link.bad{color:var(--bad)}
 .codeblock{display:flex;flex-direction:column;gap:12px}
 .qrwrap{display:none;flex-direction:column;gap:8px}
 @media (min-width:700px) and (pointer:fine){.qrwrap{display:flex}}
@@ -184,6 +186,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       <div class="err" id="codeErr" hidden>Код — 16 букв и цифр, например ABCD-EFGH-JKLM-NPQR</div>
     </div>
     <div class="err sub" id="syncStatus" hidden></div>
+    <div class="danger">
+      <button class="link center" id="logout" type="button">Выйти на этом устройстве</button>
+      <button class="link center bad" id="wipe" type="button">Стереть весь прогресс</button>
+    </div>
   </div>
 </div>
 <div class="app" id="app" hidden>
@@ -298,9 +304,9 @@ function save() {
 const stats = st => { let k = 0, l = 0; for (const id in st) st[id].arch ? k++ : l++; return [k, l]; };
 async function pushLang(lang) {
   if (!navigator.onLine) return;
-  const st = loadState(LANGS[lang].key).st, [known, learning] = stats(st), n = Number(ls.get('soz-pending-' + lang)) || 0;
+  const loc = loadState(LANGS[lang].key), st = loc.st, [known, learning] = stats(st), n = Number(ls.get('soz-pending-' + lang)) || 0;
   try {
-    await rpc('soz_push', { p_code: CODE, p_lang: lang, p_data: st, p_known: known, p_learning: learning, p_answers: n });
+    await rpc('soz_push', { p_code: CODE, p_lang: lang, p_data: loc.reset ? { ...st, _reset: loc.reset } : st, p_known: known, p_learning: learning, p_answers: n });
     ls.set('soz-pending-' + lang, String(Math.max(0, (Number(ls.get('soz-pending-' + lang)) || 0) - n)));
     markSynced();
   } catch (e) { syncState = 'offline'; paintSync(); }
@@ -318,6 +324,8 @@ async function syncAll() {
     for (const lang in LANGS) {
       const key = LANGS[lang].key, loc = loadState(key), rs = remote[lang] || {};
       let pulled = false, localNewer = false;
+      const rr = rs._reset || 0; delete rs._reset;
+      if (rr > (loc.reset || 0)) { for (const id in loc.st) if ((loc.st[id].t || 0) <= rr) delete loc.st[id]; loc.reset = rr; pulled = true; }
       for (const id in rs) if (!loc.st[id] || (rs[id].t || 0) > (loc.st[id].t || 0)) { loc.st[id] = rs[id]; pulled = true; }
       for (const id in loc.st) if (!rs[id] || (loc.st[id].t || 0) > (rs[id].t || 0)) localNewer = true;
       if (pulled) {
@@ -512,12 +520,38 @@ function loadQR() {
 }
 function openSync() {
   $('codeText').textContent = fmtCode(CODE); $('codeInput').value = ''; $('codeErr').hidden = true; paintSync();
-  $('codeBlock').hidden = true; openSheet('syncSheet'); paintAccount(); mountTelegram();
+  $('codeBlock').hidden = true; openSheet('syncSheet'); paintAccount(); paintDanger(); mountTelegram();
   const link = location.origin + location.pathname + '#sync=' + CODE, box = $('qr'); box.innerHTML = '';
   loadQR().then(() => { box.innerHTML = ''; new QRCode(box, { text: link, width: 176, height: 176, colorDark: '#0F232A', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M }); }).catch(() => { box.innerHTML = '<p class="muted">QR появится, когда будет интернет</p>'; });
   syncAll();
 }
 $('openSync').onclick = openSync;
+/* ---------- sign out / wipe: two taps, the second one confirms ---------- */
+function armed(btn, first, second, act) {
+  btn.textContent = first; btn.dataset.armed = '';
+  btn.onclick = () => {
+    if (!btn.dataset.armed) { btn.dataset.armed = '1'; btn.textContent = second; setTimeout(() => { if (btn.dataset.armed) { btn.dataset.armed = ''; btn.textContent = first; } }, 4000); return; }
+    act();
+  };
+}
+function clearDevice() {
+  const keep = new Set(['soz-name-asked']);
+  try { Object.keys(localStorage).filter(k => k.startsWith('soz-') && !keep.has(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+  CODE = newCode(); ls.set('soz-code', CODE); lastSync = 0;
+}
+function paintDanger() {
+  const a = account();
+  armed($('logout'), 'Выйти на этом устройстве',
+    a ? 'Нажми ещё раз — слова останутся в Telegram-аккаунте' : 'Нажми ещё раз. Без кода ' + fmtCode(CODE) + ' слова не вернуть',
+    () => { clearDevice(); ls.set('soz-name-asked', ''); closeSheet(); showPicker(); askName(); });
+  armed($('wipe'), 'Стереть весь прогресс', 'Нажми ещё раз — все языки начнутся с нуля на всех устройствах',
+    async () => {
+      const now = Date.now();
+      for (const l in LANGS) { ls.set(LANGS[l].key, JSON.stringify({ st: {}, updated: now, reset: now })); ls.set('soz-pending-' + l, '0'); }
+      closeSheet(); showPicker();
+      for (const l in LANGS) await pushLang(l);   // other devices see the reset mark and clear too
+    });
+}
 $('noTg').onclick = () => { $('codeBlock').hidden = !$('codeBlock').hidden; };
 $('copyCode').onclick = () => { const t = fmtCode(CODE); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { $('copyCode').textContent = 'Скопировано'; setTimeout(() => $('copyCode').textContent = 'Копировать', 1500); }).catch(() => {}); };
 function adoptCode(raw) {
