@@ -288,6 +288,9 @@ const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return
 const CODE_RE = /^[A-Z0-9]{16}$/;
 function newCode() { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', b = new Uint8Array(16); crypto.getRandomValues(b); return Array.from(b, x => a[x % a.length]).join(''); }
 let CODE = ls.get('soz-code'); if (!CODE_RE.test(CODE || '')) { CODE = newCode(); ls.set('soz-code', CODE); }
+function rememberCode(c) { try { const a = JSON.parse(ls.get('soz-codes') || '[]'); if (!a.includes(c)) { a.push(c); ls.set('soz-codes', JSON.stringify(a)); } } catch (e) {} }
+rememberCode(CODE);
+try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
 const fmtCode = c => c.match(/.{4}/g).join('-');
 async function rpc(fn, args) {
   const r = await fetch(SB + '/rest/v1/rpc/' + fn, { method: 'POST', headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
@@ -535,12 +538,13 @@ function armed(btn, first, second, act) {
   };
 }
 function clearDevice() {
-  const keep = new Set(['soz-name-asked']);
+  const keep = new Set(['soz-name-asked', 'soz-codes']);
   try { Object.keys(localStorage).filter(k => k.startsWith('soz-') && !keep.has(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
-  CODE = newCode(); ls.set('soz-code', CODE); lastSync = 0;
+  CODE = newCode(); ls.set('soz-code', CODE); rememberCode(CODE); lastSync = 0;
 }
 function paintDanger() {
   const a = account();
+  $('logout').hidden = !a;
   armed($('logout'), 'Выйти на этом устройстве',
     a ? 'Нажми ещё раз — слова останутся в Telegram-аккаунте' : 'Нажми ещё раз. Без кода ' + fmtCode(CODE) + ' слова не вернуть',
     () => { clearDevice(); ls.set('soz-name-asked', ''); closeSheet(); showPicker(); askName(); });
@@ -557,7 +561,7 @@ $('copyCode').onclick = () => { const t = fmtCode(CODE); (navigator.clipboard ? 
 function adoptCode(raw) {
   const c = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (!CODE_RE.test(c)) return false;
-  if (c !== CODE) { CODE = c; ls.set('soz-code', c); }
+  if (c !== CODE) { CODE = c; ls.set('soz-code', c); rememberCode(c); }
   syncAll(); return true;
 }
 $('codeJoin').onclick = () => { if (adoptCode($('codeInput').value)) { $('codeText').textContent = fmtCode(CODE); $('codeErr').hidden = true; $('codeInput').value = ''; $('codeInput').blur(); } else $('codeErr').hidden = false; };
