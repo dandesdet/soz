@@ -608,7 +608,14 @@ if (joined) { openSync(); }
 else if (!ls.get('soz-name-asked')) askName();
 syncAll();
 // Offline mode when hosted on its own site (does nothing inside Claude)
-try { if ('serviceWorker' in navigator && location.protocol === 'https:' && !/claude/.test(location.hostname)) navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
+try {
+  if ('serviceWorker' in navigator && location.protocol === 'https:' && !/claude/.test(location.hostname)) {
+    const hadSW = !!navigator.serviceWorker.controller; let reloaded = false;
+    // A new version took over → reload once so the icon on the home screen always opens the latest app.
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadSW && !reloaded) { reloaded = true; location.reload(); } });
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(r => { document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') r.update().catch(() => {}); }); }).catch(() => {});
+  }
+} catch (e) {}
 </script>
 </body>
 </html>
