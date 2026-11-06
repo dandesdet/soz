@@ -144,6 +144,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .join{display:flex;gap:8px}
 .join .btn{padding:0 16px;flex:none}
 .tgbox{display:flex;justify-content:center;min-height:40px}
+.tgbox[data-g]{min-height:44px}
 .sub.center{text-align:center}
 .err{color:var(--bad)}
 @media (prefers-reduced-motion:reduce){.card,.flip,.tint{transition:none!important}}
@@ -164,7 +165,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <div class="sheet psheet" id="nameSheet" hidden>
     <h2>Войди, чтобы не потерять слова</h2>
     <div class="sub">С входом прогресс сохранится, даже если сменишь телефон.</div>
-    <div class="tgbox" data-tg></div><div class="err sub center" data-tgerr hidden>Не получилось войти. Проверь интернет и попробуй ещё раз.</div>
+    <div class="tgbox" data-g></div><div class="tgbox" data-tg></div><div class="err sub center" data-tgerr hidden>Не получилось войти. Проверь интернет и попробуй ещё раз.</div>
     <div class="sub center">или просто скажи, как тебя зовут</div>
     <input class="field" id="nameInput" type="text" maxlength="40" autocomplete="given-name" placeholder="Имя">
     <button class="btn" id="nameSave" type="button">Готово</button>
@@ -173,10 +174,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <div class="sheet psheet" id="syncSheet" hidden>
     <h2>Телефон и компьютер</h2>
     <div class="sub" id="accText" hidden></div>
-    <div id="accLogin"><div class="sub">Войди через Telegram здесь и на другом устройстве — слова будут общими.</div><div class="tgbox" data-tg></div><div class="err sub center" data-tgerr hidden>Не получилось войти. Проверь интернет и попробуй ещё раз.</div></div>
-    <button class="link center" id="noTg" type="button">Без Telegram</button>
+    <div id="accLogin"><div class="sub">Войди через Google или Telegram здесь и на другом устройстве — слова будут общими.</div><div class="tgbox" data-g></div><div class="tgbox" data-tg></div><div class="err sub center" data-tgerr hidden>Не получилось войти. Проверь интернет и попробуй ещё раз.</div></div>
+    <button class="link center" id="noTg" type="button">Без входа</button>
     <div class="codeblock" id="codeBlock" hidden>
-      <div class="sub">На другом устройстве открой «Телефон и компьютер» → «Без Telegram» и введи этот код:</div>
+      <div class="sub">На другом устройстве открой «Телефон и компьютер» → «Без входа» и введи этот код:</div>
       <div class="coderow"><span class="code" id="codeText"></span><button class="link" id="copyCode" type="button">Копировать</button></div>
       <div class="qrwrap"><div class="qr" id="qr"></div><div class="sub center">или наведи на него камеру телефона</div></div>
       <div class="join">
@@ -511,7 +512,7 @@ window.addEventListener('popstate', () => { if (!location.hash) showPicker(); el
 function openSheet(id) { document.querySelectorAll('.psheet').forEach(s => s.hidden = s.id !== id); $('pscrim').hidden = false; }
 function closeSheet() { $('pscrim').hidden = true; }
 $('pscrim').addEventListener('click', e => { if (e.target === $('pscrim')) closeSheet(); });
-function askName() { $('nameInput').value = ls.get('soz-name') || ''; openSheet('nameSheet'); mountTelegram(); }
+function askName() { $('nameInput').value = ls.get('soz-name') || ''; openSheet('nameSheet'); mountTelegram(); mountGoogle(); }
 $('nameSave').onclick = () => { const v = $('nameInput').value.trim().slice(0, 40); ls.set('soz-name', v); ls.set('soz-name-asked', '1'); closeSheet(); syncAll(); };
 $('nameSkip').onclick = () => { ls.set('soz-name-asked', '1'); closeSheet(); };
 $('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('nameSave').click(); });
@@ -523,7 +524,7 @@ function loadQR() {
 }
 function openSync() {
   $('codeText').textContent = fmtCode(CODE); $('codeInput').value = ''; $('codeErr').hidden = true; paintSync();
-  $('codeBlock').hidden = true; openSheet('syncSheet'); paintAccount(); paintDanger(); mountTelegram();
+  $('codeBlock').hidden = true; openSheet('syncSheet'); paintAccount(); paintDanger(); mountTelegram(); mountGoogle();
   const link = location.origin + location.pathname + '#sync=' + CODE, box = $('qr'); box.innerHTML = '';
   loadQR().then(() => { box.innerHTML = ''; new QRCode(box, { text: link, width: 176, height: 176, colorDark: '#0F232A', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M }); }).catch(() => { box.innerHTML = '<p class="muted">QR появится, когда будет интернет</p>'; });
   syncAll();
@@ -546,7 +547,7 @@ function paintDanger() {
   const a = account();
   $('logout').hidden = !a;
   armed($('logout'), 'Выйти на этом устройстве',
-    a ? 'Нажми ещё раз — слова останутся в Telegram-аккаунте' : 'Нажми ещё раз. Без кода ' + fmtCode(CODE) + ' слова не вернуть',
+    a ? 'Нажми ещё раз — слова останутся в аккаунте ' + (a.p === 'google' ? 'Google' : 'Telegram') : 'Нажми ещё раз. Без кода ' + fmtCode(CODE) + ' слова не вернуть',
     () => { clearDevice(); ls.set('soz-name-asked', ''); closeSheet(); showPicker(); askName(); });
   armed($('wipe'), 'Стереть весь прогресс', 'Нажми ещё раз — все языки начнутся с нуля на всех устройствах',
     async () => {
@@ -574,7 +575,7 @@ function paintAccount() {
   const a = account();
   $('accLogin').hidden = !!a; $('accText').hidden = !a;
   $('noTg').hidden = !!a; if (a) $('codeBlock').hidden = true;
-  if (a) $('accText').textContent = 'Ты вошёл через Telegram' + (a.username ? ' · @' + a.username : a.name ? ' · ' + a.name : '') + '. На другом устройстве войди так же — слова будут общими.';
+  if (a) $('accText').textContent = 'Ты вошёл через ' + (a.p === 'google' ? 'Google' : 'Telegram') + (a.username ? ' · @' + a.username : a.name ? ' · ' + a.name : '') + '. На другом устройстве войди так же — слова будут общими.';
 }
 function mountTelegram() {
   if (account()) return;
@@ -592,17 +593,41 @@ window.onTgAuth = async user => {
     const r = await fetch(SB + '/functions/v1/soz-tg-login', { method: 'POST', headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify({ tg: user, code: CODE }) });
     if (!r.ok) throw new Error('login ' + r.status);
     const d = await r.json();
-    ls.set('soz-account', JSON.stringify({ p: 'tg', name: d.name || '', username: d.username || '' }));
+    finishLogin('tg', d);
+  } catch (e) {
+    document.querySelectorAll('[data-tgerr]').forEach(el => el.hidden = false);
+  }
+};
+function finishLogin(p, d) {
+    ls.set('soz-account', JSON.stringify({ p, name: d.name || '', username: d.username || '' }));
     if (d.name && !ls.get('soz-name')) ls.set('soz-name', d.name);
     ls.set('soz-name-asked', '1');
     // An existing account brings its own code: switch to it, then merge this device's words into it.
     if (d.code && d.code !== CODE) adoptCode(d.code); else syncAll();
     paintAccount();
-    if (!$('nameSheet').hidden) closeSheet(); else $('codeText').textContent = fmtCode(CODE);
+    if (!$('nameSheet').hidden) closeSheet(); else { $('codeText').textContent = fmtCode(CODE); paintDanger(); }
+}
+/* ---------- login with Google (ID token checked on the server; email is not stored) ---------- */
+const G_CLIENT = '570872540423-p6biqjvc05lfgp1l49o1rf0o80lq4e4r.apps.googleusercontent.com';
+let gLib = null;
+function mountGoogle() {
+  if (account()) return;
+  if (!gLib) gLib = new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true; s.onload = ok; s.onerror = no; document.head.appendChild(s); })
+    .then(() => google.accounts.id.initialize({ client_id: G_CLIENT, callback: onGoogle, ux_mode: 'popup', auto_select: false, itp_support: true }));
+  gLib.then(() => document.querySelectorAll('[data-g]').forEach(box => {
+    if (box.closest('[hidden]') || box.childElementCount) return;
+    google.accounts.id.renderButton(box, { theme: 'outline', size: 'large', shape: 'rectangular', text: 'signin_with', locale: 'ru', width: 240 });
+  })).catch(() => {});
+}
+async function onGoogle(resp) {
+  try {
+    const r = await fetch(SB + '/functions/v1/soz-google-login', { method: 'POST', headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify({ credential: resp.credential, code: CODE }) });
+    if (!r.ok) throw new Error('login ' + r.status);
+    finishLogin('google', await r.json());
   } catch (e) {
     document.querySelectorAll('[data-tgerr]').forEach(el => el.hidden = false);
   }
-};
+}
 
 /* ---------- boot ---------- */
 const m = location.hash.match(/^#sync=([A-Za-z0-9-]+)/);
