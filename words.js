@@ -286,6 +286,56 @@ Yaxshi zarba!|Хороший удар!|👏|Теннис|Nice shot!
 Isinib olaylik|Давайте разомнёмся|🤸|Теннис|Let's warm up
 Soat nechada oʻynaymiz?|Во сколько играем?|🕒|Теннис|What time do we play?
 Kortni band qildim|Я забронировал корт|📅|Теннис|I booked the court
+telefon|телефон|📱|Телефон|
+Alo?|Алло?|📞|Телефон|Hello? (on the phone)
+Kim bu?|Кто это?|❓|Телефон|Who is this?
+raqam|номер|🔢|Телефон|number
+Keyinroq qoʻngʻiroq qiling|Перезвоните позже|⏳|Телефон|Call back later
+Eshitilmayapti|Плохо слышно|🔇|Телефон|I can't hear you
+Xabar yozing|Напишите сообщение|💬|Телефон|Text me
+Sizga qoʻngʻiroq qilaman|Я вам позвоню|📲|Телефон|I'll call you
+Band edim|Я был занят|🙅|Телефон|I was busy
+zaryadka|зарядка|🔌|Телефон|charger
+kvartira|квартира|🏢|Дом|apartment
+ijara|аренда|📝|Дом|rent
+Ijaraga beriladi|Сдаётся|🪧|Дом|For rent
+Oyiga qancha?|Сколько в месяц?|📆|Дом|How much per month?
+uy egasi|хозяин квартиры|👴|Дом|landlord
+qoʻshni|сосед|👋|Дом|neighbour
+qavat|этаж|🏬|Дом|floor (storey)
+xona|комната|🛋️|Дом|room
+oshxona|кухня|🍳|Дом|kitchen
+hammom|ванная|🛁|Дом|bathroom
+kalit|ключ|🔑|Дом|
+eshik|дверь|🚪|Дом|
+deraza|окно|🪟|Дом|window
+Issiq suv yoʻq|Нет горячей воды|🚿|Дом|There's no hot water
+Buzilib qoldi|Сломалось|💥|Дом|It broke
+usta|мастер|🧰|Дом|repairman
+Tuzatib bering|Почините, пожалуйста|🔧|Дом|Please fix it
+Suv oqyapti|Течёт вода|💦|Дом|Water is leaking
+konditsioner|кондиционер|❄️|Дом|air conditioner
+muzlatgich|холодильник|🧊|Дом|fridge
+kir yuvish mashinasi|стиральная машина|🧺|Дом|washing machine
+dazmol|утюг|👕|Дом|iron
+bankomat|банкомат|🏧|Банк|ATM
+karta|банковская карта|💳|Банк|bank card
+pasport|паспорт|🛂|Банк|passport
+soʻm|сум|💴|Банк|soum (money)
+dollar|доллар|💵|Банк|dollar
+kurs|курс валюты|📈|Банк|exchange rate
+Valyuta ayirboshlash|Обмен валюты|💱|Банк|Currency exchange
+Pul yechmoqchiman|Хочу снять деньги|💸|Банк|I want to withdraw money
+Qanday borsam boʻladi?|Как мне добраться?|🗺️|Дорога|How do I get there?
+Yoʻlni koʻrsating|Покажите дорогу|👉|Дорога|Show me the way
+chorraha|перекрёсток|✖️|Дорога|crossroads
+svetofor|светофор|🚦|Дорога|traffic light
+koʻprik|мост|🌉|Дорога|bridge
+burilish|поворот|↪️|Дорога|turn
+yonida|рядом с|↔️|Дорога|next to
+roʻparasida|напротив|🔄|Дорога|opposite
+orqasida|позади, за|🔙|Дорога|behind
+Adashib qoldim|Я заблудился|😵|Дорога|I'm lost
 `;
 // Generated illustrations (from 5×5 sheets): uz word → file in gen/
 window.SOZ_GEN = {
@@ -557,7 +607,57 @@ window.SOZ_GEN = {
  "qizil": "gd957c5a3.webp",
  "koʻk": "ge7a9a78f.webp",
  "yashil": "ga193c2cf.webp",
- "sariq": "gb1b21462.webp"
+ "sariq": "gb1b21462.webp",
+ "telefon": "g15a957ee.webp",
+ "Alo?": "gb78fda0c.webp",
+ "Kim bu?": "gf55c18a1.webp",
+ "raqam": "g94074c74.webp",
+ "Keyinroq qoʻngʻiroq qiling": "g8e761e05.webp",
+ "Eshitilmayapti": "ga30f84b8.webp",
+ "Xabar yozing": "g817ef80e.webp",
+ "Sizga qoʻngʻiroq qilaman": "gcdc23053.webp",
+ "Band edim": "g6bd63c01.webp",
+ "zaryadka": "g294a21ad.webp",
+ "kvartira": "g18b8252d.webp",
+ "ijara": "g820f7aac.webp",
+ "Ijaraga beriladi": "g58c7ce36.webp",
+ "Oyiga qancha?": "gbe09e1d8.webp",
+ "uy egasi": "g3a485a0f.webp",
+ "qoʻshni": "ga5f4ad5a.webp",
+ "qavat": "g7ba3787e.webp",
+ "xona": "g3fed0918.webp",
+ "oshxona": "g3108ebab.webp",
+ "hammom": "g126c161f.webp",
+ "kalit": "g0c56246c.webp",
+ "eshik": "gdc42c810.webp",
+ "deraza": "g6133d34b.webp",
+ "Issiq suv yoʻq": "g75feaf47.webp",
+ "Buzilib qoldi": "gb82bd0f2.webp",
+ "usta": "g7d5cd95c.webp",
+ "Tuzatib bering": "g489b4acf.webp",
+ "Suv oqyapti": "g0253e3c1.webp",
+ "konditsioner": "ged6c2038.webp",
+ "muzlatgich": "gad5819bc.webp",
+ "kir yuvish mashinasi": "g2ac1ca22.webp",
+ "dazmol": "ga06641eb.webp",
+ "bankomat": "ga589e3dc.webp",
+ "karta": "g63954d27.webp",
+ "pasport": "g3866ad4a.webp",
+ "soʻm": "gdd1c6c0e.webp",
+ "dollar": "g33c381af.webp",
+ "kurs": "g1f53cd4a.webp",
+ "Valyuta ayirboshlash": "gda06beb4.webp",
+ "Pul yechmoqchiman": "gf23fed74.webp",
+ "Qanday borsam boʻladi?": "g8cd01d89.webp",
+ "Yoʻlni koʻrsating": "gf7ecab8c.webp",
+ "chorraha": "g7cfd4207.webp",
+ "svetofor": "gbb1c1481.webp",
+ "koʻprik": "g49288b7e.webp",
+ "burilish": "g627fd3ab.webp",
+ "yonida": "g98c8e42c.webp",
+ "roʻparasida": "ga68964d6.webp",
+ "orqasida": "gbfe1f4f7.webp",
+ "Adashib qoldim": "g22e28d22.webp"
 };
 // Same words in other languages, keyed by the uz word (same pictures, same order).
 window.SOZ_TR = {
@@ -846,7 +946,57 @@ window.SOZ_TR = {
   "Yaxshi zarba!": "¡Buen golpe!",
   "Isinib olaylik": "Vamos a calentar",
   "Soat nechada oʻynaymiz?": "¿A qué hora jugamos?",
-  "Kortni band qildim": "He reservado la pista"
+  "Kortni band qildim": "He reservado la pista",
+  "telefon": "el teléfono",
+  "Alo?": "¿Diga?",
+  "Kim bu?": "¿Quién es?",
+  "raqam": "el número",
+  "Keyinroq qoʻngʻiroq qiling": "Llame más tarde",
+  "Eshitilmayapti": "No se oye bien",
+  "Xabar yozing": "Mándeme un mensaje",
+  "Sizga qoʻngʻiroq qilaman": "Le llamo",
+  "Band edim": "Estaba ocupado",
+  "zaryadka": "el cargador",
+  "kvartira": "el piso",
+  "ijara": "el alquiler",
+  "Ijaraga beriladi": "Se alquila",
+  "Oyiga qancha?": "¿Cuánto es al mes?",
+  "uy egasi": "el casero",
+  "qoʻshni": "el vecino",
+  "qavat": "la planta",
+  "xona": "la habitación",
+  "oshxona": "la cocina",
+  "hammom": "el baño",
+  "kalit": "la llave",
+  "eshik": "la puerta",
+  "deraza": "la ventana",
+  "Issiq suv yoʻq": "No hay agua caliente",
+  "Buzilib qoldi": "Se ha roto",
+  "usta": "el técnico",
+  "Tuzatib bering": "Arréglelo, por favor",
+  "Suv oqyapti": "Hay una fuga de agua",
+  "konditsioner": "el aire acondicionado",
+  "muzlatgich": "la nevera",
+  "kir yuvish mashinasi": "la lavadora",
+  "dazmol": "la plancha",
+  "bankomat": "el cajero automático",
+  "karta": "la tarjeta",
+  "pasport": "el pasaporte",
+  "soʻm": "el sum",
+  "dollar": "el dólar",
+  "kurs": "el tipo de cambio",
+  "Valyuta ayirboshlash": "Cambio de divisas",
+  "Pul yechmoqchiman": "Quiero sacar dinero",
+  "Qanday borsam boʻladi?": "¿Cómo llego?",
+  "Yoʻlni koʻrsating": "Indíqueme el camino",
+  "chorraha": "el cruce",
+  "svetofor": "el semáforo",
+  "koʻprik": "el puente",
+  "burilish": "la curva",
+  "yonida": "al lado de",
+  "roʻparasida": "enfrente de",
+  "orqasida": "detrás de",
+  "Adashib qoldim": "Me he perdido"
  },
  "en": {
   "Salom": "Hi!",
@@ -1133,6 +1283,56 @@ window.SOZ_TR = {
   "Yaxshi zarba!": "Nice shot!",
   "Isinib olaylik": "Let's warm up",
   "Soat nechada oʻynaymiz?": "What time do we play?",
-  "Kortni band qildim": "I booked the court"
+  "Kortni band qildim": "I booked the court",
+  "telefon": "phone",
+  "Alo?": "Hello?",
+  "Kim bu?": "Who is this?",
+  "raqam": "number",
+  "Keyinroq qoʻngʻiroq qiling": "Call back later",
+  "Eshitilmayapti": "I can't hear you",
+  "Xabar yozing": "Text me",
+  "Sizga qoʻngʻiroq qilaman": "I'll call you",
+  "Band edim": "I was busy",
+  "zaryadka": "charger",
+  "kvartira": "apartment",
+  "ijara": "rent",
+  "Ijaraga beriladi": "For rent",
+  "Oyiga qancha?": "How much per month?",
+  "uy egasi": "landlord",
+  "qoʻshni": "neighbour",
+  "qavat": "floor",
+  "xona": "room",
+  "oshxona": "kitchen",
+  "hammom": "bathroom",
+  "kalit": "key",
+  "eshik": "door",
+  "deraza": "window",
+  "Issiq suv yoʻq": "There's no hot water",
+  "Buzilib qoldi": "It broke",
+  "usta": "repairman",
+  "Tuzatib bering": "Please fix it",
+  "Suv oqyapti": "Water is leaking",
+  "konditsioner": "air conditioner",
+  "muzlatgich": "fridge",
+  "kir yuvish mashinasi": "washing machine",
+  "dazmol": "iron",
+  "bankomat": "ATM",
+  "karta": "card",
+  "pasport": "passport",
+  "soʻm": "soum",
+  "dollar": "dollar",
+  "kurs": "exchange rate",
+  "Valyuta ayirboshlash": "Currency exchange",
+  "Pul yechmoqchiman": "I want to withdraw money",
+  "Qanday borsam boʻladi?": "How do I get there?",
+  "Yoʻlni koʻrsating": "Show me the way",
+  "chorraha": "intersection",
+  "svetofor": "traffic light",
+  "koʻprik": "bridge",
+  "burilish": "turn",
+  "yonida": "next to",
+  "roʻparasida": "opposite",
+  "orqasida": "behind",
+  "Adashib qoldim": "I'm lost"
  }
 };
