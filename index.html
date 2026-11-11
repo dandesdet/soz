@@ -69,9 +69,11 @@ body{background:var(--bg);color:var(--fg);font:400 16px/1.4 var(--font);overflow
 
 /* stage + cards: outer .card moves with the finger, inner .flip turns over */
 .stage{flex:1;position:relative;min-height:0}
-.card{position:absolute;inset:0;margin:auto;width:100%;height:min(100%,520px);touch-action:none;cursor:grab;
+.card{position:absolute;inset:0;margin:auto;width:100%;height:min(calc(100% - 32px),520px);transform-origin:50% 100%;touch-action:none;cursor:grab;
   perspective:1400px;transition:transform .26s cubic-bezier(.2,.8,.2,1),opacity .26s}
-.card.next{transform:translateY(14px) scale(.94);opacity:.7;pointer-events:none}
+.card.next{transform:translateY(10px) scale(.95);pointer-events:none}
+.card.deep{transform:translateY(20px) scale(.90);pointer-events:none}
+.card.next .face,.card.deep .face{box-shadow:0 2px 6px rgba(15,35,42,.10)}
 .flip{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.3,.7,.2,1)}
 .card.open .flip{transform:rotateY(180deg)}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-sizing:border-box;
@@ -378,7 +380,8 @@ function render() {
     return;
   }
   $('hint').hidden = Object.keys(S.st).length > 2;
-  stage.innerHTML = (queue[1] ? cardHTML(BY[queue[1]], true) : '') + cardHTML(BY[queue[0]], false);
+  // a stack: the next card and one more layer peek out under the current one
+  stage.innerHTML = (queue[2] ? '<div class="card deep"><div class="flip"><div class="face"></div></div></div>' : '') + (queue[1] ? cardHTML(BY[queue[1]], true) : '') + cardHTML(BY[queue[0]], false);
   bind($('cur'));
 }
 
@@ -432,6 +435,8 @@ function fling(card, know) {
   card.style.opacity = 0;
   const back = document.querySelector('.card.next');
   if (back) { back.style.transform = 'none'; back.style.opacity = 1; }
+  const deep = document.querySelector('.card.deep');
+  if (deep) deep.style.transform = 'translateY(10px) scale(.95)';   // the stack moves up one step
   setTimeout(() => { clearTint(); flying = false; answer(know); }, 240);
 }
 document.addEventListener('keydown', e => {
