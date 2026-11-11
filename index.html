@@ -143,6 +143,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .scrim{align-items:center}
   .sheet{border-radius:24px;max-width:440px;padding:24px;gap:16px;box-shadow:0 24px 64px rgba(5,15,20,.25)}
 }
+.keyHint{display:none}
+@media (hover:hover) and (pointer:fine){.tapHint{display:none}.keyHint{display:inline}}
 @media (prefers-reduced-motion:reduce){.card,.flip,.tint{transition:none!important}}
 </style>
 </head>
@@ -174,7 +176,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <div class="top"><button class="backbtn" id="back" type="button" aria-label="Языки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span id="langName">Oʻzbekcha</span></button><button class="folder" id="openArchive" type="button" aria-label="Знаю"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><span id="cKnown">0</span></button></div>
   <div class="banner" id="banner" hidden><span id="bannerText"></span><button class="link" id="exitArchive" type="button">Выйти</button></div>
   <div class="stage" id="stage"></div>
-  <div class="hint" id="hint" hidden><span class="l">← Не знаю</span><span>Тап — перевернуть</span><span class="r">Знаю →</span></div>
+  <div class="hint" id="hint" hidden><span class="l">← Не знаю</span><span class="tapHint">Тап — перевернуть</span><span class="keyHint">↓ — перевернуть</span><span class="r">Знаю →</span></div>
 </div>
 <div class="tint" id="tint"></div>
 <div class="scrim" id="scrim" hidden><div class="sheet" id="sheet">
@@ -439,7 +441,7 @@ document.addEventListener('keydown', e => {
   const c = $('cur'); if (!c) return;
   if (e.key === 'ArrowRight') fling(c, true);
   else if (e.key === 'ArrowLeft') fling(c, false);
-  else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); c.classList.toggle('open'); }
+  else if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); c.classList.toggle('open'); }
   else if (e.key === 'Escape') { if (mode === 'archive') { exitArchive(); render(); } else showPicker(); }
 });
 
