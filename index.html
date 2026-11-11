@@ -73,6 +73,8 @@ body{background:var(--bg);color:var(--fg);font:400 16px/1.4 var(--font);overflow
   perspective:1400px;transition:transform .26s cubic-bezier(.2,.8,.2,1),opacity .26s,filter .26s}
 .card.next{transform:translateY(12px) scale(.95);filter:brightness(.97);pointer-events:none}
 .card.deep{transform:translateY(24px) scale(.90);filter:brightness(.92);pointer-events:none}
+.card.deep.enter{opacity:0}
+.card.deep{transition:transform .26s cubic-bezier(.2,.8,.2,1),filter .26s,opacity .4s ease}
 .card.next .face,.card.deep .face{box-shadow:0 2px 6px rgba(15,35,42,.10)}
 .flip{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.3,.7,.2,1)}
 .card.open .flip{transform:rotateY(180deg)}
@@ -367,7 +369,7 @@ function nextDueText() {
   const ms = Math.min(...ds) - Date.now(), h = Math.round(ms / 36e5);
   return h < 1 ? 'Следующее повторение — меньше чем через час.' : h < 24 ? `Следующее повторение — через ${h} ч.` : `Следующее повторение — через ${Math.round(h / 24)} дн.`;
 }
-function render() {
+function render(afterSwipe) {
   if (mode === 'learn' && queue.length < QMIN) refill();
   counters();
   const stage = $('stage');
@@ -381,7 +383,10 @@ function render() {
   }
   $('hint').hidden = Object.keys(S.st).length > 2;
   // a stack: the next card and one more layer peek out under the current one
-  stage.innerHTML = (queue[2] ? '<div class="card deep"><div class="flip"><div class="face"></div></div></div>' : '') + (queue[1] ? cardHTML(BY[queue[1]], true) : '') + cardHTML(BY[queue[0]], false);
+  stage.innerHTML = (queue[2] ? '<div class="card deep' + (afterSwipe === true ? ' enter' : '') + '"><div class="flip"><div class="face"></div></div></div>' : '') + (queue[1] ? cardHTML(BY[queue[1]], true) : '') + cardHTML(BY[queue[0]], false);
+  // after a swipe the new bottom layer fades in instead of popping up
+  const enter = stage.querySelector('.card.deep.enter');
+  if (enter) requestAnimationFrame(() => requestAnimationFrame(() => enter.classList.remove('enter')));
   bind($('cur'));
 }
 
