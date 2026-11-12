@@ -164,6 +164,16 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .toast{position:fixed;left:50%;width:max-content;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:min(440px,calc(100% - 32px));box-sizing:border-box;
   background:var(--fg);color:var(--bg);font:400 16px/1.4 var(--font);padding:12px 16px;border-radius:12px;z-index:6;text-align:center;transition:opacity .3s}
 .toast.out{opacity:0}
+.notice{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translate(-50%,0);width:min(440px,calc(100% - 32px));box-sizing:border-box;z-index:7;
+  display:flex;align-items:flex-start;gap:12px;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-left:4px solid var(--good);
+  border-radius:16px;padding:14px 8px 14px 16px;box-shadow:0 12px 40px rgba(5,15,20,.18);transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s}
+.notice.out{transform:translate(-50%,-140%);opacity:0}
+.notice.err{border-left-color:var(--bad)}
+.notice .nt{flex:1;min-width:0;cursor:pointer;display:flex;flex-direction:column;gap:4px;font:400 15px/1.4 var(--font);color:var(--muted)}
+.notice .nt b{font:600 17px/1.3 var(--font);color:var(--fg)}
+.notice .nx{flex:none;width:44px;height:44px;margin:-10px 0 -10px 0;border:0;background:none;color:var(--muted);border-radius:12px;cursor:pointer;display:grid;place-items:center}
+.notice .nx:hover{background:var(--chip)}
+.notice .nx svg{width:20px;height:20px}
 @media (prefers-reduced-motion:reduce){.card,.flip,.tint{transition:none!important}}
 </style>
 </head>
@@ -213,6 +223,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </div>
 <div class="tint" id="tint"></div>
 <div class="toast" id="toast" hidden></div>
+<div class="notice out" id="notice" role="status" hidden><div class="nt" id="noticeBody"><b id="noticeTitle"></b><span id="noticeText"></span></div><button class="nx" id="noticeX" type="button" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
 <div class="scrim" id="scrim" hidden><div class="sheet" id="sheet">
   <h2>Знаю</h2>
   <div class="sub" id="archSub"></div>
@@ -287,7 +298,16 @@ function refill() {
       queue.push((takeMine ? mine : pool).shift().id); slot++;
     }
   }
+  // Words that just arrived from the user's own list: put a few right into the next cards so they see them.
+  const b = BOOST[LANG];
+  if (mode === 'learn' && b) {
+    delete BOOST[LANG];
+    const ids = b.filter(id => BY[id] && !S.st[id] && id !== queue[0]);
+    queue = queue.filter(id => !ids.includes(id));
+    ids.forEach((id, i) => queue.splice(Math.min(1 + 2 * i, queue.length), 0, id));
+  }
 }
+const BOOST = {};
 function requeue(id, pos) { queue.splice(Math.min(pos, queue.length), 0, id); }
 
 function answer(know) {
@@ -372,6 +392,7 @@ async function syncAll() {
       ls.set('soz-mywords', JSON.stringify(mw));
       if (!$('app').hidden) { WORDS = buildWords(LANG); BY = Object.fromEntries(WORDS.map(w => [w.id, w])); }
     }
+    checkInbox(await rpc('soz_inbox_recent', { p_code: CODE }).catch(() => null) || [], mw);
     for (const lang in LANGS) {
       const key = LANGS[lang].key, loc = loadState(key), rs = remote[lang] || {};
       let pulled = false, localNewer = false;
@@ -569,7 +590,7 @@ $('addSend').onclick = async () => {
   try {
     await rpc('soz_submit', { p_code: CODE, p_lang: LANG, p_text: text });
     ls.set('soz-draft-' + LANG, ''); closeSheet();
-    toast('Слова появятся в карточках в течение часа');
+    toast('Принято! Сообщим здесь, когда слова будут готовы');
   } catch (e) {
     $('addErr').hidden = false;
   }
@@ -595,6 +616,43 @@ function openLang(lang) {
 document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => openLang(b.dataset.lang));
 $('back').onclick = () => history.state === null && location.hash ? history.back() : showPicker();
 window.addEventListener('popstate', () => { if (!location.hash) showPicker(); else if (LANGS[location.hash.slice(1)]) openLang(location.hash.slice(1)); });
+/* ---------- "your words are ready" notice ---------- */
+const plural = (n, a, b, c) => { const m = n % 10, h = n % 100; return m === 1 && h !== 11 ? a : m >= 2 && m <= 4 && (h < 12 || h > 14) ? b : c; };
+let noticeIds = [], pollTimer = 0;
+function checkInbox(rows, mw) {
+  clearTimeout(pollTimer);
+  if (rows.some(r => r.status === 'new')) pollTimer = setTimeout(syncAll, 2 * MIN);   // still processing → look again soon
+  const ack = Number(ls.get('soz-inbox-ack')) || 0;
+  const fresh = rows.filter(r => r.id > ack && r.status !== 'new' && (ack || Date.now() - Date.parse(r.processed_at || r.created_at) < 3 * DAY));
+  if (!fresh.length) return;
+  noticeIds = fresh.map(r => r.id);
+  const lang = fresh[fresh.length - 1].lang, from = Math.min(...fresh.filter(r => r.lang === lang).map(r => Date.parse(r.created_at))) - 1000;
+  const newIds = new Set(mw.filter(w => w.lang === lang && Date.parse(w.added_at) >= from).map(w => 'u' + w.id));
+  const all = buildWords(lang), got = all.filter(w => newIds.has(w.id)), n = got.length, after = all.length;
+  const el = $('notice'); el.classList.toggle('err', !n);
+  if (n) {
+    const noPic = got.filter(w => !w.gen).length;
+    $('noticeTitle').textContent = `Готово: +${n} ${plural(n, 'слово', 'слова', 'слов')}`;
+    $('noticeText').textContent = `${LANGS[lang].name}: было ${after - n}, стало ${after}. ` +
+      (noPic ? `Картинки для ${noPic} ${plural(noPic, 'слова', 'слов', 'слов')} ещё рисуются — пока с эмодзи. Можно учить!` : 'Картинки готовы — можно учить!');
+    BOOST[lang] = got.filter(w => !loadState(LANGS[lang].key).st[w.id]).slice(-3).reverse().map(w => w.id);
+    if (!$('app').hidden && LANG === lang && mode === 'learn') { queue = queue.slice(0, 1); render(); }
+  } else if (fresh.some(r => r.status === 'error')) {
+    $('noticeTitle').textContent = 'Не нашли слов в тексте';
+    $('noticeText').textContent = 'Попробуй списком: каждое слово с новой строки, можно с переводом.';
+  } else {
+    $('noticeTitle').textContent = 'Эти слова уже есть в колоде';
+    $('noticeText').textContent = `${LANGS[lang].name}: всего ${after}. Учи дальше!`;
+  }
+  $('noticeBody').onclick = () => { closeNotice(); if (n && ($('app').hidden || LANG !== lang)) openLang(lang); };
+  el.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('out')));
+}
+function closeNotice() {
+  const el = $('notice'); if (el.hidden) return;
+  ls.set('soz-inbox-ack', String(Math.max(Number(ls.get('soz-inbox-ack')) || 0, ...noticeIds)));
+  el.classList.add('out'); setTimeout(() => el.hidden = true, 350);
+}
+$('noticeX').onclick = closeNotice;
 /* ---------- name + sync sheets ---------- */
 function openSheet(id) { document.querySelectorAll('.psheet').forEach(s => s.hidden = s.id !== id); $('pscrim').hidden = false; }
 function closeSheet() { $('pscrim').hidden = true; }
