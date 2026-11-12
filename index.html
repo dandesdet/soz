@@ -656,6 +656,12 @@ function closeNotice() {
   el.classList.add('out'); setTimeout(() => el.hidden = true, 350);
 }
 $('noticeX').onclick = closeNotice;
+if (/[?&]demo-notice/.test(location.search)) setTimeout(() => {   // preview: ?demo-notice
+  const el = $('notice'); noticeIds = [];
+  $('noticeTitle').textContent = 'Готово: +26 слов'; $('noticeText').textContent = 'Испанский: было 335, стало 361. Картинки готовы — можно учить!';
+  $('noticeBody').onclick = closeNotice;
+  el.style.transform = ''; el.classList.add('out'); el.hidden = false; void el.offsetHeight; setTimeout(() => el.classList.remove('out'), 60);
+}, 800);
 { // swipe up to dismiss
   const el = $('notice'); let y0 = 0, t0 = 0, dy = 0, on = false;
   el.addEventListener('pointerdown', e => { if (e.target.closest('.nx')) return; on = true; y0 = e.clientY; t0 = performance.now(); dy = 0; el.classList.add('drag'); el.setPointerCapture(e.pointerId); });
@@ -663,8 +669,7 @@ $('noticeX').onclick = closeNotice;
   const end = () => { if (!on) return; on = false; el.classList.remove('drag');
     const fast = dy < -20 && dy / (performance.now() - t0) < -0.4;
     if (dy < -40 || fast) { el._swiped = true; el.style.transform = 'translate(-50%,calc(-100% - 24px))'; closeNotice(); }
-    else el.style.transform = '';
-    else if (Math.abs(dy) > 6) el._swiped = true; };
+    else { el.style.transform = ''; if (Math.abs(dy) > 6) el._swiped = true; } };
   el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
   el.addEventListener('click', e => { if (el._swiped) { el._swiped = false; e.stopPropagation(); e.preventDefault(); } }, true);
 }
