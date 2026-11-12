@@ -1,341 +1,341 @@
-// Soʻz word base. One word per line: uz | ru | emoji | topic | english caption (only if the picture is ambiguous).
+// Soʻz word base. One word per line: uz | ru | emoji | topic | english caption (only if the picture is ambiguous) | level 1–5 (1 = A1 beginner … 5 = C1).
 // Order = learning order (simple → complex). New batches are appended at the end.
 window.SOZ_WORDS = `
-Salom|Привет|👋|Знакомство|Hi
-Rahmat|Спасибо|🙏|Знакомство|Thank you
-Ha|Да|✅|Основа|Yes
-Yoʻq|Нет|❌|Основа|No
-Assalomu alaykum|Здравствуйте|🤝|Знакомство|Hello (formal)
-Xayr|До свидания|🚶|Знакомство|Goodbye
-Yaxshi|Хорошо|👍|Основа|Good
-Yomon|Плохо|👎|Основа|Bad
-bir|один|1|Числа|
-ikki|два|2|Числа|
-uch|три|3|Числа|
-suv|вода|💧|Еда|water
-non|лепёшка, хлеб|🫓|Еда|bread
-choy|чай|🍵|Еда|tea
-Iltimos|Пожалуйста (просьба)|🙇|Основа|Please
-Kechirasiz|Извините|😔|Основа|Excuse me
-Qalaysiz?|Как вы?|🙂|Знакомство|How are you?
-Yaxshimisiz?|Как дела? (всё хорошо?)|😊|Знакомство|Are you well?
-toʻrt|четыре|4|Числа|
-besh|пять|5|Числа|
-taksi|такси|🚕|Такси|
-bozor|рынок, базар|🧺|Рынок|market
-pul|деньги|💰|Рынок|money
-Qancha turadi?|Сколько стоит?|🏷️|Рынок|How much is it?
-Mayli|Ладно|🆗|Основа|Okay
-Albatta|Конечно|💯|Основа|Of course
-olti|шесть|6|Числа|
-yetti|семь|7|Числа|
-sakkiz|восемь|8|Числа|
-toʻqqiz|девять|9|Числа|
-oʻn|десять|10|Числа|
-Tushunmadim|Я не понял|🤷|Основа|I didn't understand
-Tushundim|Понял|💡|Основа|I understand
-Bilmayman|Не знаю|❓|Основа|I don't know
-chapga|налево|⬅️|Такси|to the left
-oʻngga|направо|➡️|Такси|to the right
-toʻgʻriga|прямо|⬆️|Такси|straight ahead
-Shu yerda toʻxtang|Остановите здесь|🛑|Такси|Stop here
-men|я|🙋|Люди|I
-siz|вы|🫵|Люди|you
-biz|мы|👫|Люди|we
-ota|отец, папа|👨|Люди|father
-ona|мать, мама|👩|Люди|mother
-doʻst|друг|🫂|Люди|friend
-goʻsht|мясо|🥩|Еда|meat
-tovuq|курица|🍗|Еда|chicken
-osh|плов|🍛|Еда|plov
-olma|яблоко|🍎|Еда|
-uzum|виноград|🍇|Еда|
-qovun|дыня|🍈|Еда|melon
-tarvuz|арбуз|🍉|Еда|
-tennis|теннис|🎾|Теннис|tennis
-toʻp|мяч|⚽|Теннис|ball
-kort|корт|🏟️|Теннис|court
-Ismingiz nima?|Как вас зовут?|🏷️|Знакомство|What's your name?
-Mening ismim…|Меня зовут…|🙋‍♂️|Знакомство|My name is…
-Tanishganimdan xursandman|Рад знакомству|🤗|Знакомство|Nice to meet you
-Xush kelibsiz|Добро пожаловать|🚪|Знакомство|Welcome
-Koʻrishguncha|До встречи|👀|Знакомство|See you
-Xayrli tong|Доброе утро|🌅|Знакомство|Good morning
-Xayrli kech|Добрый вечер|🌆|Знакомство|Good evening
-Xayrli tun|Спокойной ночи|🌙|Знакомство|Good night
-Sekinroq gapiring|Говорите медленнее|🐢|Основа|Speak slower
-Ruscha bilasizmi?|Вы говорите по-русски?|🗣️|Основа|Do you speak Russian?
-Kerak|Нужно|☝️|Основа|I need
-Kerak emas|Не нужно|✋|Основа|I don't need
-arzon|дешёвый|🪙|Рынок|cheap
-qimmat|дорогой|💎|Рынок|expensive
-Arzonroq qiling|Сделайте дешевле|🤝|Рынок|Make it cheaper
-bitta|одна штука|☝🏻|Рынок|one piece
-kilo|килограмм|⚖️|Рынок|kilogram
-naqd|наличные|💵|Рынок|cash
-qaytim|сдача|🔁|Рынок|change (money)
-Karta bilan toʻlasam boʻladimi?|Можно оплатить картой?|💳|Рынок|Can I pay by card?
-pomidor|помидор|🍅|Еда|
-bodring|огурец|🥒|Еда|
-kartoshka|картошка|🥔|Еда|
-piyoz|лук|🧅|Еда|
-sabzi|морковь|🥕|Еда|
-guruch|рис|🍚|Еда|rice
-tuz|соль|🧂|Еда|salt
-sut|молоко|🥛|Еда|milk
-tuxum|яйцо|🥚|Еда|
-Qayerga?|Куда?|🧭|Такси|Where to?
-Qayerda?|Где?|📌|Город|Where?
-manzil|адрес|📍|Такси|address
-uzoq|далеко|🛣️|Такси|far
-yaqin|близко|👣|Такси|near
-Necha pul?|Сколько денег? (цена поездки)|💸|Такси|How much is the ride?
-Olib boring|Отвезите|🚖|Такси|Take me there
-tezroq|быстрее|⚡|Такси|faster
-orqaga|назад|↩️|Такси|back
-mashina|машина|🚗|Такси|
-yigirma|двадцать|20|Числа|
-oʻttiz|тридцать|30|Числа|
-qirq|сорок|40|Числа|
-ellik|пятьдесят|50|Числа|
-yuz|сто|100|Числа|
-ming|тысяча|1000|Числа|
-nima?|что?|❔|Вопросы|what?
-kim?|кто?|👤|Вопросы|who?
-qachon?|когда?|⏰|Вопросы|when?
-nega?|почему?|🤔|Вопросы|why?
-qanday?|как?|🌀|Вопросы|how?
-nechta?|сколько (штук)?|🔢|Вопросы|how many?
-uy|дом|🏠|Город|home
-doʻkon|магазин|🏪|Город|shop
-dorixona|аптека|⚕️|Город|pharmacy
-kasalxona|больница|🏥|Клиника|hospital
-mehmonxona|гостиница|🏨|Город|hotel
-bank|банк|🏦|Город|
-masjid|мечеть|🕌|Город|mosque
-bekat|остановка|🚏|Город|bus stop
-metro|метро|🚇|Город|
-avtobus|автобус|🚌|Город|
-aeroport|аэропорт|✈️|Город|
-Hojatxona qayerda?|Где туалет?|🚻|Город|Where is the toilet?
-ovqat|еда|🍽️|Еда|food
-menyu|меню|📋|Еда|menu
-Hisobni bering|Принесите счёт|🧾|Еда|The bill, please
-mazali|вкусный|😋|Еда|tasty
-achchiq|острый|🌶️|Еда|spicy
-shirin|сладкий|🍰|Еда|sweet
-issiq|горячий, жаркий|🔥|Основа|hot
-sovuq|холодный|🧊|Основа|cold
-katta|большой|🐘|Основа|big
-kichik|маленький|🐭|Основа|small
-koʻp|много|📚|Основа|a lot
-ozgina|немного|🤏|Основа|a little
-juda|очень|❗|Основа|very
-yangi|новый|✨|Основа|new
-eski|старый (о вещи)|🏚️|Основа|old
-chiroyli|красивый|🌸|Основа|beautiful
-bugun|сегодня|📅|Время|today
-ertaga|завтра|🌄|Время|tomorrow
-kecha|вчера|🌃|Время|yesterday
-hozir|сейчас|⏱️|Время|now
-keyin|потом|⏭️|Время|later
-Soat necha?|Который час?|⌚|Время|What time is it?
-daqiqa|минута|⏲️|Время|minute
-kun|день|🌞|Время|day
-hafta|неделя|🗓️|Время|week
-oy|месяц|🌕|Время|month
-yil|год|🎆|Время|year
-ertalab|утром|🐓|Время|in the morning
-kechqurun|вечером|🌇|Время|in the evening
-Bir daqiqa kuting|Подождите минуту|⏳|Основа|Wait a minute
-shifokor|врач|🧑‍⚕️|Клиника|doctor
-dori|лекарство|💊|Клиника|medicine
-ogʻriq|боль|🤕|Клиника|pain
-Boshim ogʻriyapti|У меня болит голова|🤯|Клиника|I have a headache
-tish|зуб|🦷|Клиника|tooth
-qorin|живот|🫃|Клиника|stomach
-isitma|температура (жар)|🌡️|Клиника|fever
-kasal|больной|🤒|Клиника|sick
-Yordam bering!|Помогите!|🆘|Клиника|Help!
-tez yordam|скорая помощь|🚑|Клиника|ambulance
-yurak|сердце|❤️|Клиника|heart
-koʻz|глаз|👁️|Клиника|eye
-quloq|ухо|👂|Клиника|ear
-oyoq|нога|🦵|Клиника|leg
-qoʻl|рука|🫱|Клиника|hand
-tomoq|горло|🗣|Клиника|throat
-yoʻtal|кашель|😷|Клиника|cough
-Allergiyam bor|У меня аллергия|🤧|Клиника|I have an allergy
-Oʻynaymizmi?|Сыграем?|🎾|Теннис|Shall we play?
-Kim boshlaydi?|Кто начинает?|🙋|Теннис|Who starts?
-Tayyormisiz?|Готовы?|🏁|Теннис|Ready?
-zarba|удар|💥|Теннис|shot
-Zoʻr!|Отлично! Круто!|🔥|Теннис|Awesome!
-navbat|очередь|🔄|Теннис|turn
-Sizning navbatingiz|Ваша очередь|👉|Теннис|Your turn
-Yutdim|Я выиграл|🥇|Теннис|I won
-Yutqazdim|Я проиграл|😩|Теннис|I lost
-gʻalaba|победа|🏆|Теннис|victory
-Charchadim|Я устал|😮‍💨|Теннис|I'm tired
-Dam olamiz|Сделаем перерыв|☕|Теннис|Let's take a break
-Yana bir oʻyin?|Ещё одну игру?|🔁|Теннис|One more game?
-ota-ona|родители|👨‍👩‍👦|Люди|parents
-aka|старший брат|🧔|Люди|older brother
-uka|младший брат|👦|Люди|younger brother
-opa|старшая сестра|👩‍🦰|Люди|older sister
-singil|младшая сестра|👧|Люди|younger sister
-oʻgʻil|сын|🧒|Люди|son
-qiz|дочь, девушка|👱‍♀️|Люди|daughter, girl
-bola|ребёнок|👶|Люди|child
-oila|семья|🏡|Люди|family
-xotin|жена|👰|Люди|wife
-er|муж|🤵|Люди|husband
-u|он, она|🧍|Люди|he / she
-ular|они|👥|Люди|they
-bormoq|идти, ехать|🚶‍♂️|Глаголы|to go
-kelmoq|приходить|🏃|Глаголы|to come
-yemoq|есть (кушать)|🍴|Глаголы|to eat
-ichmoq|пить|🥤|Глаголы|to drink
-uxlamoq|спать|😴|Глаголы|to sleep
-gapirmoq|говорить|💬|Глаголы|to speak
-bilmoq|знать|🧠|Глаголы|to know
-koʻrmoq|видеть|🔭|Глаголы|to see
-ishlamoq|работать|💼|Глаголы|to work
-kutmoq|ждать|⌛|Глаголы|to wait
-olmoq|брать|🤲|Глаголы|to take
-bermoq|давать|🎁|Глаголы|to give
-yozmoq|писать|✍️|Глаголы|to write
-oʻqimoq|читать, учиться|📖|Глаголы|to read, to study
-qilmoq|делать|🛠️|Глаголы|to do
-ochmoq|открывать|🔓|Глаголы|to open
-yopmoq|закрывать|🔒|Глаголы|to close
-oʻtirmoq|садиться, сидеть|🪑|Глаголы|to sit
-tushmoq|выходить (из машины)|⬇️|Глаголы|to get out
-sotib olmoq|покупать|🛒|Глаголы|to buy
-sotmoq|продавать|🏬|Глаголы|to sell
-Menga yoqadi|Мне нравится|😍|Фразы|I like it
-Menga yoqmaydi|Мне не нравится|😒|Фразы|I don't like it
-Mumkinmi?|Можно?|🤞|Фразы|May I?
-Boʻladi|Хорошо, договорились|👌|Фразы|Deal
-Boʻlmaydi|Нельзя, не получится|🚫|Фразы|Not possible
-Muammo yoʻq|Без проблем|😎|Фразы|No problem
-Hech gap emas|Не за что|🤲🏻|Фразы|You're welcome
-Juda yaxshi|Очень хорошо|🌟|Фразы|Very good
-Qayerdansiz?|Откуда вы?|🌍|Фразы|Where are you from?
-Toshkentda yashayman|Я живу в Ташкенте|🏙️|Фразы|I live in Tashkent
-Telefon raqamingiz?|Ваш номер телефона?|📱|Фразы|Your phone number?
-Yana bir marta ayting|Скажите ещё раз|🔂|Фразы|Say it again
-havo|погода, воздух|🌤️|Погода|weather
-yomgʻir|дождь|🌧️|Погода|rain
-qor|снег|❄️|Погода|snow
-quyosh|солнце|☀️|Погода|sun
-shamol|ветер|💨|Погода|wind
-oq|белый|⚪|Цвета|white
-qora|чёрный|⚫|Цвета|black
-qizil|красный|🔴|Цвета|red
-koʻk|синий, голубой|🔵|Цвета|blue
-yashil|зелёный|🟢|Цвета|green
-sariq|жёлтый|🟡|Цвета|yellow
-kofe|кофе|☕|Кафе|
-shakar|сахар|🍬|Кафе|sugar
-qoshiq|ложка|🥄|Кафе|
-vilka|вилка|🍴|Кафе|
-pichoq|нож|🔪|Кафе|
-stakan|стакан|🥛|Кафе|glass
-piyola|пиала|🍵|Кафе|tea bowl
-somsa|самса|🥟|Кафе|samsa pastry
-lagʻmon|лагман|🍜|Кафе|lagman noodles
-shashlik|шашлык|🍢|Кафе|kebab skewers
-salat|салат|🥗|Кафе|
-ofitsiant|официант|🧑‍🍳|Кафе|waiter
-raketka|ракетка|🎾|Теннис|racket
-toʻr|сетка|🥅|Теннис|net
-murabbiy|тренер|🧑‍🏫|Теннис|coach
-krossovka|кроссовки|👟|Теннис|sneakers
-hisob|счёт (в игре)|🔢|Теннис|score
-nol|ноль|0|Числа|zero
-teng|поровну, ровно|🟰|Теннис|equal / tied
-set|сет|🎾|Теннис|set (in tennis)
-aut|аут|🚫|Теннис|out (ball)
-xursand|радостный, довольный|😄|Чувства|glad
-xafa|расстроенный, обиженный|😞|Чувства|upset
-baxtli|счастливый|🥰|Чувства|happy
-choychaqa|чаевые|💵|Кафе|tip
-Koʻk choy bering|Дайте зелёного чаю|🍵|Кафе|Green tea, please
-Joy bormi?|Есть свободные места?|🪑|Кафе|Is there a free table?
-Qornim och|Я голоден|🍽️|Чувства|I'm hungry
-Chanqadim|Я хочу пить|🥤|Чувства|I'm thirsty
-Zerikdim|Мне скучно|🥱|Чувства|I'm bored
-Qoʻrqdim|Я испугался|😨|Чувства|I got scared
-Kayfiyatim yaxshi|У меня хорошее настроение|😊|Чувства|I'm in a good mood
-Xavotir olmang|Не волнуйтесь|🤗|Чувства|Don't worry
-Sogʻindim|Я соскучился|🥺|Чувства|I missed you
-Jahlim chiqdi|Я разозлился|😠|Чувства|I got angry
-Bordim|Я пошёл / сходил|🚶|Прошедшее|I went
-Keldim|Я пришёл|🚪|Прошедшее|I came
-Yedim|Я поел|🍛|Прошедшее|I ate
-Ichdim|Я выпил|🥤|Прошедшее|I drank
-Koʻrdim|Я увидел|👀|Прошедшее|I saw
-Oldim|Я купил / взял|🛍️|Прошедшее|I bought / took
-Aytdim|Я сказал|🗣️|Прошедшее|I said
-Unutdim|Я забыл|🤦|Прошедшее|I forgot
-Kechikdim|Я опоздал|⏰|Прошедшее|I'm late
-Yoʻqotdim|Я потерял|🔍|Прошедшее|I lost it
-Qoʻngʻiroq qildim|Я позвонил|📞|Прошедшее|I called
-Yaxshi zarba!|Хороший удар!|👏|Теннис|Nice shot!
-Isinib olaylik|Давайте разомнёмся|🤸|Теннис|Let's warm up
-Soat nechada oʻynaymiz?|Во сколько играем?|🕒|Теннис|What time do we play?
-Kortni band qildim|Я забронировал корт|📅|Теннис|I booked the court
-telefon|телефон|📱|Телефон|
-Alo?|Алло?|📞|Телефон|Hello? (on the phone)
-Kim bu?|Кто это?|❓|Телефон|Who is this?
-raqam|номер|🔢|Телефон|number
-Keyinroq qoʻngʻiroq qiling|Перезвоните позже|⏳|Телефон|Call back later
-Eshitilmayapti|Плохо слышно|🔇|Телефон|I can't hear you
-Xabar yozing|Напишите сообщение|💬|Телефон|Text me
-Sizga qoʻngʻiroq qilaman|Я вам позвоню|📲|Телефон|I'll call you
-Band edim|Я был занят|🙅|Телефон|I was busy
-zaryadka|зарядка|🔌|Телефон|charger
-kvartira|квартира|🏢|Дом|apartment
-ijara|аренда|📝|Дом|rent
-Ijaraga beriladi|Сдаётся|🪧|Дом|For rent
-Oyiga qancha?|Сколько в месяц?|📆|Дом|How much per month?
-uy egasi|хозяин квартиры|👴|Дом|landlord
-qoʻshni|сосед|👋|Дом|neighbour
-qavat|этаж|🏬|Дом|floor (storey)
-xona|комната|🛋️|Дом|room
-oshxona|кухня|🍳|Дом|kitchen
-hammom|ванная|🛁|Дом|bathroom
-kalit|ключ|🔑|Дом|
-eshik|дверь|🚪|Дом|
-deraza|окно|🪟|Дом|window
-Issiq suv yoʻq|Нет горячей воды|🚿|Дом|There's no hot water
-Buzilib qoldi|Сломалось|💥|Дом|It broke
-usta|мастер|🧰|Дом|repairman
-Tuzatib bering|Почините, пожалуйста|🔧|Дом|Please fix it
-Suv oqyapti|Течёт вода|💦|Дом|Water is leaking
-konditsioner|кондиционер|❄️|Дом|air conditioner
-muzlatgich|холодильник|🧊|Дом|fridge
-kir yuvish mashinasi|стиральная машина|🧺|Дом|washing machine
-dazmol|утюг|👕|Дом|iron
-bankomat|банкомат|🏧|Банк|ATM
-karta|банковская карта|💳|Банк|bank card
-pasport|паспорт|🛂|Банк|passport
-soʻm|сум|💴|Банк|soum (money)
-dollar|доллар|💵|Банк|dollar
-kurs|курс валюты|📈|Банк|exchange rate
-Valyuta ayirboshlash|Обмен валюты|💱|Банк|Currency exchange
-Pul yechmoqchiman|Хочу снять деньги|💸|Банк|I want to withdraw money
-Qanday borsam boʻladi?|Как мне добраться?|🗺️|Дорога|How do I get there?
-Yoʻlni koʻrsating|Покажите дорогу|👉|Дорога|Show me the way
-chorraha|перекрёсток|✖️|Дорога|crossroads
-svetofor|светофор|🚦|Дорога|traffic light
-koʻprik|мост|🌉|Дорога|bridge
-burilish|поворот|↪️|Дорога|turn
-yonida|рядом с|↔️|Дорога|next to
-roʻparasida|напротив|🔄|Дорога|opposite
-orqasida|позади, за|🔙|Дорога|behind
-Adashib qoldim|Я заблудился|😵|Дорога|I'm lost
+Salom|Привет|👋|Знакомство|Hi|1
+Rahmat|Спасибо|🙏|Знакомство|Thank you|1
+Ha|Да|✅|Основа|Yes|1
+Yoʻq|Нет|❌|Основа|No|1
+Assalomu alaykum|Здравствуйте|🤝|Знакомство|Hello (formal)|1
+Xayr|До свидания|🚶|Знакомство|Goodbye|1
+Yaxshi|Хорошо|👍|Основа|Good|1
+Yomon|Плохо|👎|Основа|Bad|1
+bir|один|1|Числа||1
+ikki|два|2|Числа||1
+uch|три|3|Числа||1
+suv|вода|💧|Еда|water|1
+non|лепёшка, хлеб|🫓|Еда|bread|1
+choy|чай|🍵|Еда|tea|1
+Iltimos|Пожалуйста (просьба)|🙇|Основа|Please|1
+Kechirasiz|Извините|😔|Основа|Excuse me|1
+Qalaysiz?|Как вы?|🙂|Знакомство|How are you?|1
+Yaxshimisiz?|Как дела? (всё хорошо?)|😊|Знакомство|Are you well?|1
+toʻrt|четыре|4|Числа||1
+besh|пять|5|Числа||1
+taksi|такси|🚕|Такси||1
+bozor|рынок, базар|🧺|Рынок|market|1
+pul|деньги|💰|Рынок|money|1
+Qancha turadi?|Сколько стоит?|🏷️|Рынок|How much is it?|1
+Mayli|Ладно|🆗|Основа|Okay|1
+Albatta|Конечно|💯|Основа|Of course|1
+olti|шесть|6|Числа||1
+yetti|семь|7|Числа||1
+sakkiz|восемь|8|Числа||1
+toʻqqiz|девять|9|Числа||1
+oʻn|десять|10|Числа||1
+Tushunmadim|Я не понял|🤷|Основа|I didn't understand|1
+Tushundim|Понял|💡|Основа|I understand|1
+Bilmayman|Не знаю|❓|Основа|I don't know|1
+chapga|налево|⬅️|Такси|to the left|1
+oʻngga|направо|➡️|Такси|to the right|1
+toʻgʻriga|прямо|⬆️|Такси|straight ahead|1
+Shu yerda toʻxtang|Остановите здесь|🛑|Такси|Stop here|1
+men|я|🙋|Люди|I|1
+siz|вы|🫵|Люди|you|1
+biz|мы|👫|Люди|we|1
+ota|отец, папа|👨|Люди|father|1
+ona|мать, мама|👩|Люди|mother|1
+doʻst|друг|🫂|Люди|friend|1
+goʻsht|мясо|🥩|Еда|meat|1
+tovuq|курица|🍗|Еда|chicken|1
+osh|плов|🍛|Еда|plov|1
+olma|яблоко|🍎|Еда||1
+uzum|виноград|🍇|Еда||1
+qovun|дыня|🍈|Еда|melon|1
+tarvuz|арбуз|🍉|Еда||1
+tennis|теннис|🎾|Теннис|tennis|1
+toʻp|мяч|⚽|Теннис|ball|1
+kort|корт|🏟️|Теннис|court|1
+Ismingiz nima?|Как вас зовут?|🏷️|Знакомство|What's your name?|1
+Mening ismim…|Меня зовут…|🙋‍♂️|Знакомство|My name is…|1
+Tanishganimdan xursandman|Рад знакомству|🤗|Знакомство|Nice to meet you|1
+Xush kelibsiz|Добро пожаловать|🚪|Знакомство|Welcome|1
+Koʻrishguncha|До встречи|👀|Знакомство|See you|1
+Xayrli tong|Доброе утро|🌅|Знакомство|Good morning|1
+Xayrli kech|Добрый вечер|🌆|Знакомство|Good evening|1
+Xayrli tun|Спокойной ночи|🌙|Знакомство|Good night|1
+Sekinroq gapiring|Говорите медленнее|🐢|Основа|Speak slower|1
+Ruscha bilasizmi?|Вы говорите по-русски?|🗣️|Основа|Do you speak Russian?|1
+Kerak|Нужно|☝️|Основа|I need|1
+Kerak emas|Не нужно|✋|Основа|I don't need|1
+arzon|дешёвый|🪙|Рынок|cheap|1
+qimmat|дорогой|💎|Рынок|expensive|1
+Arzonroq qiling|Сделайте дешевле|🤝|Рынок|Make it cheaper|1
+bitta|одна штука|☝🏻|Рынок|one piece|1
+kilo|килограмм|⚖️|Рынок|kilogram|1
+naqd|наличные|💵|Рынок|cash|1
+qaytim|сдача|🔁|Рынок|change (money)|1
+Karta bilan toʻlasam boʻladimi?|Можно оплатить картой?|💳|Рынок|Can I pay by card?|1
+pomidor|помидор|🍅|Еда||1
+bodring|огурец|🥒|Еда||1
+kartoshka|картошка|🥔|Еда||1
+piyoz|лук|🧅|Еда||1
+sabzi|морковь|🥕|Еда||1
+guruch|рис|🍚|Еда|rice|1
+tuz|соль|🧂|Еда|salt|1
+sut|молоко|🥛|Еда|milk|1
+tuxum|яйцо|🥚|Еда||1
+Qayerga?|Куда?|🧭|Такси|Where to?|1
+Qayerda?|Где?|📌|Город|Where?|1
+manzil|адрес|📍|Такси|address|1
+uzoq|далеко|🛣️|Такси|far|1
+yaqin|близко|👣|Такси|near|1
+Necha pul?|Сколько денег? (цена поездки)|💸|Такси|How much is the ride?|1
+Olib boring|Отвезите|🚖|Такси|Take me there|1
+tezroq|быстрее|⚡|Такси|faster|1
+orqaga|назад|↩️|Такси|back|1
+mashina|машина|🚗|Такси||1
+yigirma|двадцать|20|Числа||1
+oʻttiz|тридцать|30|Числа||1
+qirq|сорок|40|Числа||1
+ellik|пятьдесят|50|Числа||1
+yuz|сто|100|Числа||1
+ming|тысяча|1000|Числа||1
+nima?|что?|❔|Вопросы|what?|1
+kim?|кто?|👤|Вопросы|who?|1
+qachon?|когда?|⏰|Вопросы|when?|1
+nega?|почему?|🤔|Вопросы|why?|1
+qanday?|как?|🌀|Вопросы|how?|1
+nechta?|сколько (штук)?|🔢|Вопросы|how many?|1
+uy|дом|🏠|Город|home|1
+doʻkon|магазин|🏪|Город|shop|1
+dorixona|аптека|⚕️|Город|pharmacy|1
+kasalxona|больница|🏥|Клиника|hospital|1
+mehmonxona|гостиница|🏨|Город|hotel|1
+bank|банк|🏦|Город||1
+masjid|мечеть|🕌|Город|mosque|1
+bekat|остановка|🚏|Город|bus stop|1
+metro|метро|🚇|Город||1
+avtobus|автобус|🚌|Город||1
+aeroport|аэропорт|✈️|Город||1
+Hojatxona qayerda?|Где туалет?|🚻|Город|Where is the toilet?|1
+ovqat|еда|🍽️|Еда|food|1
+menyu|меню|📋|Еда|menu|1
+Hisobni bering|Принесите счёт|🧾|Еда|The bill, please|1
+mazali|вкусный|😋|Еда|tasty|2
+achchiq|острый|🌶️|Еда|spicy|2
+shirin|сладкий|🍰|Еда|sweet|2
+issiq|горячий, жаркий|🔥|Основа|hot|2
+sovuq|холодный|🧊|Основа|cold|2
+katta|большой|🐘|Основа|big|2
+kichik|маленький|🐭|Основа|small|2
+koʻp|много|📚|Основа|a lot|2
+ozgina|немного|🤏|Основа|a little|2
+juda|очень|❗|Основа|very|2
+yangi|новый|✨|Основа|new|2
+eski|старый (о вещи)|🏚️|Основа|old|2
+chiroyli|красивый|🌸|Основа|beautiful|2
+bugun|сегодня|📅|Время|today|2
+ertaga|завтра|🌄|Время|tomorrow|2
+kecha|вчера|🌃|Время|yesterday|2
+hozir|сейчас|⏱️|Время|now|2
+keyin|потом|⏭️|Время|later|2
+Soat necha?|Который час?|⌚|Время|What time is it?|2
+daqiqa|минута|⏲️|Время|minute|2
+kun|день|🌞|Время|day|2
+hafta|неделя|🗓️|Время|week|2
+oy|месяц|🌕|Время|month|2
+yil|год|🎆|Время|year|2
+ertalab|утром|🐓|Время|in the morning|2
+kechqurun|вечером|🌇|Время|in the evening|2
+Bir daqiqa kuting|Подождите минуту|⏳|Основа|Wait a minute|2
+shifokor|врач|🧑‍⚕️|Клиника|doctor|2
+dori|лекарство|💊|Клиника|medicine|2
+ogʻriq|боль|🤕|Клиника|pain|2
+Boshim ogʻriyapti|У меня болит голова|🤯|Клиника|I have a headache|2
+tish|зуб|🦷|Клиника|tooth|2
+qorin|живот|🫃|Клиника|stomach|2
+isitma|температура (жар)|🌡️|Клиника|fever|2
+kasal|больной|🤒|Клиника|sick|2
+Yordam bering!|Помогите!|🆘|Клиника|Help!|2
+tez yordam|скорая помощь|🚑|Клиника|ambulance|2
+yurak|сердце|❤️|Клиника|heart|2
+koʻz|глаз|👁️|Клиника|eye|2
+quloq|ухо|👂|Клиника|ear|2
+oyoq|нога|🦵|Клиника|leg|2
+qoʻl|рука|🫱|Клиника|hand|2
+tomoq|горло|🗣|Клиника|throat|2
+yoʻtal|кашель|😷|Клиника|cough|2
+Allergiyam bor|У меня аллергия|🤧|Клиника|I have an allergy|2
+Oʻynaymizmi?|Сыграем?|🎾|Теннис|Shall we play?|2
+Kim boshlaydi?|Кто начинает?|🙋|Теннис|Who starts?|2
+Tayyormisiz?|Готовы?|🏁|Теннис|Ready?|2
+zarba|удар|💥|Теннис|shot|2
+Zoʻr!|Отлично! Круто!|🔥|Теннис|Awesome!|2
+navbat|очередь|🔄|Теннис|turn|2
+Sizning navbatingiz|Ваша очередь|👉|Теннис|Your turn|2
+Yutdim|Я выиграл|🥇|Теннис|I won|2
+Yutqazdim|Я проиграл|😩|Теннис|I lost|2
+gʻalaba|победа|🏆|Теннис|victory|2
+Charchadim|Я устал|😮‍💨|Теннис|I'm tired|2
+Dam olamiz|Сделаем перерыв|☕|Теннис|Let's take a break|2
+Yana bir oʻyin?|Ещё одну игру?|🔁|Теннис|One more game?|2
+ota-ona|родители|👨‍👩‍👦|Люди|parents|2
+aka|старший брат|🧔|Люди|older brother|2
+uka|младший брат|👦|Люди|younger brother|2
+opa|старшая сестра|👩‍🦰|Люди|older sister|2
+singil|младшая сестра|👧|Люди|younger sister|2
+oʻgʻil|сын|🧒|Люди|son|2
+qiz|дочь, девушка|👱‍♀️|Люди|daughter, girl|2
+bola|ребёнок|👶|Люди|child|2
+oila|семья|🏡|Люди|family|2
+xotin|жена|👰|Люди|wife|2
+er|муж|🤵|Люди|husband|2
+u|он, она|🧍|Люди|he / she|2
+ular|они|👥|Люди|they|2
+bormoq|идти, ехать|🚶‍♂️|Глаголы|to go|2
+kelmoq|приходить|🏃|Глаголы|to come|2
+yemoq|есть (кушать)|🍴|Глаголы|to eat|2
+ichmoq|пить|🥤|Глаголы|to drink|2
+uxlamoq|спать|😴|Глаголы|to sleep|2
+gapirmoq|говорить|💬|Глаголы|to speak|2
+bilmoq|знать|🧠|Глаголы|to know|2
+koʻrmoq|видеть|🔭|Глаголы|to see|2
+ishlamoq|работать|💼|Глаголы|to work|2
+kutmoq|ждать|⌛|Глаголы|to wait|2
+olmoq|брать|🤲|Глаголы|to take|2
+bermoq|давать|🎁|Глаголы|to give|2
+yozmoq|писать|✍️|Глаголы|to write|2
+oʻqimoq|читать, учиться|📖|Глаголы|to read, to study|2
+qilmoq|делать|🛠️|Глаголы|to do|2
+ochmoq|открывать|🔓|Глаголы|to open|2
+yopmoq|закрывать|🔒|Глаголы|to close|2
+oʻtirmoq|садиться, сидеть|🪑|Глаголы|to sit|2
+tushmoq|выходить (из машины)|⬇️|Глаголы|to get out|2
+sotib olmoq|покупать|🛒|Глаголы|to buy|2
+sotmoq|продавать|🏬|Глаголы|to sell|2
+Menga yoqadi|Мне нравится|😍|Фразы|I like it|2
+Menga yoqmaydi|Мне не нравится|😒|Фразы|I don't like it|2
+Mumkinmi?|Можно?|🤞|Фразы|May I?|2
+Boʻladi|Хорошо, договорились|👌|Фразы|Deal|2
+Boʻlmaydi|Нельзя, не получится|🚫|Фразы|Not possible|2
+Muammo yoʻq|Без проблем|😎|Фразы|No problem|2
+Hech gap emas|Не за что|🤲🏻|Фразы|You're welcome|2
+Juda yaxshi|Очень хорошо|🌟|Фразы|Very good|2
+Qayerdansiz?|Откуда вы?|🌍|Фразы|Where are you from?|2
+Toshkentda yashayman|Я живу в Ташкенте|🏙️|Фразы|I live in Tashkent|2
+Telefon raqamingiz?|Ваш номер телефона?|📱|Фразы|Your phone number?|2
+Yana bir marta ayting|Скажите ещё раз|🔂|Фразы|Say it again|2
+havo|погода, воздух|🌤️|Погода|weather|2
+yomgʻir|дождь|🌧️|Погода|rain|2
+qor|снег|❄️|Погода|snow|2
+quyosh|солнце|☀️|Погода|sun|2
+shamol|ветер|💨|Погода|wind|2
+oq|белый|⚪|Цвета|white|2
+qora|чёрный|⚫|Цвета|black|2
+qizil|красный|🔴|Цвета|red|2
+koʻk|синий, голубой|🔵|Цвета|blue|2
+yashil|зелёный|🟢|Цвета|green|2
+sariq|жёлтый|🟡|Цвета|yellow|2
+kofe|кофе|☕|Кафе||3
+shakar|сахар|🍬|Кафе|sugar|3
+qoshiq|ложка|🥄|Кафе||3
+vilka|вилка|🍴|Кафе||3
+pichoq|нож|🔪|Кафе||3
+stakan|стакан|🥛|Кафе|glass|3
+piyola|пиала|🍵|Кафе|tea bowl|3
+somsa|самса|🥟|Кафе|samsa pastry|3
+lagʻmon|лагман|🍜|Кафе|lagman noodles|3
+shashlik|шашлык|🍢|Кафе|kebab skewers|3
+salat|салат|🥗|Кафе||3
+ofitsiant|официант|🧑‍🍳|Кафе|waiter|3
+raketka|ракетка|🎾|Теннис|racket|3
+toʻr|сетка|🥅|Теннис|net|3
+murabbiy|тренер|🧑‍🏫|Теннис|coach|3
+krossovka|кроссовки|👟|Теннис|sneakers|3
+hisob|счёт (в игре)|🔢|Теннис|score|3
+nol|ноль|0|Числа|zero|3
+teng|поровну, ровно|🟰|Теннис|equal / tied|3
+set|сет|🎾|Теннис|set (in tennis)|3
+aut|аут|🚫|Теннис|out (ball)|3
+xursand|радостный, довольный|😄|Чувства|glad|3
+xafa|расстроенный, обиженный|😞|Чувства|upset|3
+baxtli|счастливый|🥰|Чувства|happy|3
+choychaqa|чаевые|💵|Кафе|tip|3
+Koʻk choy bering|Дайте зелёного чаю|🍵|Кафе|Green tea, please|3
+Joy bormi?|Есть свободные места?|🪑|Кафе|Is there a free table?|3
+Qornim och|Я голоден|🍽️|Чувства|I'm hungry|3
+Chanqadim|Я хочу пить|🥤|Чувства|I'm thirsty|3
+Zerikdim|Мне скучно|🥱|Чувства|I'm bored|3
+Qoʻrqdim|Я испугался|😨|Чувства|I got scared|3
+Kayfiyatim yaxshi|У меня хорошее настроение|😊|Чувства|I'm in a good mood|3
+Xavotir olmang|Не волнуйтесь|🤗|Чувства|Don't worry|3
+Sogʻindim|Я соскучился|🥺|Чувства|I missed you|3
+Jahlim chiqdi|Я разозлился|😠|Чувства|I got angry|3
+Bordim|Я пошёл / сходил|🚶|Прошедшее|I went|3
+Keldim|Я пришёл|🚪|Прошедшее|I came|3
+Yedim|Я поел|🍛|Прошедшее|I ate|3
+Ichdim|Я выпил|🥤|Прошедшее|I drank|3
+Koʻrdim|Я увидел|👀|Прошедшее|I saw|3
+Oldim|Я купил / взял|🛍️|Прошедшее|I bought / took|3
+Aytdim|Я сказал|🗣️|Прошедшее|I said|3
+Unutdim|Я забыл|🤦|Прошедшее|I forgot|3
+Kechikdim|Я опоздал|⏰|Прошедшее|I'm late|3
+Yoʻqotdim|Я потерял|🔍|Прошедшее|I lost it|3
+Qoʻngʻiroq qildim|Я позвонил|📞|Прошедшее|I called|3
+Yaxshi zarba!|Хороший удар!|👏|Теннис|Nice shot!|3
+Isinib olaylik|Давайте разомнёмся|🤸|Теннис|Let's warm up|3
+Soat nechada oʻynaymiz?|Во сколько играем?|🕒|Теннис|What time do we play?|3
+Kortni band qildim|Я забронировал корт|📅|Теннис|I booked the court|3
+telefon|телефон|📱|Телефон||3
+Alo?|Алло?|📞|Телефон|Hello? (on the phone)|3
+Kim bu?|Кто это?|❓|Телефон|Who is this?|3
+raqam|номер|🔢|Телефон|number|3
+Keyinroq qoʻngʻiroq qiling|Перезвоните позже|⏳|Телефон|Call back later|3
+Eshitilmayapti|Плохо слышно|🔇|Телефон|I can't hear you|3
+Xabar yozing|Напишите сообщение|💬|Телефон|Text me|3
+Sizga qoʻngʻiroq qilaman|Я вам позвоню|📲|Телефон|I'll call you|3
+Band edim|Я был занят|🙅|Телефон|I was busy|3
+zaryadka|зарядка|🔌|Телефон|charger|3
+kvartira|квартира|🏢|Дом|apartment|3
+ijara|аренда|📝|Дом|rent|3
+Ijaraga beriladi|Сдаётся|🪧|Дом|For rent|3
+Oyiga qancha?|Сколько в месяц?|📆|Дом|How much per month?|3
+uy egasi|хозяин квартиры|👴|Дом|landlord|3
+qoʻshni|сосед|👋|Дом|neighbour|3
+qavat|этаж|🏬|Дом|floor (storey)|3
+xona|комната|🛋️|Дом|room|3
+oshxona|кухня|🍳|Дом|kitchen|3
+hammom|ванная|🛁|Дом|bathroom|3
+kalit|ключ|🔑|Дом||3
+eshik|дверь|🚪|Дом||3
+deraza|окно|🪟|Дом|window|3
+Issiq suv yoʻq|Нет горячей воды|🚿|Дом|There's no hot water|3
+Buzilib qoldi|Сломалось|💥|Дом|It broke|3
+usta|мастер|🧰|Дом|repairman|3
+Tuzatib bering|Почините, пожалуйста|🔧|Дом|Please fix it|3
+Suv oqyapti|Течёт вода|💦|Дом|Water is leaking|3
+konditsioner|кондиционер|❄️|Дом|air conditioner|3
+muzlatgich|холодильник|🧊|Дом|fridge|3
+kir yuvish mashinasi|стиральная машина|🧺|Дом|washing machine|3
+dazmol|утюг|👕|Дом|iron|3
+bankomat|банкомат|🏧|Банк|ATM|3
+karta|банковская карта|💳|Банк|bank card|3
+pasport|паспорт|🛂|Банк|passport|3
+soʻm|сум|💴|Банк|soum (money)|3
+dollar|доллар|💵|Банк|dollar|3
+kurs|курс валюты|📈|Банк|exchange rate|3
+Valyuta ayirboshlash|Обмен валюты|💱|Банк|Currency exchange|3
+Pul yechmoqchiman|Хочу снять деньги|💸|Банк|I want to withdraw money|3
+Qanday borsam boʻladi?|Как мне добраться?|🗺️|Дорога|How do I get there?|3
+Yoʻlni koʻrsating|Покажите дорогу|👉|Дорога|Show me the way|3
+chorraha|перекрёсток|✖️|Дорога|crossroads|3
+svetofor|светофор|🚦|Дорога|traffic light|3
+koʻprik|мост|🌉|Дорога|bridge|3
+burilish|поворот|↪️|Дорога|turn|3
+yonida|рядом с|↔️|Дорога|next to|3
+roʻparasida|напротив|🔄|Дорога|opposite|3
+orqasida|позади, за|🔙|Дорога|behind|3
+Adashib qoldim|Я заблудился|😵|Дорога|I'm lost|3
 `;
 // Generated illustrations (from 5×5 sheets): uz word → file in gen/
 window.SOZ_GEN = {
