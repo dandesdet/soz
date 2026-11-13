@@ -256,6 +256,7 @@ function buildWords(lang) {
   // In the language they were added in they are "mine" — mixed into the stream right away.
   const seen = new Set(base.map(w => w.t.toLowerCase())), mine = [];
   for (const u of myWords()) {
+    if (!u.img) continue;                                        // no picture yet → wait, the word appears once its illustration is ready
     const t = u[lang]; if (!t || seen.has(t.toLowerCase())) continue; seen.add(t.toLowerCase());
     const cap = lang === 'en' ? u.ru : (u.en || u.ru);
     mine.push({ id: 'u' + u.id, uz: u.uz || '', ru: u.ru, img: u.emoji || '✨', gen: u.img, t, cap, level: u.level || 2, mine: u.lang === lang });
@@ -624,7 +625,14 @@ function checkInbox(rows, mw) {
   clearTimeout(pollTimer);
   if (rows.some(r => r.status === 'new')) pollTimer = setTimeout(syncAll, 2 * MIN);   // still processing → look again soon
   const ack = Number(ls.get('soz-inbox-ack')) || 0;
-  const fresh = rows.filter(r => r.id > ack && r.status !== 'new' && (ack || Date.now() - Date.parse(r.processed_at || r.created_at) < 3 * DAY));
+  let fresh = rows.filter(r => r.id > ack && r.status !== 'new' && (ack || Date.now() - Date.parse(r.processed_at || r.created_at) < 3 * DAY));
+  // Wait until every word from a request has its picture: words are shown only with real illustrations.
+  const later = r => rows.filter(x => x.id > r.id && x.lang === r.lang).map(x => Date.parse(x.created_at) - 1000);
+  const firstWaiting = fresh.find(r => {
+    const t0 = Date.parse(r.created_at) - 1000, t1 = Math.min(Infinity, ...later(r));
+    return mw.some(w => w.lang === r.lang && !w.img && Date.parse(w.added_at) >= t0 && Date.parse(w.added_at) < t1);
+  });
+  if (firstWaiting) fresh = fresh.filter(r => r.id < firstWaiting.id);
   if (!fresh.length) return;
   noticeIds = fresh.map(r => r.id);
   const lang = fresh[fresh.length - 1].lang, from = Math.min(...fresh.filter(r => r.lang === lang).map(r => Date.parse(r.created_at))) - 1000;
@@ -632,10 +640,9 @@ function checkInbox(rows, mw) {
   const all = buildWords(lang), got = all.filter(w => newIds.has(w.id)), n = got.length, after = all.length;
   const el = $('notice');
   if (n) {
-    const noPic = got.filter(w => !w.gen).length;
     $('noticeTitle').textContent = `Готово: +${n} ${plural(n, 'слово', 'слова', 'слов')}`;
     $('noticeText').textContent = `${LANGS[lang].name}: было ${after - n}, стало ${after}. ` +
-      (noPic ? `Картинки для ${noPic} ${plural(noPic, 'слова', 'слов', 'слов')} ещё рисуются — пока с эмодзи. Можно учить!` : 'Картинки готовы — можно учить!');
+      'Картинки готовы — можно учить!';
     BOOST[lang] = got.filter(w => !loadState(LANGS[lang].key).st[w.id]).slice(-3).reverse().map(w => w.id);
     if (!$('app').hidden && LANG === lang && mode === 'learn') { queue = queue.slice(0, 1); render(); }
   } else if (fresh.some(r => r.status === 'error')) {
