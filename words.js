@@ -336,6 +336,56 @@ yonida|рядом с|↔️|Дорога|next to|3
 roʻparasida|напротив|🔄|Дорога|opposite|3
 orqasida|позади, за|🔙|Дорога|behind|3
 Adashib qoldim|Я заблудился|😵|Дорога|I'm lost|3
+kiyim|одежда|👕|Одежда|clothes|2
+koʻylak|рубашка, платье|👔|Одежда|shirt / dress|2
+shim|брюки|👖|Одежда|trousers|2
+kurtka|куртка|🧥|Одежда||2
+poyabzal|обувь|👞|Одежда|shoes|2
+doʻppi|тюбетейка|🧢|Одежда|skullcap (doppi)|2
+paypoq|носки|🧦|Одежда|socks|2
+sumka|сумка|👜|Одежда||2
+oʻlcham|размер|📏|Одежда|size|2
+Kiyib koʻrsam boʻladimi?|Можно примерить?|🪞|Одежда|Can I try it on?|2
+Kattaroq bormi?|Есть побольше?|➕|Одежда|Do you have a bigger one?|2
+Kichikroq bormi?|Есть поменьше?|➖|Одежда|Do you have a smaller one?|2
+sartarosh|парикмахер (мужской)|💈|Парикмахерская|barber|2
+soch|волосы|💇|Парикмахерская|hair|2
+soqol|борода|🧔|Парикмахерская|beard|2
+Soch oldirmoqchiman|Хочу подстричься|💇‍♂️|Парикмахерская|I want a haircut|2
+Qisqaroq qiling|Покороче, пожалуйста|✂️|Парикмахерская|Shorter, please|2
+Yordam bera olasizmi?|Можете помочь?|🙋|Просьбы|Can you help me?|3
+Yozib bering|Напишите, пожалуйста|📝|Просьбы|Please write it down|3
+Bir oz kutib turing|Подождите немного|⏳|Просьбы|Wait a little|3
+Eshikni oching|Откройте дверь|🚪|Просьбы|Open the door|3
+Rasmga tushirib bera olasizmi?|Можете меня сфотографировать?|📸|Просьбы|Can you take my photo?|3
+Ovozni pasaytiring|Сделайте потише|🔉|Просьбы|Turn it down, please|3
+Konditsionerni yoqing|Включите кондиционер|❄️|Просьбы|Turn on the AC|3
+Oynani yoping|Закройте окно|🪟|Просьбы|Close the window|3
+Menga yordam kerak|Мне нужна помощь|🆘|Просьбы|I need help|3
+Ertaga boraman|Завтра пойду (поеду)|📅|Будущее|I'll go tomorrow|3
+Keyin kelaman|Приду позже|🔜|Будущее|I'll come later|3
+Kutaman|Буду ждать|🕰️|Будущее|I'll wait|3
+Oʻylab koʻraman|Подумаю|🤔|Будущее|I'll think about it|3
+Albatta kelaman|Обязательно приду|🤝|Будущее|I'll definitely come|3
+dam olish kuni|выходной день|🛋️|Время|day off|3
+kelasi hafta|на следующей неделе|🗓️|Время|next week|3
+oʻtgan hafta|на прошлой неделе|⏪|Время|last week|3
+Nima ish qilasiz?|Кем вы работаете?|💼|Работа|What do you do?|4
+ishxona|работа (место), офис|🏢|Работа|workplace|4
+hamkasb|коллега|🧑‍💼|Работа|colleague|4
+Boʻsh vaqtingizda nima qilasiz?|Что делаете в свободное время?|🎨|Хобби|What do you do in your free time?|4
+sevimli mashgʻulot|хобби, любимое занятие|🎸|Хобби|hobby|4
+Tennis oʻynashni yaxshi koʻraman|Люблю играть в теннис|🎾|Хобби|I love playing tennis|4
+Qachondan beri oʻynaysiz?|Как давно вы играете?|⏱️|Теннис|How long have you been playing?|4
+Qachondan beri Toshkentdasiz?|Давно вы в Ташкенте?|🏙️|Знакомство|How long have you been in Tashkent?|4
+toʻy|свадьба (торжество)|💒|Праздники|wedding|4
+tugʻilgan kun|день рождения|🎂|Праздники|birthday|4
+Tabriklayman!|Поздравляю!|🎉|Праздники|Congratulations!|4
+bayram|праздник|🎊|Праздники|holiday, celebration|4
+Navroʻz|Навруз|🌷|Праздники|Navruz (spring new year)|4
+sovgʻa|подарок|🎁|Праздники|gift|4
+mehmon|гость|🧕|Праздники|guest|4
+Mehmonga keling|Приходите в гости|🏡|Праздники|Come visit us|4
 `;
 // Generated illustrations (from 5×5 sheets): uz word → file in gen/
 window.SOZ_GEN = {
@@ -657,7 +707,57 @@ window.SOZ_GEN = {
  "yonida": "g98c8e42c.webp",
  "roʻparasida": "ga68964d6.webp",
  "orqasida": "gbfe1f4f7.webp",
- "Adashib qoldim": "g22e28d22.webp"
+ "Adashib qoldim": "g22e28d22.webp",
+ "kiyim": "g0586d9ad.webp",
+ "koʻylak": "g68fae10c.webp",
+ "shim": "geee66925.webp",
+ "kurtka": "g0f977396.webp",
+ "poyabzal": "g10f328af.webp",
+ "doʻppi": "ge270b1a0.webp",
+ "paypoq": "ge94d1142.webp",
+ "sumka": "g6ca6932d.webp",
+ "oʻlcham": "g27a16727.webp",
+ "Kiyib koʻrsam boʻladimi?": "gc957f67e.webp",
+ "Kattaroq bormi?": "g9e0b6f7c.webp",
+ "Kichikroq bormi?": "g6c609fb6.webp",
+ "sartarosh": "g681cf2ca.webp",
+ "soch": "g1456775f.webp",
+ "soqol": "gdf59d766.webp",
+ "Soch oldirmoqchiman": "gd2528eb1.webp",
+ "Qisqaroq qiling": "g15ae7e96.webp",
+ "Yordam bera olasizmi?": "g3c88ac70.webp",
+ "Yozib bering": "g08108695.webp",
+ "Bir oz kutib turing": "ga1a68253.webp",
+ "Eshikni oching": "gd2a9ed96.webp",
+ "Rasmga tushirib bera olasizmi?": "gc017c4f0.webp",
+ "Ovozni pasaytiring": "ga13aeaff.webp",
+ "Konditsionerni yoqing": "g55be928b.webp",
+ "Oynani yoping": "g2993952c.webp",
+ "Menga yordam kerak": "g2dc25459.webp",
+ "Ertaga boraman": "ga9b7045c.webp",
+ "Keyin kelaman": "g01e490c7.webp",
+ "Kutaman": "gcf133b5d.webp",
+ "Oʻylab koʻraman": "g62de2ce7.webp",
+ "Albatta kelaman": "g71a1ffda.webp",
+ "dam olish kuni": "ge93acbb7.webp",
+ "kelasi hafta": "g639014d7.webp",
+ "oʻtgan hafta": "g12579e0f.webp",
+ "Nima ish qilasiz?": "gd5e142c9.webp",
+ "ishxona": "gb81c1fb4.webp",
+ "hamkasb": "g03aa4dd0.webp",
+ "Boʻsh vaqtingizda nima qilasiz?": "g7856e620.webp",
+ "sevimli mashgʻulot": "g48d76a5a.webp",
+ "Tennis oʻynashni yaxshi koʻraman": "g6b786c1d.webp",
+ "Qachondan beri oʻynaysiz?": "g50866d66.webp",
+ "Qachondan beri Toshkentdasiz?": "g36763d2c.webp",
+ "toʻy": "gc7b9c30e.webp",
+ "tugʻilgan kun": "g82788eb5.webp",
+ "Tabriklayman!": "gc802152b.webp",
+ "bayram": "g8f8f0281.webp",
+ "Navroʻz": "g278816f4.webp",
+ "sovgʻa": "ga15945bb.webp",
+ "mehmon": "g31bc4026.webp",
+ "Mehmonga keling": "gd8617077.webp"
 };
 // Same words in other languages, keyed by the uz word (same pictures, same order).
 window.SOZ_TR = {
@@ -996,7 +1096,57 @@ window.SOZ_TR = {
   "yonida": "al lado de",
   "roʻparasida": "enfrente de",
   "orqasida": "detrás de",
-  "Adashib qoldim": "Me he perdido"
+  "Adashib qoldim": "Me he perdido",
+  "kiyim": "la ropa",
+  "koʻylak": "la camisa",
+  "shim": "los pantalones",
+  "kurtka": "la chaqueta",
+  "poyabzal": "los zapatos",
+  "doʻppi": "el gorro uzbeko (doʻppi)",
+  "paypoq": "los calcetines",
+  "sumka": "el bolso",
+  "oʻlcham": "la talla",
+  "Kiyib koʻrsam boʻladimi?": "¿Me lo puedo probar?",
+  "Kattaroq bormi?": "¿Hay una talla más grande?",
+  "Kichikroq bormi?": "¿Hay una talla más pequeña?",
+  "sartarosh": "el barbero",
+  "soch": "el pelo",
+  "soqol": "la barba",
+  "Soch oldirmoqchiman": "Quiero cortarme el pelo",
+  "Qisqaroq qiling": "Más corto, por favor",
+  "Yordam bera olasizmi?": "¿Me puede ayudar?",
+  "Yozib bering": "Escríbamelo, por favor",
+  "Bir oz kutib turing": "Espere un poco",
+  "Eshikni oching": "Abra la puerta",
+  "Rasmga tushirib bera olasizmi?": "¿Me puede hacer una foto?",
+  "Ovozni pasaytiring": "Baje el volumen, por favor",
+  "Konditsionerni yoqing": "Encienda el aire acondicionado",
+  "Oynani yoping": "Cierre la ventana",
+  "Menga yordam kerak": "Necesito ayuda",
+  "Ertaga boraman": "Iré mañana",
+  "Keyin kelaman": "Vengo luego",
+  "Kutaman": "Le espero",
+  "Oʻylab koʻraman": "Me lo pensaré",
+  "Albatta kelaman": "Vendré seguro",
+  "dam olish kuni": "el día libre",
+  "kelasi hafta": "la semana que viene",
+  "oʻtgan hafta": "la semana pasada",
+  "Nima ish qilasiz?": "¿A qué se dedica?",
+  "ishxona": "el trabajo (la oficina)",
+  "hamkasb": "el compañero de trabajo",
+  "Boʻsh vaqtingizda nima qilasiz?": "¿Qué hace en su tiempo libre?",
+  "sevimli mashgʻulot": "el pasatiempo",
+  "Tennis oʻynashni yaxshi koʻraman": "Me encanta jugar al tenis",
+  "Qachondan beri oʻynaysiz?": "¿Desde cuándo juega?",
+  "Qachondan beri Toshkentdasiz?": "¿Desde cuándo está en Taskent?",
+  "toʻy": "la boda",
+  "tugʻilgan kun": "el cumpleaños",
+  "Tabriklayman!": "¡Felicidades!",
+  "bayram": "la fiesta",
+  "Navroʻz": "el Navruz (Año Nuevo de primavera)",
+  "sovgʻa": "el regalo",
+  "mehmon": "el invitado",
+  "Mehmonga keling": "Venga a visitarnos"
  },
  "en": {
   "Salom": "Hi!",
@@ -1333,6 +1483,56 @@ window.SOZ_TR = {
   "yonida": "next to",
   "roʻparasida": "opposite",
   "orqasida": "behind",
-  "Adashib qoldim": "I'm lost"
+  "Adashib qoldim": "I'm lost",
+  "kiyim": "clothes",
+  "koʻylak": "shirt",
+  "shim": "trousers",
+  "kurtka": "jacket",
+  "poyabzal": "shoes",
+  "doʻppi": "Uzbek skullcap (doppi)",
+  "paypoq": "socks",
+  "sumka": "bag",
+  "oʻlcham": "size",
+  "Kiyib koʻrsam boʻladimi?": "Can I try it on?",
+  "Kattaroq bormi?": "Do you have a bigger one?",
+  "Kichikroq bormi?": "Do you have a smaller one?",
+  "sartarosh": "barber",
+  "soch": "hair",
+  "soqol": "beard",
+  "Soch oldirmoqchiman": "I'd like a haircut",
+  "Qisqaroq qiling": "Shorter, please",
+  "Yordam bera olasizmi?": "Could you help me?",
+  "Yozib bering": "Please write it down",
+  "Bir oz kutib turing": "Wait a moment, please",
+  "Eshikni oching": "Open the door, please",
+  "Rasmga tushirib bera olasizmi?": "Could you take a photo of me?",
+  "Ovozni pasaytiring": "Turn it down, please",
+  "Konditsionerni yoqing": "Turn on the AC, please",
+  "Oynani yoping": "Close the window, please",
+  "Menga yordam kerak": "I need help",
+  "Ertaga boraman": "I'll go tomorrow",
+  "Keyin kelaman": "I'll come later",
+  "Kutaman": "I'll wait",
+  "Oʻylab koʻraman": "I'll think about it",
+  "Albatta kelaman": "I'll definitely come",
+  "dam olish kuni": "day off",
+  "kelasi hafta": "next week",
+  "oʻtgan hafta": "last week",
+  "Nima ish qilasiz?": "What do you do for a living?",
+  "ishxona": "workplace",
+  "hamkasb": "colleague",
+  "Boʻsh vaqtingizda nima qilasiz?": "What do you do in your free time?",
+  "sevimli mashgʻulot": "hobby",
+  "Tennis oʻynashni yaxshi koʻraman": "I love playing tennis",
+  "Qachondan beri oʻynaysiz?": "How long have you been playing?",
+  "Qachondan beri Toshkentdasiz?": "How long have you been in Tashkent?",
+  "toʻy": "wedding",
+  "tugʻilgan kun": "birthday",
+  "Tabriklayman!": "Congratulations!",
+  "bayram": "holiday",
+  "Navroʻz": "Navruz (spring New Year)",
+  "sovgʻa": "gift",
+  "mehmon": "guest",
+  "Mehmonga keling": "Come and visit us"
  }
 };
