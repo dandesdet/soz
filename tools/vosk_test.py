@@ -55,4 +55,30 @@ def testfree(thr):
         other += sim(runfree(wav(aud[random.choice([x for x in words if x!=w])]))) >= thr
     print(f'FREE similarity>={thr}: correct accepted {acc}/80 | first 60% only, wrongly accepted {trunc}/{tn} | other word wrongly accepted {other}/80', flush=True)
     if thr==1.0: print(' misses', misses[:12]); print(' truncated heard as', [(e, runfree(wav(aud[w],0.6))) for w in sample[:12] for e in [norm(w)]])
-for thr in (1.0, 0.9, 0.8): testfree(thr)
+
+import asyncio, edge_tts
+V='aeiou'
+def mutate(e):
+    w = e.split(' '); x = w[-1]
+    for i in range(len(x)-1, 0, -1):          # change the last vowel of the last word
+        if x[i] in V: x = x[:i] + ('a' if x[i]!='a' else 'o') + x[i+1:]; break
+    else: x = x + 'a'
+    w[-1] = x; return ' '.join(w)
+bad = [(norm(w), mutate(norm(w))) for w in sample if len(norm(w)) >= 3]
+async def synth():
+    for e, b in bad:
+        f = '/tmp/bad_' + re.sub(r'\W','_',b) + '.mp3'
+        if not os.path.exists(f): await edge_tts.Communicate(b.replace("'", "ʻ"), 'uz-UZ-MadinaNeural', rate='-10%').save(f)
+asyncio.run(synth())
+def badwav(b):
+    f = '/tmp/bad_' + re.sub(r'\W','_',b); subprocess.run(['ffmpeg','-loglevel','error','-y','-i',f+'.mp3','-ar','16000','-ac','1',f+'.wav'],check=True); return f+'.wav'
+res = {k:0 for k in ['free exact','free sim>=0.9','one-word grammar final','one-word grammar partial (NOW)','deck grammar final']}
+ex=[]
+for e,b in bad:
+    p = badwav(b); t = runfree(p)
+    res['free exact'] += t==e; res['free sim>=0.9'] += SequenceMatcher(None,t,e).ratio()>=0.9
+    t2,c,seen = run(p,[e,'[unk]']); res['one-word grammar final'] += t2==e; res['one-word grammar partial (NOW)'] += e in seen
+    t3,c,_ = run(p, deck+['[unk]']); res['deck grammar final'] += t3==e
+    ex.append((e,b,t))
+print('WRONG ENDING wrongly accepted, out of', len(bad), res)
+print('examples (word, said, heard free):', ex[:20])
