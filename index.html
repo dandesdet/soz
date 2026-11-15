@@ -240,6 +240,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </div></div>
 
 <script src="words.js"></script>
+<script src="audio.js"></script>
 <script>
 const RAW = window.SOZ_WORDS || '';
 
@@ -434,6 +435,15 @@ function paintSync() {
 let voice = null;
 function findVoice() { try { voice = speechSynthesis.getVoices().find(v => LANGS[LANG].voice.test(v.lang)) || null; } catch (e) { voice = null; } }
 if ('speechSynthesis' in window) { speechSynthesis.onvoiceschanged = () => { const had = !!voice; findVoice(); if (!had && voice && !$('app').hidden) render(); }; }
+const AUD = window.SOZ_AUDIO || {};   // pre-recorded audio (Uzbek: no device has an Uzbek voice) — made by tools/tts.py on GitHub
+const audioOf = w => (AUD[LANG] || {})[w.uz || w.t] || '';
+const canSay = w => !!(voice || audioOf(w));
+let player = null;
+function sayWord(w) {
+  const f = audioOf(w);
+  if (f && !voice) { if (player) player.pause(); player = new Audio('audio/' + f); player.play().catch(() => {}); return; }
+  speak(w.t);
+}
 function speak(t) { const u = new SpeechSynthesisUtterance(t.replace('…', '').replace(/\s*\(.*?\)/g, '')); u.voice = voice; u.lang = voice.lang; speechSynthesis.cancel(); speechSynthesis.speak(u); }
 
 /* ---------- render ---------- */
@@ -444,7 +454,7 @@ function cardHTML(w, next) {
     <div class="flip">
       <div class="face">${pic}${w.cap ? `<div class="en">${w.cap}</div>` : ''}</div>
       ${next ? '' : `<div class="face rear">${pic}<div class="uz">${w.t}</div><div class="ru">${w.ru}</div>
-        ${voice ? '<button class="say" type="button" data-say>🔊 Послушать</button>' : ''}
+        ${canSay(w) ? '<button class="say" type="button" data-say>🔊 Послушать</button>' : ''}
         ${reported(w.id) ? '' : '<button class="bad" type="button" data-bad>Плохая картинка</button>'}</div>`}
     </div>
     <span class="stamp yes">Знаю</span><span class="stamp no">Не знаю</span>
@@ -522,7 +532,7 @@ function bind(card) {
   card.addEventListener('pointerup', up);
   card.addEventListener('pointercancel', up);
   const say = card.querySelector('[data-say]');
-  if (say) say.addEventListener('click', e => { e.stopPropagation(); speak(BY[queue[0]].t); });
+  if (say) say.addEventListener('click', e => { e.stopPropagation(); sayWord(BY[queue[0]]); });
   const bad = card.querySelector('[data-bad]');
   if (bad) bad.addEventListener('click', e => { e.stopPropagation(); reportPic(BY[queue[0]]); bad.remove(); });
 }
@@ -559,7 +569,7 @@ function onVoice(cmd) {
   else if (cmd === 'flip') c.classList.toggle('open');
   else if (cmd === 'no') {                                              // show the answer first, then send it left
     voiceBusy = true; c.classList.add('open');
-    setTimeout(() => { voiceBusy = false; if ($('cur') === c) fling(c, false); }, 1500);
+    setTimeout(() => { voiceBusy = false; if ($('cur') === c) fling(c, false); }, 1000);
   }
 }
 function startRec() {
@@ -571,8 +581,8 @@ function startRec() {
     for (let i = e.resultIndex; i < e.results.length; i++) {
       if (i <= done) continue;
       const cmd = voiceCmd(e.results[i][0].transcript);
-      // act on "знаю" only when final, so "не знаю" is not mistaken for it halfway through
-      if (cmd && (cmd !== 'yes' || e.results[i].isFinal)) { done = i; onVoice(cmd); try { r.abort(); } catch (x) {} return; }   // restart → fresh transcript for the next card
+      // act on interim results: «не» is heard before «знаю», so an interim «знаю» without «не» is safe, so "не знаю" is not mistaken for it halfway through
+      if (cmd) { done = i; onVoice(cmd); try { r.abort(); } catch (x) {} return; }   // restart → fresh transcript for the next card
     }
   };
   rec.onerror = e => {
