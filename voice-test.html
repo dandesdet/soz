@@ -67,6 +67,7 @@ const WORDS = window.SOZ_WORDS.trim().split('\n').map(l => l.split('|')).filter(
 // spoken form for the model: lower case, one kind of apostrophe, no punctuation
 const norm = s => s.toLowerCase().replace(/[ʻʼ’`‘]/g, "'").replace(/…/g, '').replace(/\(.*?\)/g, '').replace(/[^a-z' \-]/g, ' ').replace(/\s+/g, ' ').trim();
 
+const same = (a, b) => a.replace(/[\s\-']/g, '') === b.replace(/[\s\-']/g, '');   // «qayer-dansiz» = «qayerdansiz»
 let model, ctx, rec, word, expected, tStart, tLast, done = false, ok = 0, tried = 0, lastIdx = -1;
 
 function pick() { let i; do { i = Math.floor(Math.random() * WORDS.length); } while (i === lastIdx); lastIdx = i; return WORDS[i]; }
@@ -80,26 +81,25 @@ function show() {
 }
 function newRecognizer() {
   if (rec) { try { rec.remove(); } catch (e) {} }
-  rec = new model.KaldiRecognizer(ctx.sampleRate, JSON.stringify([expected, '[unk]']));
+  rec = new model.KaldiRecognizer(ctx.sampleRate);   // no word list: a hint makes the model force everything into the expected word
   rec.on('partialresult', m => {
     const p = (m.result.partial || '').trim(); if (!p || done) return;
     if (!tStart) tStart = performance.now(); tLast = performance.now();
-    $('heard').textContent = 'Слышу: ' + p.replace(/\[unk\]/g, '…');
-    if (p === expected) verdict(true);                          // accept as soon as it is heard — no waiting for silence
+    $('heard').textContent = 'Слышу: ' + p;
   });
   rec.on('result', m => {
     const t = (m.result.text || '').trim(); if (!t || done) return;
-    verdict(t === expected, t);
+    verdict(same(t, expected), t);   // judged only on the finished word, after a short pause
   });
   $('status').textContent = 'Говори';
 }
 function verdict(good, heard) {
   done = true; tried++; if (good) ok++; score();
-  const after = tStart ? Math.round(performance.now() - tStart) : 0;   // from the first sound of the word to the verdict
+  const after = tLast ? Math.round(performance.now() - tLast) : 0;   // wait after the last sound of the word
   $('card').className = 'card ' + (good ? 'ok' : 'no');
   $('verdict').className = 'verdict ' + (good ? 'ok' : 'no');
-  $('verdict').textContent = good ? `✓ Засчитано · ${(after / 1000).toFixed(1)} с от начала слова` : '✗ Не похоже';
-  if (!good && heard) $('heard').textContent = 'Услышал: ' + heard.replace(/\[unk\]/g, 'непонятное');
+  $('verdict').textContent = good ? `✓ Засчитано · ответ через ${(after / 1000).toFixed(1)} с` : '✗ Не похоже';
+  if (!good && heard) $('heard').textContent = 'Услышал: ' + heard;
   $('uz').hidden = false;
   if (good) setTimeout(() => { if (done) show(); }, 900);
   else setTimeout(() => { if (done && $('verdict').textContent.startsWith('✗')) { done = false; $('verdict').textContent = 'Попробуй ещё раз'; $('verdict').className = 'verdict'; $('card').className = 'card'; newRecognizer(); } }, 1600);
