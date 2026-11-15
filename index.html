@@ -536,7 +536,16 @@ function reportPic(w) {
 }
 /* ---------- voice: «знаю» / «не знаю» / «как переводится» ---------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let rec = null, micOn = false, voiceBusy = false;
+let rec = null, micOn = false, voiceBusy = false, voiceOk = false;
+const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const HOME_APP = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+// iOS home-screen apps expose webkitSpeechRecognition but it often never starts (WebKit bug 225298).
+// If it fails there once, the mic is hidden for the home-screen app instead of staying a dead button.
+function voiceDead() {
+  setMic(false); $('mic').hidden = true;
+  if (HOME_APP) { ls.set('soz-voice-dead', '1'); toast('Голос здесь не работает — открой Soʻz в Safari, там он есть.'); }
+  else toast('Голос не запустился — проверь, что в настройках включена диктовка.');
+}
 function voiceCmd(text) {
   const t = text.toLowerCase().replace(/ё/g, 'е');
   if (/не\s*зна/.test(t)) return 'no';
@@ -554,7 +563,9 @@ function onVoice(cmd) {
   }
 }
 function startRec() {
-  const r = rec = new SR(); rec.lang = 'ru-RU'; rec.continuous = true; rec.interimResults = true;
+  const r = rec = new SR(); rec.lang = 'ru-RU'; rec.continuous = !IOS; rec.interimResults = true;   // iOS: continuous mode is buggy → short sessions, restarted on end
+  let alive = false; r.onstart = r.onaudiostart = () => { alive = true; voiceOk = true; };
+  if (!voiceOk) setTimeout(() => { if (rec === r && micOn && !alive) voiceDead(); }, 4000);
   let done = -1;                                                       // index of the last result already acted on
   rec.onresult = e => {
     for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -564,7 +575,10 @@ function startRec() {
       if (cmd && (cmd !== 'yes' || e.results[i].isFinal)) { done = i; onVoice(cmd); try { r.abort(); } catch (x) {} return; }   // restart → fresh transcript for the next card
     }
   };
-  rec.onerror = e => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { setMic(false); toast('Нет доступа к микрофону — разреши его в настройках браузера.'); } };
+  rec.onerror = e => {
+    if (e.error === 'service-not-allowed' && (HOME_APP || !voiceOk)) voiceDead();
+    else if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { setMic(false); toast('Нет доступа к микрофону — разреши его в настройках браузера.'); }
+  };
   r.onend = () => { if (micOn && rec === r) try { startRec(); } catch (e) { setMic(false); } };
   try { rec.start(); } catch (e) {}
 }
@@ -573,7 +587,7 @@ function setMic(on) {
   if (on) { startRec(); toast('Говори: «знаю», «не знаю» или «как переводится»'); }
   else if (rec) { const r = rec; rec = null; r.onend = null; try { r.abort(); } catch (e) {} }
 }
-if (SR) { $('mic').hidden = false; $('mic').onclick = () => setMic(!micOn); }
+if (SR && !(HOME_APP && ls.get('soz-voice-dead'))) { $('mic').hidden = false; $('mic').onclick = () => setMic(!micOn); }
 let flying = false;
 function fling(card, know) {
   if (flying) return; flying = true;
