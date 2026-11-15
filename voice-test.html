@@ -94,10 +94,10 @@ function newRecognizer() {
 }
 function verdict(good, heard) {
   done = true; tried++; if (good) ok++; score();
-  const after = tLast ? Math.round(performance.now() - tLast) : 0;
+  const after = tStart ? Math.round(performance.now() - tStart) : 0;   // from the first sound of the word to the verdict
   $('card').className = 'card ' + (good ? 'ok' : 'no');
   $('verdict').className = 'verdict ' + (good ? 'ok' : 'no');
-  $('verdict').textContent = good ? `✓ Засчитано · через ${(after / 1000).toFixed(1)} с` : '✗ Не похоже';
+  $('verdict').textContent = good ? `✓ Засчитано · ${(after / 1000).toFixed(1)} с от начала слова` : '✗ Не похоже';
   if (!good && heard) $('heard').textContent = 'Услышал: ' + heard.replace(/\[unk\]/g, 'непонятное');
   $('uz').hidden = false;
   if (good) setTimeout(() => { if (done) show(); }, 900);
