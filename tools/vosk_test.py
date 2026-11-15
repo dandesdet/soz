@@ -34,6 +34,25 @@ def test(name, g, thr=0, use_partial=False):
         if len(e) >= 5: tn += 1; trunc += ok(wav(aud[w],0.6))
         other += ok(wav(aud[random.choice([x for x in words if x!=w])]))
     print(f'{name}: correct accepted {acc}/80 | first 60% only, wrongly accepted {trunc}/{tn} | other word wrongly accepted {other}/80', flush=True)
-test('NOW (one-word grammar, partial)', lambda e:[e,'[unk]'], use_partial=True)
-test('one-word grammar, final', lambda e:[e,'[unk]'])
-for thr in (0, 0.7, 0.85, 0.95): test(f'deck grammar, final, conf>={thr}', lambda e: deck+['[unk]'], thr)
+
+from difflib import SequenceMatcher
+def runfree(path):
+    r = KaldiRecognizer(m, 16000); wf = wave.open(path,'rb')
+    while True:
+        d = wf.readframes(2000)
+        if not d: break
+        r.AcceptWaveform(d)
+    return json.loads(r.FinalResult()).get('text','')
+def testfree(thr):
+    acc=trunc=other=tn=0; misses=[]; fa=[]
+    for w in sample:
+        e = norm(w); sim = lambda t: SequenceMatcher(None, t, e).ratio()
+        t = runfree(wav(aud[w])); a = sim(t) >= thr; acc += a
+        if not a: misses.append((e,t))
+        if len(e) >= 5:
+            tn += 1; t = runfree(wav(aud[w],0.6)); b = sim(t) >= thr; trunc += b
+            if b: fa.append((e,t))
+        other += sim(runfree(wav(aud[random.choice([x for x in words if x!=w])]))) >= thr
+    print(f'FREE similarity>={thr}: correct accepted {acc}/80 | first 60% only, wrongly accepted {trunc}/{tn} | other word wrongly accepted {other}/80', flush=True)
+    if thr==1.0: print(' misses', misses[:12]); print(' truncated heard as', [(e, runfree(wav(aud[w],0.6))) for w in sample[:12] for e in [norm(w)]])
+for thr in (1.0, 0.9, 0.8): testfree(thr)
