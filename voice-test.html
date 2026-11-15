@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Soʻz — тест голоса</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#EEF3F4">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&display=swap">
+<style>
+/* Test page: offline word check with Vosk (on-device, no internet after the first model download). */
+:root{--bg:#EEF3F4;--surface:#fff;--fg:#0F232A;--muted:#3E555D;--chip:#E1ECEF;--accent:#17698A;--good:#1E9A55;--bad:#D23F3F;
+  --font:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0C181D;--surface:#152730;--fg:#EAF2F4;--muted:#B3C6CC;--chip:#1E343D;--accent:#5DB9DA;--good:#3DCB80;--bad:#FF6A6A;color-scheme:dark}}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:400 16px/1.4 var(--font);-webkit-tap-highlight-color:transparent}
+.app{min-height:100%;max-width:480px;margin:0 auto;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;
+  padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;align-items:center;min-height:48px}
+h1{margin:0;font-size:20px;font-weight:600}
+.score{font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.card{flex:1;background:var(--surface);border-radius:24px;box-shadow:0 8px 28px rgba(15,35,42,.08);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;padding:24px;text-align:center;min-height:420px;transition:box-shadow .2s}
+.card.ok{box-shadow:0 0 0 4px var(--good),0 8px 28px rgba(15,35,42,.08)}
+.card.no{box-shadow:0 0 0 4px var(--bad),0 8px 28px rgba(15,35,42,.08)}
+.pic{width:240px;height:240px;display:flex;align-items:center;justify-content:center;font-size:120px}
+.pic img{width:100%;height:100%;object-fit:contain;border-radius:16px}
+.uz{font-size:20px;font-weight:600}
+.ru{font-size:16px;color:var(--muted)}
+.heard{min-height:24px;font-size:16px;color:var(--muted)}
+.verdict{min-height:24px;font-size:18px;font-weight:600}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--bad)}
+.row{display:flex;gap:12px}
+button{flex:1;height:56px;border:0;border-radius:16px;font:600 18px var(--font);cursor:pointer;background:var(--chip);color:var(--fg)}
+button.main{background:var(--accent);color:#fff}
+button:hover{filter:brightness(.97)} button:active{transform:scale(.98)}
+.status{font-size:16px;color:var(--muted);text-align:center;min-height:24px}
+.note{font-size:16px;color:var(--muted)}
+label{display:flex;align-items:center;gap:8px;font-size:16px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><h1>Тест голоса · узбекский</h1><span class="score" id="score"></span></div>
+  <div id="intro" class="note">Говоришь слово с карточки — телефон сам проверяет, без интернета. В первый раз скачается модель (45 МБ), потом она живёт в телефоне.<br><br>Проверь и неправильные слова: они не должны засчитываться.</div>
+  <div class="card" id="card" hidden>
+    <div class="pic" id="pic"></div>
+    <div class="uz" id="uz"></div>
+    <div class="ru" id="ru"></div>
+    <div class="heard" id="heard"></div>
+    <div class="verdict" id="verdict"></div>
+  </div>
+  <div class="status" id="status"></div>
+  <label id="hideBox" hidden><input type="checkbox" id="hide"> Скрыть узбекское слово (вспоминать по картинке)</label>
+  <div class="row"><button class="main" id="start">Начать</button><button id="next" hidden>Дальше</button></div>
+</div>
+<script src="words.js"></script>
+<script src="lib/vosk.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const MODEL = 'models/vosk-model-small-uz-0.22.tar.gz';
+const GEN = window.SOZ_GEN || {};
+const WORDS = window.SOZ_WORDS.trim().split('\n').map(l => l.split('|')).filter(r => r.length > 2 && !/^[0-9]+$/.test(r[0]))
+  .map(r => ({ uz: r[0].trim(), ru: r[1], img: r[2] }));
+// spoken form for the model: lower case, one kind of apostrophe, no punctuation
+const norm = s => s.toLowerCase().replace(/[ʻʼ’`‘]/g, "'").replace(/…/g, '').replace(/\(.*?\)/g, '').replace(/[^a-z' \-]/g, ' ').replace(/\s+/g, ' ').trim();
+
+let model, ctx, rec, word, expected, tStart, tLast, done = false, ok = 0, tried = 0, lastIdx = -1;
+
+function pick() { let i; do { i = Math.floor(Math.random() * WORDS.length); } while (i === lastIdx); lastIdx = i; return WORDS[i]; }
+function score() { $('score').textContent = tried ? `${ok} из ${tried} попыток` : ''; }
+function show() {
+  word = pick(); expected = norm(word.uz); done = false; tStart = tLast = 0;
+  $('pic').innerHTML = GEN[word.uz] ? `<img src="gen/${GEN[word.uz]}" alt="">` : word.img;
+  $('uz').textContent = word.uz; $('uz').hidden = $('hide').checked; $('ru').textContent = word.ru;
+  $('heard').textContent = ''; $('verdict').textContent = ''; $('verdict').className = 'verdict'; $('card').className = 'card';
+  newRecognizer();
+}
+function newRecognizer() {
+  if (rec) { try { rec.remove(); } catch (e) {} }
+  rec = new model.KaldiRecognizer(ctx.sampleRate, JSON.stringify([expected, '[unk]']));
+  rec.on('partialresult', m => {
+    const p = (m.result.partial || '').trim(); if (!p || done) return;
+    if (!tStart) tStart = performance.now(); tLast = performance.now();
+    $('heard').textContent = 'Слышу: ' + p.replace(/\[unk\]/g, '…');
+    if (p === expected) verdict(true);                          // accept as soon as it is heard — no waiting for silence
+  });
+  rec.on('result', m => {
+    const t = (m.result.text || '').trim(); if (!t || done) return;
+    verdict(t === expected, t);
+  });
+  $('status').textContent = 'Говори';
+}
+function verdict(good, heard) {
+  done = true; tried++; if (good) ok++; score();
+  const after = tLast ? Math.round(performance.now() - tLast) : 0;
+  $('card').className = 'card ' + (good ? 'ok' : 'no');
+  $('verdict').className = 'verdict ' + (good ? 'ok' : 'no');
+  $('verdict').textContent = good ? `✓ Засчитано · через ${(after / 1000).toFixed(1)} с` : '✗ Не похоже';
+  if (!good && heard) $('heard').textContent = 'Услышал: ' + heard.replace(/\[unk\]/g, 'непонятное');
+  $('uz').hidden = false;
+  if (good) setTimeout(() => { if (done) show(); }, 900);
+  else setTimeout(() => { if (done && $('verdict').textContent.startsWith('✗')) { done = false; $('verdict').textContent = 'Попробуй ещё раз'; $('verdict').className = 'verdict'; $('card').className = 'card'; newRecognizer(); } }, 1600);
+}
+async function start() {
+  $('start').hidden = true; $('intro').hidden = true;
+  const t0 = performance.now(); let tick;
+  try {
+    // mic first: needs the tap; the model download can take a while
+    ctx = new (window.AudioContext || window.webkitAudioContext)();   // created inside the tap (iOS requirement)
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
+    await ctx.resume();
+    $('status').textContent = 'Загружаю модель…';
+    tick = setInterval(() => { $('status').textContent = `Загружаю модель… ${Math.round((performance.now() - t0) / 1000)} с (только в первый раз)`; }, 1000);
+    model = await Vosk.createModel(MODEL);
+    clearInterval(tick);
+    const loadS = ((performance.now() - t0) / 1000).toFixed(1);
+    const node = ctx.createScriptProcessor(4096, 1, 1);
+    node.onaudioprocess = e => { if (rec && !done) try { rec.acceptWaveform(e.inputBuffer); } catch (x) {} };
+    ctx.createMediaStreamSource(stream).connect(node); node.connect(ctx.destination);
+    $('card').hidden = false; $('next').hidden = false; $('hideBox').hidden = false;
+    show(); $('status').textContent = `Модель готова за ${loadS} с · говори`;
+  } catch (e) {
+    clearInterval(tick);
+    $('status').textContent = 'Не получилось: ' + (e && e.message || e); $('start').hidden = false; $('start').textContent = 'Ещё раз';
+  }
+}
+$('start').onclick = start;
+$('next').onclick = show;
+$('hide').onchange = () => { $('uz').hidden = $('hide').checked && !done; };
+document.addEventListener('visibilitychange', () => { if (ctx && document.visibilityState === 'visible' && ctx.state !== 'running') ctx.resume(); });
+</script>
+</body>

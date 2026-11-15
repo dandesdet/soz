@@ -1,0 +1,21 @@
+name: Speech models
+on:
+  push:
+    branches: [main]
+    paths: [tools/models.sh]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  models:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh tools/models.sh
+      - name: Commit
+        run: |
+          git config user.name "soz-bot"; git config user.email "soz-bot@users.noreply.github.com"
+          git add models
+          git diff --cached --quiet && exit 0
+          git commit -m "Offline speech models"
+          for i in 1 2 3; do git pull --rebase -q && git push && exit 0; sleep 5; done; exit 1
