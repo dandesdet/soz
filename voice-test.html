@@ -59,7 +59,8 @@ label{display:flex;align-items:center;gap:8px;font-size:16px;color:var(--muted)}
 <script src="lib/vosk.js"></script>
 <script>
 const $ = id => document.getElementById(id);
-const MODEL = 'models/vosk-model-small-uz-0.22.tar.gz';
+// absolute URL: the library resolves relative paths against the site root and would lose /soz/
+const MODEL = new URL('models/vosk-model-small-uz-0.22.tar.gz', location.href).href;
 const GEN = window.SOZ_GEN || {};
 const WORDS = window.SOZ_WORDS.trim().split('\n').map(l => l.split('|')).filter(r => r.length > 2 && !/^[0-9]+$/.test(r[0]))
   .map(r => ({ uz: r[0].trim(), ru: r[1], img: r[2] }));
@@ -103,6 +104,18 @@ function verdict(good, heard) {
   if (good) setTimeout(() => { if (done) show(); }, 900);
   else setTimeout(() => { if (done && $('verdict').textContent.startsWith('✗')) { done = false; $('verdict').textContent = 'Попробуй ещё раз'; $('verdict').className = 'verdict'; $('card').className = 'card'; newRecognizer(); } }, 1600);
 }
+async function prefetch() {
+  const r = await fetch(MODEL);
+  if (!r.ok) throw new Error('модель не скачалась (код ' + r.status + ')');
+  const total = +r.headers.get('content-length') || 51e6, rd = r.body && r.body.getReader();
+  if (!rd) { await r.blob(); return; }
+  let got = 0;
+  for (;;) {
+    const { done, value } = await rd.read(); if (done) break;
+    got += value.length;
+    $('status').textContent = `Скачиваю модель: ${Math.round(got / 1e6)} из ${Math.round(total / 1e6)} МБ (только в первый раз)`;
+  }
+}
 async function start() {
   $('start').hidden = true; $('intro').hidden = true;
   const t0 = performance.now(); let tick;
@@ -111,10 +124,11 @@ async function start() {
     ctx = new (window.AudioContext || window.webkitAudioContext)();   // created inside the tap (iOS requirement)
     const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
     await ctx.resume();
-    $('status').textContent = 'Загружаю модель…';
-    tick = setInterval(() => { $('status').textContent = `Загружаю модель… ${Math.round((performance.now() - t0) / 1000)} с (только в первый раз)`; }, 1000);
+    if (!localStorage.getItem('soz-vosk-uz')) await prefetch();   // after the first success the model lives in the phone (IndexedDB)                                   // shows megabytes; the library then takes the file from the browser cache
+    $('status').textContent = 'Запускаю модель…';
+    tick = setTimeout(() => { $('status').textContent = 'Модель не запускается — возможно, телефону не хватает памяти. Напиши мне.'; }, 60000);
     model = await Vosk.createModel(MODEL);
-    clearInterval(tick);
+    clearTimeout(tick); localStorage.setItem('soz-vosk-uz', '1');
     const loadS = ((performance.now() - t0) / 1000).toFixed(1);
     const node = ctx.createScriptProcessor(4096, 1, 1);
     node.onaudioprocess = e => { if (rec && !done) try { rec.acceptWaveform(e.inputBuffer); } catch (x) {} };
@@ -122,7 +136,7 @@ async function start() {
     $('card').hidden = false; $('next').hidden = false; $('hideBox').hidden = false;
     show(); $('status').textContent = `Модель готова за ${loadS} с · говори`;
   } catch (e) {
-    clearInterval(tick);
+    clearTimeout(tick);
     $('status').textContent = 'Не получилось: ' + (e && e.message || e); $('start').hidden = false; $('start').textContent = 'Ещё раз';
   }
 }
