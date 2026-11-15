@@ -154,6 +154,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .iconbtn svg{width:26px;height:26px}
 .iconbtn:hover{background:var(--chip)}
 .iconbtn:active{transform:scale(.94)}
+.iconbtn.on{color:var(--good)}
+.iconbtn.on svg{animation:mic 1.6s ease-in-out infinite}
+@keyframes mic{50%{opacity:.45}}
+.bad{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);height:40px;padding:0 14px;border:0;border-radius:12px;background:none;
+  font:400 16px var(--font);color:var(--muted);cursor:pointer;white-space:nowrap}
+.bad:hover{background:var(--chip)}
+.bad:active{transform:translateX(-50%) scale(.96)}
 .levels{display:flex;flex-direction:column;gap:12px}
 .lang.lvl{height:64px;justify-content:center;box-shadow:none;background:var(--chip)}
 .lang.lvl:hover{background:var(--line)}
@@ -217,7 +224,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   </div>
 </div>
 <div class="app" id="app" hidden>
-  <div class="top"><button class="backbtn" id="back" type="button" aria-label="Языки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span id="langName">Oʻzbekcha</span></button><span class="tools"><button class="iconbtn" id="openAdd" type="button" aria-label="Свои слова"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><button class="folder" id="openArchive" type="button" aria-label="Знаю"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><span id="cKnown">0</span></button></span></div>
+  <div class="top"><button class="backbtn" id="back" type="button" aria-label="Языки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span id="langName">Oʻzbekcha</span></button><span class="tools"><button class="iconbtn" id="mic" type="button" aria-label="Голосом" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button class="iconbtn" id="openAdd" type="button" aria-label="Свои слова"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><button class="folder" id="openArchive" type="button" aria-label="Знаю"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><span id="cKnown">0</span></button></span></div>
   <div class="banner" id="banner" hidden><span id="bannerText"></span><button class="link" id="exitArchive" type="button">Выйти</button></div>
   <div class="stage" id="stage"></div>
   <div class="hint" id="hint" hidden><span class="l">← Не знаю</span><span class="tapHint">Тап — перевернуть</span><span class="keyHint">↓ — перевернуть</span><span class="r">Знаю →</span></div>
@@ -269,7 +276,9 @@ let LANG = 'uz', WORDS = [], BY = {};
 const IMG = {"👋": "1f44b.webp", "🙏": "1f64f.webp", "✅": "2705.webp", "❌": "274c.webp", "🤝": "1f91d.webp", "🚶": "1f6b6.webp", "👍": "1f44d.webp", "👎": "1f44e.webp", "💧": "1f4a7.webp", "🫓": "1fad3.webp", "🍵": "1f375.webp", "🙇": "1f647.webp", "😔": "1f614.webp", "🙂": "1f642.webp", "😊": "1f60a.webp", "🚕": "1f695.webp", "🧺": "1f9fa.webp", "💰": "1f4b0.webp", "🏷️": "1f3f7-fe0f.webp", "🆗": "1f197.webp", "💯": "1f4af.webp", "🤷": "1f937.webp", "💡": "1f4a1.webp", "❓": "2753.webp", "⬅️": "2b05-fe0f.webp", "➡️": "27a1-fe0f.webp", "⬆️": "2b06-fe0f.webp", "🛑": "1f6d1.webp", "🙋": "1f64b.webp", "🫵": "1faf5.webp", "👫": "1f46b.webp", "👨": "1f468.webp", "👩": "1f469.webp", "🫂": "1fac2.webp", "🥩": "1f969.webp", "🍗": "1f357.webp", "🍛": "1f35b.webp", "🍎": "1f34e.webp", "🍇": "1f347.webp", "🍈": "1f348.webp", "🍉": "1f349.webp", "🎾": "1f3be.webp", "⚽": "26bd.webp", "🏟️": "1f3df-fe0f.webp", "🙋‍♂️": "1f64b-200d-2642-fe0f.webp", "🤗": "1f917.webp", "🚪": "1f6aa.webp", "👀": "1f440.webp", "🌅": "1f305.webp", "🌆": "1f306.webp", "🌙": "1f319.webp", "🐢": "1f422.webp", "🗣️": "1f5e3-fe0f.webp", "☝️": "261d-fe0f.webp", "✋": "270b.webp", "🪙": "1fa99.webp", "💎": "1f48e.webp", "☝🏻": "261d-1f3fb.webp", "⚖️": "2696-fe0f.webp", "💵": "1f4b5.webp", "🔁": "1f501.webp", "💳": "1f4b3.webp", "🍅": "1f345.webp", "🥒": "1f952.webp", "🥔": "1f954.webp", "🧅": "1f9c5.webp", "🥕": "1f955.webp", "🍚": "1f35a.webp", "🧂": "1f9c2.webp", "🥛": "1f95b.webp", "🥚": "1f95a.webp", "🧭": "1f9ed.webp", "📌": "1f4cc.webp", "📍": "1f4cd.webp", "🛣️": "1f6e3-fe0f.webp", "👣": "1f463.webp", "💸": "1f4b8.webp", "🚖": "1f696.webp", "⚡": "26a1.webp", "↩️": "21a9-fe0f.webp", "🚗": "1f697.webp", "❔": "2754.webp", "👤": "1f464.webp", "⏰": "23f0.webp", "🤔": "1f914.webp", "🌀": "1f300.webp", "🔢": "1f522.webp", "🏠": "1f3e0.webp", "🏪": "1f3ea.webp", "⚕️": "2695-fe0f.webp", "🏥": "1f3e5.webp", "🏨": "1f3e8.webp", "🏦": "1f3e6.webp", "🕌": "1f54c.webp", "🚏": "1f68f.webp", "🚇": "1f687.webp", "🚌": "1f68c.webp", "✈️": "2708-fe0f.webp", "🚻": "1f6bb.webp", "🍽️": "1f37d-fe0f.webp", "📋": "1f4cb.webp", "🧾": "1f9fe.webp", "😋": "1f60b.webp", "🌶️": "1f336-fe0f.webp", "🍰": "1f370.webp", "🔥": "1f525.webp", "🧊": "1f9ca.webp", "🐘": "1f418.webp", "🐭": "1f42d.webp", "📚": "1f4da.webp", "🤏": "1f90f.webp", "❗": "2757.webp", "✨": "2728.webp", "🏚️": "1f3da-fe0f.webp", "🌸": "1f338.webp", "📅": "1f4c5.webp", "🌄": "1f304.webp", "🌃": "1f303.webp", "⏱️": "23f1-fe0f.webp", "⏭️": "23ed-fe0f.webp", "⌚": "231a.webp", "⏲️": "23f2-fe0f.webp", "🌞": "1f31e.webp", "🗓️": "1f5d3-fe0f.webp", "🌕": "1f315.webp", "🎆": "1f386.webp", "🐓": "1f413.webp", "🌇": "1f307.webp", "⏳": "23f3.webp", "🧑‍⚕️": "1f9d1-200d-2695-fe0f.webp", "💊": "1f48a.webp", "🤕": "1f915.webp", "🤯": "1f92f.webp", "🦷": "1f9b7.webp", "🫃": "1fac3.webp", "🌡️": "1f321-fe0f.webp", "🤒": "1f912.webp", "🆘": "1f198.webp", "🚑": "1f691.webp", "❤️": "2764-fe0f.webp", "👁️": "1f441-fe0f.webp", "👂": "1f442.webp", "🦵": "1f9b5.webp", "🫱": "1faf1.webp", "🗣": "1f5e3-fe0f.webp", "😷": "1f637.webp", "🤧": "1f927.webp", "🏁": "1f3c1.webp", "💥": "1f4a5.webp", "🔄": "1f504.webp", "👉": "1f449.webp", "🥇": "1f947.webp", "😩": "1f629.webp", "🏆": "1f3c6.webp", "😮‍💨": "1f62e-200d-1f4a8.webp", "☕": "2615.webp", "👨‍👩‍👦": "1f468-200d-1f469-200d-1f466.webp", "🧔": "1f9d4.webp", "👦": "1f466.webp", "👩‍🦰": "1f469-200d-1f9b0.webp", "👧": "1f467.webp", "🧒": "1f9d2.webp", "👱‍♀️": "1f471-200d-2640-fe0f.webp", "👶": "1f476.webp", "🏡": "1f3e1.webp", "👰": "1f470.webp", "🤵": "1f935.webp", "🧍": "1f9cd.webp", "👥": "1f465.webp", "🚶‍♂️": "1f6b6-200d-2642-fe0f.webp", "🏃": "1f3c3.webp", "🍴": "1f374.webp", "🥤": "1f964.webp", "😴": "1f634.webp", "💬": "1f4ac.webp", "🧠": "1f9e0.webp", "🔭": "1f52d.webp", "💼": "1f4bc.webp", "⌛": "231b.webp", "🤲": "1f932.webp", "🎁": "1f381.webp", "✍️": "270d-fe0f.webp", "📖": "1f4d6.webp", "🛠️": "1f6e0-fe0f.webp", "🔓": "1f513.webp", "🔒": "1f512.webp", "🪑": "1fa91.webp", "⬇️": "2b07-fe0f.webp", "🛒": "1f6d2.webp", "🏬": "1f3ec.webp", "😍": "1f60d.webp", "😒": "1f612.webp", "🤞": "1f91e.webp", "👌": "1f44c.webp", "🚫": "1f6ab.webp", "😎": "1f60e.webp", "🤲🏻": "1f932-1f3fb.webp", "🌟": "1f31f.webp", "🌍": "1f30d.webp", "🏙️": "1f3d9-fe0f.webp", "📱": "1f4f1.webp", "🔂": "1f502.webp", "🌤️": "1f324-fe0f.webp", "🌧️": "1f327-fe0f.webp", "❄️": "2744-fe0f.webp", "☀️": "2600-fe0f.webp", "💨": "1f4a8.webp", "⚪": "26aa.webp", "⚫": "26ab.webp", "🔴": "1f534.webp", "🔵": "1f535.webp", "🟢": "1f7e2.webp", "🟡": "1f7e1.webp"};
 // Generated illustrations (5×5 sheets, sliced) — take priority over emoji
 const GEN = window.SOZ_GEN || {};
-const picFor = w => w.gen ? `<img class="gen" src="gen/${w.gen}" alt="" draggable="false" onerror="this.outerHTML=picInner('${w.img}')">` : GEN[w.uz] ? `<img class="gen" src="gen/${GEN[w.uz]}" alt="" draggable="false" onerror="this.outerHTML=picInner('${w.img}')">` : picInner(w.img);
+const GENL = window.SOZ_GEN_L || {};   // per-language pictures (Spanish setting for es, etc.) win over the shared ones
+const genOf = w => w.gen || ((GENL[LANG] || {})[w.uz]) || GEN[w.uz] || '';
+const picFor = w => { const g = genOf(w); return g ? `<img class="gen" src="gen/${g}" alt="" draggable="false" onerror="this.outerHTML=picInner('${w.img}')">` : picInner(w.img); };
 const picInner = e => IMG[e] ? `<img src="img/${IMG[e]}" alt="" draggable="false" onerror="this.replaceWith(document.createTextNode('${e}'))">` : e;
 
 const MIN = 6e4, DAY = 864e5;
@@ -435,7 +444,8 @@ function cardHTML(w, next) {
     <div class="flip">
       <div class="face">${pic}${w.cap ? `<div class="en">${w.cap}</div>` : ''}</div>
       ${next ? '' : `<div class="face rear">${pic}<div class="uz">${w.t}</div><div class="ru">${w.ru}</div>
-        ${voice ? '<button class="say" type="button" data-say>🔊 Послушать</button>' : ''}</div>`}
+        ${voice ? '<button class="say" type="button" data-say>🔊 Послушать</button>' : ''}
+        ${reported(w.id) ? '' : '<button class="bad" type="button" data-bad>Плохая картинка</button>'}</div>`}
     </div>
     <span class="stamp yes">Знаю</span><span class="stamp no">Не знаю</span>
   </div>`;
@@ -488,7 +498,7 @@ function bind(card) {
   const yes = card.querySelector('.stamp.yes'), no = card.querySelector('.stamp.no');
   let x0 = 0, y0 = 0, t0 = 0, dx = 0, dy = 0, down = false, moved = false;
   card.addEventListener('pointerdown', e => {
-    if (e.target.closest('[data-say]')) return;
+    if (e.target.closest('[data-say],[data-bad]')) return;
     down = true; moved = false; x0 = e.clientX; y0 = e.clientY; t0 = performance.now(); dx = dy = 0;
     card.setPointerCapture(e.pointerId); card.style.transition = 'none'; card.style.cursor = 'grabbing';
   });
@@ -513,7 +523,57 @@ function bind(card) {
   card.addEventListener('pointercancel', up);
   const say = card.querySelector('[data-say]');
   if (say) say.addEventListener('click', e => { e.stopPropagation(); speak(BY[queue[0]].t); });
+  const bad = card.querySelector('[data-bad]');
+  if (bad) bad.addEventListener('click', e => { e.stopPropagation(); reportPic(BY[queue[0]]); bad.remove(); });
 }
+/* ---------- "bad picture": goes to the redraw queue ---------- */
+function reportedSet() { try { return new Set(JSON.parse(ls.get('soz-reported') || '[]')); } catch (e) { return new Set(); } }
+function reported(id) { return reportedSet().has(id); }
+function reportPic(w) {
+  const s = reportedSet(); s.add(w.id); ls.set('soz-reported', JSON.stringify([...s]));
+  rpc('soz_report', { p_code: CODE, p_lang: LANG, p_key: w.id, p_uz: w.uz || '', p_word: w.t, p_gen: !!genOf(w) }).catch(() => {});
+  toast('Спасибо! Перерисуем — обычно за сутки.');
+}
+/* ---------- voice: «знаю» / «не знаю» / «как переводится» ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, micOn = false, voiceBusy = false;
+function voiceCmd(text) {
+  const t = text.toLowerCase().replace(/ё/g, 'е');
+  if (/не\s*зна/.test(t)) return 'no';
+  if (/зна[юе]/.test(t)) return 'yes';
+  if (/перев|переверн|покаж|что это|значит/.test(t)) return 'flip';
+  return '';
+}
+function onVoice(cmd) {
+  const c = $('cur'); if (!c || voiceBusy || flying || !$('pscrim').hidden || !$('scrim').hidden) return;
+  if (cmd === 'yes') fling(c, true);
+  else if (cmd === 'flip') c.classList.toggle('open');
+  else if (cmd === 'no') {                                              // show the answer first, then send it left
+    voiceBusy = true; c.classList.add('open');
+    setTimeout(() => { voiceBusy = false; if ($('cur') === c) fling(c, false); }, 1500);
+  }
+}
+function startRec() {
+  const r = rec = new SR(); rec.lang = 'ru-RU'; rec.continuous = true; rec.interimResults = true;
+  let done = -1;                                                       // index of the last result already acted on
+  rec.onresult = e => {
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (i <= done) continue;
+      const cmd = voiceCmd(e.results[i][0].transcript);
+      // act on "знаю" only when final, so "не знаю" is not mistaken for it halfway through
+      if (cmd && (cmd !== 'yes' || e.results[i].isFinal)) { done = i; onVoice(cmd); try { r.abort(); } catch (x) {} return; }   // restart → fresh transcript for the next card
+    }
+  };
+  rec.onerror = e => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { setMic(false); toast('Нет доступа к микрофону — разреши его в настройках браузера.'); } };
+  r.onend = () => { if (micOn && rec === r) try { startRec(); } catch (e) { setMic(false); } };
+  try { rec.start(); } catch (e) {}
+}
+function setMic(on) {
+  micOn = on; $('mic').classList.toggle('on', on);
+  if (on) { startRec(); toast('Говори: «знаю», «не знаю» или «как переводится»'); }
+  else if (rec) { const r = rec; rec = null; r.onend = null; try { r.abort(); } catch (e) {} }
+}
+if (SR) { $('mic').hidden = false; $('mic').onclick = () => setMic(!micOn); }
 let flying = false;
 function fling(card, know) {
   if (flying) return; flying = true;
@@ -600,6 +660,7 @@ $('addSend').onclick = async () => {
 };
 function refreshPicker() { paintAcctLine(); for (const l in LANGS) { $('k-' + l).textContent = knownCount(l); $('n-' + l).textContent = buildWords(l).length; } }
 function showPicker() {
+  if (typeof micOn !== 'undefined' && micOn) setMic(false);
   closeArchive(); closeSheet(); mode = 'learn'; queue = [];
   refreshPicker();
   $('app').hidden = true; $('picker').hidden = false;
