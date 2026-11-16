@@ -506,27 +506,30 @@ function clearTint() { tint.style.transition = ''; tint.style.opacity = 0; }
 
 function bind(card) {
   const yes = card.querySelector('.stamp.yes'), no = card.querySelector('.stamp.no');
-  let x0 = 0, y0 = 0, t0 = 0, dx = 0, dy = 0, down = false, moved = false;
+  let x0 = 0, y0 = 0, t0 = 0, dx = 0, dy = 0, down = false, moved = false, trail = [];   // trail: recent [time, x] — speed of the last ~100 ms, not of the whole touch
   card.addEventListener('pointerdown', e => {
     if (e.target.closest('[data-say],[data-bad]')) return;
-    down = true; moved = false; x0 = e.clientX; y0 = e.clientY; t0 = performance.now(); dx = dy = 0;
+    down = true; moved = false; x0 = e.clientX; y0 = e.clientY; t0 = performance.now(); dx = dy = 0; trail = [[t0, e.clientX]];
     card.setPointerCapture(e.pointerId); card.style.transition = 'none'; card.style.cursor = 'grabbing';
   });
   card.addEventListener('pointermove', e => {
     if (!down) return;
     dx = e.clientX - x0; dy = e.clientY - y0;
+    const now = performance.now(); trail.push([now, e.clientX]); while (trail.length > 2 && now - trail[0][0] > 100) trail.shift();
     if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
     if (!moved) return;
     card.style.transform = `translate(${dx}px, ${dy * 0.25}px) rotate(${dx / 18}deg)`;
-    yes.style.opacity = Math.max(0, Math.min(dx / 100, 1));
-    no.style.opacity = Math.max(0, Math.min(-dx / 100, 1));
+    yes.style.opacity = Math.max(0, Math.min(dx / 60, 1));
+    no.style.opacity = Math.max(0, Math.min(-dx / 60, 1));
     setTint(dx);
   });
   const up = () => {
     if (!down) return; down = false; card.style.cursor = '';
     if (!moved) { card.style.transition = ''; card.classList.toggle('open'); return; }
-    const v = Math.abs(dx) / (performance.now() - t0);
-    if (Math.abs(dx) > 90 || (v > 0.6 && Math.abs(dx) > 30)) fling(card, dx > 0);
+    // one-handed thumb swipes are short: 60 px is enough, or a quick flick of 20+ px (speed over the last 100 ms)
+    const a = trail[0], b = trail[trail.length - 1], v = b[0] > a[0] ? (b[1] - a[1]) / (b[0] - a[0]) : 0;
+    const flick = Math.abs(v) > 0.35 && Math.abs(dx) > 20 && Math.sign(v) === Math.sign(dx);
+    if (Math.abs(dx) > 60 || flick) fling(card, dx > 0);
     else { card.style.transition = ''; card.style.transform = ''; yes.style.opacity = no.style.opacity = 0; clearTint(); }
   };
   card.addEventListener('pointerup', up);
