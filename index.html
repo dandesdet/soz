@@ -492,6 +492,7 @@ function render(afterSwipe) {
   const enter = stage.querySelector('.card.deep.enter');
   if (enter) requestAnimationFrame(() => requestAnimationFrame(() => enter.classList.remove('enter')));
   bind($('cur'));
+  if (typeof micOn !== 'undefined' && micOn) voiceCard();
 }
 
 /* ---------- gestures ---------- */
@@ -547,60 +548,86 @@ function reportPic(w) {
   rpc('soz_report', { p_code: CODE, p_lang: LANG, p_key: w.id, p_uz: w.uz || '', p_word: w.t, p_gen: !!genOf(w) }).catch(() => {});
   toast('Спасибо! Перерисуем — обычно за сутки.');
 }
-/* ---------- voice: «знаю» / «не знаю» / «как переводится» ---------- */
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let rec = null, micOn = false, voiceBusy = false, voiceOk = false;
-const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const HOME_APP = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
-// iOS home-screen apps expose webkitSpeechRecognition but it often never starts (WebKit bug 225298).
-// If it fails there once, the mic is hidden for the home-screen app instead of staying a dead button.
-function voiceDead() {
-  setMic(false); $('mic').hidden = true;
-  if (HOME_APP) { ls.set('soz-voice-dead', '1'); toast('Голос здесь не работает — открой Soʻz в Safari, там он есть.'); }
-  else toast('Голос не запустился — проверь, что в настройках включена диктовка.');
+/* ---------- voice: say the word — the phone checks it offline (Vosk) and swipes ---------- */
+// Recognition runs on the phone: the language model (~40–50 MB) is downloaded once, then works without internet,
+// also in the home-screen app. Right word → right. «bilmayman / no sé / I don't know» → answer, then left.
+// Wrong word → one more try; wrong twice → answer, then left.
+const VOSK = { uz: 'vosk-model-small-uz-0.22', es: 'vosk-model-small-es-0.42', en: 'vosk-model-small-en-us-0.15' };
+const DONT = { uz: ['bilmayman', 'bilmadim'], es: ['nose', 'nolose'], en: ['idontknow', 'dontknow', 'idunno'] };
+let micOn = false, voiceBusy = false, vModel = null, vLang = '', vCtx = null, vStream = null, rec = null, vTries = 0;
+const vKey = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[ʻʼ’`‘']/g, '')
+  .replace(/\(.*?\)/g, '').replace(/[^a-zñ0-9]/g, '');
+function vTargets(w) {
+  const out = new Set();
+  for (let v of w.t.split(/[\/,;]/)) {
+    v = v.replace(/[¡!¿?.…]/g, ' ').trim(); if (!v) continue;
+    out.add(vKey(v));
+    const bare = LANG === 'es' ? v.replace(/^(el|la|los|las|un|una|unos|unas)\s+/i, '') : LANG === 'en' ? v.replace(/^(the|a|an|to)\s+/i, '') : v;
+    out.add(vKey(bare));
+  }
+  out.delete(''); return out;
 }
-function voiceCmd(text) {
-  const t = text.toLowerCase().replace(/ё/g, 'е');
-  if (/не\s*зна/.test(t)) return 'no';
-  if (/зна[юе]/.test(t)) return 'yes';
-  if (/перев|переверн|покаж|что это|значит/.test(t)) return 'flip';
-  return '';
+function loadScript(src) { return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error('нет сети')); document.head.appendChild(s); }); }
+async function vPrefetch(url) {                                   // shows megabytes; the library then takes the file from the browser cache
+  const r = await fetch(url); if (!r.ok) throw new Error('модель не скачалась');
+  const total = +r.headers.get('content-length') || 45e6, rd = r.body && r.body.getReader();
+  if (!rd) { await r.blob(); return; }
+  let got = 0;
+  for (;;) { const { done, value } = await rd.read(); if (done) break; got += value.length; toast(`Скачиваю голосовой модуль: ${Math.round(got / 1e6)} из ${Math.round(total / 1e6)} МБ. Это один раз.`); }
 }
-function onVoice(cmd) {
-  const c = $('cur'); if (!c || voiceBusy || flying || !$('pscrim').hidden || !$('scrim').hidden) return;
-  if (cmd === 'yes') fling(c, true);
-  else if (cmd === 'flip') c.classList.toggle('open');
-  else if (cmd === 'no') {                                              // show the answer first, then send it left
-    voiceBusy = true; c.classList.add('open');
-    setTimeout(() => { voiceBusy = false; if ($('cur') === c) fling(c, false); }, 1000);
+async function vLoad(lang) {
+  if (vModel && vLang === lang) return;
+  if (vModel) { try { vModel.terminate(); } catch (e) {} vModel = null; }   // one language in memory at a time
+  if (!window.Vosk) await loadScript('lib/vosk.js');
+  const url = new URL('models/' + VOSK[lang] + '.tar.gz', location.href).href;   // absolute: the library would lose /soz/
+  if (!ls.get('soz-vosk-' + lang)) await vPrefetch(url);
+  toast('Запускаю голос…');
+  vModel = await Vosk.createModel(url); vLang = lang; ls.set('soz-vosk-' + lang, '1');
+}
+function voiceCard() {                                            // a fresh recognizer for every card
+  if (rec) { try { rec.remove(); } catch (e) {} rec = null; }
+  if (!micOn || !vModel || !$('cur')) return;
+  vTries = 0;
+  const r = rec = new vModel.KaldiRecognizer(vCtx.sampleRate);
+  r.on('result', m => { if (rec === r) onHeard((m.result.text || '').trim()); });
+}
+function onHeard(text) {
+  const c = $('cur'), w = BY[queue[0]];
+  if (!text || !c || !w || voiceBusy || flying || !$('pscrim').hidden || !$('scrim').hidden) return;
+  const k = vKey(text); if (k.length < 2) return;                 // a cough or a click
+  if (vTargets(w).has(k)) { fling(c, true); return; }
+  if ((DONT[LANG] || []).includes(k)) { showThenLeft(c); return; }
+  if (++vTries < 2) { toast(`Услышал «${text}». Скажи ещё раз`); return; }
+  toast(`Услышал «${text}»`); showThenLeft(c);
+}
+function showThenLeft(c) {                                        // show the answer first, then send it left
+  voiceBusy = true; c.classList.add('open');
+  setTimeout(() => { voiceBusy = false; if ($('cur') === c) fling(c, false); }, 1500);
+}
+async function setMic(on) {
+  micOn = on; $('mic').classList.toggle('on', on);
+  if (!on) {
+    if (rec) { try { rec.remove(); } catch (e) {} rec = null; }
+    if (vStream) { vStream.getTracks().forEach(t => t.stop()); vStream = null; }
+    return;
+  }
+  try {
+    if (!vCtx) vCtx = new (window.AudioContext || window.webkitAudioContext)();   // created inside the tap (iOS)
+    vStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
+    await vCtx.resume();
+    const node = vCtx.createScriptProcessor(4096, 1, 1);
+    node.onaudioprocess = e => { if (rec && micOn && !voiceBusy && !flying) try { rec.acceptWaveform(e.inputBuffer); } catch (x) {} };
+    vCtx.createMediaStreamSource(vStream).connect(node); node.connect(vCtx.destination);
+    await vLoad(LANG);
+    if (!micOn) return;
+    voiceCard();
+    toast({ uz: 'Говори слово. Не знаешь — скажи «bilmayman»', es: 'Говори слово. Не знаешь — скажи «no sé»', en: 'Говори слово. Не знаешь — скажи «I don’t know»' }[LANG]);
+  } catch (e) {
+    setMic(false);
+    toast(e && e.name === 'NotAllowedError' ? 'Нет доступа к микрофону — разреши его в настройках.' : 'Голос не запустился: ' + ((e && e.message) || e));
   }
 }
-function startRec() {
-  const r = rec = new SR(); rec.lang = 'ru-RU'; rec.continuous = !IOS; rec.interimResults = true;   // iOS: continuous mode is buggy → short sessions, restarted on end
-  let alive = false; r.onstart = r.onaudiostart = () => { alive = true; voiceOk = true; };
-  if (!voiceOk) setTimeout(() => { if (rec === r && micOn && !alive) voiceDead(); }, 4000);
-  let done = -1;                                                       // index of the last result already acted on
-  rec.onresult = e => {
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (i <= done) continue;
-      const cmd = voiceCmd(e.results[i][0].transcript);
-      // act on interim results: «не» is heard before «знаю», so an interim «знаю» without «не» is safe, so "не знаю" is not mistaken for it halfway through
-      if (cmd) { done = i; onVoice(cmd); try { r.abort(); } catch (x) {} return; }   // restart → fresh transcript for the next card
-    }
-  };
-  rec.onerror = e => {
-    if (e.error === 'service-not-allowed' && (HOME_APP || !voiceOk)) voiceDead();
-    else if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { setMic(false); toast('Нет доступа к микрофону — разреши его в настройках браузера.'); }
-  };
-  r.onend = () => { if (micOn && rec === r) try { startRec(); } catch (e) { setMic(false); } };
-  try { rec.start(); } catch (e) {}
-}
-function setMic(on) {
-  micOn = on; $('mic').classList.toggle('on', on);
-  if (on) { startRec(); toast('Говори: «знаю», «не знаю» или «как переводится»'); }
-  else if (rec) { const r = rec; rec = null; r.onend = null; try { r.abort(); } catch (e) {} }
-}
-if (SR && !(HOME_APP && ls.get('soz-voice-dead'))) { $('mic').hidden = false; $('mic').onclick = () => setMic(!micOn); }
+if (navigator.mediaDevices && window.WebAssembly && VOSK) { $('mic').hidden = false; $('mic').onclick = () => setMic(!micOn); }
 let flying = false;
 function fling(card, know) {
   if (flying) return; flying = true;
