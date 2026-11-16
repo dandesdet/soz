@@ -7,6 +7,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: pip install vosk edge-tts && sudo apt-get install -y -q ffmpeg >/dev/null
+      - run: pip install vosk edge-tts librosa && sudo apt-get install -y -q ffmpeg >/dev/null
       - run: curl -sfLO https://alphacephei.com/vosk/models/vosk-model-small-uz-0.22.zip && unzip -q vosk-model-small-uz-0.22.zip
-      - run: python tools/vosk_test.py
+      - run: python tools/dtw_test.py
