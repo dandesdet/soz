@@ -665,9 +665,35 @@ function onHeard(text) {
   if (!text || !c || !w || voiceBusy || flying || !$('pscrim').hidden || !$('scrim').hidden) return;
   const k = vKey(text); if (k.length < 2) return;                 // a cough or a click
   if ((DONT[LANG] || []).some(d => lev(phon(text), d) <= 1)) { heard('Не знаешь — смотри ответ'); showThenLeft(c); return; }
-  if (understood(text, w)) { heard('✓ ' + text); fling(c, true); return; }
-  if (++vTries < 2) { heard(`Услышал «${text}» — скажи ещё раз`); return; }
-  heard(`Услышал «${text}»`); showThenLeft(c);
+  if (understood(text, w)) { heard('✓ ' + text); fling(c, true); teacher('ok'); return; }
+  if (++vTries < 2) { heard(`Услышал «${text}» — скажи ещё раз`); teacher('again'); return; }
+  heard(`Услышал «${text}»`); showThenLeft(c, w);
+}
+// The teacher: a short spoken praise on a right answer, «once more» on a miss, the right word after two misses.
+// Listening pauses while the phone speaks, so its own voice is never taken for an answer.
+let fxAudio = null;
+function teacher(kind) {
+  const list = ((AUD.praise || {})[LANG] || {})[kind] || []; if (!list.length) return Promise.resolve();
+  return playFx('audio/' + list[Math.floor(Math.random() * list.length)]);
+}
+function playFx(src) {
+  return new Promise(done => {
+    voiceBusy = true; if (fxAudio) fxAudio.pause();
+    const a = fxAudio = new Audio(src); let fin = false;
+    const end = () => { if (fin) return; fin = true; if (fxAudio === a) { voiceBusy = false; vadReset(); } done(); };
+    a.onended = a.onerror = end; a.play().catch(end);
+    setTimeout(end, 4000);                                        // never stay deaf if the clip hangs
+  });
+}
+function sayAnswer(w) {                                           // the right word, in the deck's voice
+  const f = w && audioOf(w);
+  if (f) return playFx('audio/' + f);
+  if (w && voice) return new Promise(done => {
+    voiceBusy = true; let fin = false; const end = () => { if (fin) return; fin = true; voiceBusy = false; vadReset(); done(); };
+    const u = new SpeechSynthesisUtterance(w.t.replace(/\s*\(.*?\)/g, '')); u.voice = voice; u.lang = voice.lang; u.onend = u.onerror = end;
+    speechSynthesis.cancel(); speechSynthesis.speak(u); setTimeout(end, 4000);
+  });
+  return Promise.resolve();
 }
 function heard(t) { const el = $('heard'); el.hidden = !micOn; el.textContent = t || ''; }
 let lvl = 0, lvlRaf = 0;
@@ -676,9 +702,10 @@ function meter(x) {                                               // voice level
   const v = Math.min(1, Math.sqrt(s / (x.length / 4)) * 14); lvl = Math.max(v, lvl * 0.8);
   if (!lvlRaf) lvlRaf = requestAnimationFrame(() => { lvlRaf = 0; $('mic').style.setProperty('--lvl', micOn ? lvl.toFixed(2) : 0); });
 }
-function showThenLeft(c) {                                        // show the answer first, then send it left
+function showThenLeft(c, w) {                                     // show the answer (and say it), then send it left
   voiceBusy = true; c.classList.add('open');
-  setTimeout(() => { voiceBusy = false; if ($('cur') === c) fling(c, false); }, 1500);
+  const t0 = Date.now();
+  sayAnswer(w || BY[queue[0]]).then(() => { voiceBusy = true; setTimeout(() => { voiceBusy = false; vadReset(); if ($('cur') === c) fling(c, false); }, Math.max(300, 1500 - (Date.now() - t0))); });
 }
 async function setMic(on) {
   micOn = on; $('mic').classList.toggle('on', on); heard(on ? 'Включаю микрофон…' : '');
