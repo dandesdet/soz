@@ -386,5 +386,43 @@ window.SOZ_AUDIO = {
   "sovgʻa": "uz-a44908ec86.mp3",
   "mehmon": "uz-6e8b0ab576.mp3",
   "Mehmonga keling": "uz-d0ccbeea98.mp3"
+ },
+ "praise": {
+  "uz": {
+   "ok": [
+    "fx-uz-64cb62bf.mp3",
+    "fx-uz-0140ce1e.mp3",
+    "fx-uz-0e77e4ef.mp3",
+    "fx-uz-b5ac647f.mp3",
+    "fx-uz-6c946baf.mp3"
+   ],
+   "again": [
+    "fx-uz-80ef76b2.mp3"
+   ]
+  },
+  "es": {
+   "ok": [
+    "fx-es-bae72887.mp3",
+    "fx-es-76421f2e.mp3",
+    "fx-es-de271d91.mp3",
+    "fx-es-16f59f90.mp3",
+    "fx-es-4216a9de.mp3"
+   ],
+   "again": [
+    "fx-es-b7db4b66.mp3"
+   ]
+  },
+  "en": {
+   "ok": [
+    "fx-en-b8852c72.mp3",
+    "fx-en-9d77c526.mp3",
+    "fx-en-67ec5fe3.mp3",
+    "fx-en-9b2af336.mp3",
+    "fx-en-430ae6ba.mp3"
+   ],
+   "again": [
+    "fx-en-94ad7945.mp3"
+   ]
+  }
  }
 };
