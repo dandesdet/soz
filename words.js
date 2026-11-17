@@ -389,7 +389,7 @@ Mehmonga keling|Приходите в гости|🏡|Праздники|Come vi
 `;
 // Generated illustrations (from 5×5 sheets): uz word → file in gen/
 window.SOZ_GEN = {
- "Salom": "g4be1041e.webp",
+ "Salom": "g4be1041e1701.webp",
  "Rahmat": "g22edede4.webp",
  "Ha": "g4bf3fd6a.webp",
  "Yoʻq": "g70d4a6a0.webp",
