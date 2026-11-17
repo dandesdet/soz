@@ -654,7 +654,8 @@ async function setMic(on) {
     const node = vCtx.createScriptProcessor(4096, 1, 1);
     node.onaudioprocess = e => { if (!micOn || voiceBusy || flying) return; if (gOn) { if (vad) vadFeed(new Float32Array(e.inputBuffer.getChannelData(0))); } else if (rec) try { rec.acceptWaveform(e.inputBuffer); } catch (x) {} };
     vCtx.createMediaStreamSource(vStream).connect(node); node.connect(vCtx.destination);
-    gOn = navigator.onLine;                                        // online → Google; offline → the model in the phone
+    const force = new URLSearchParams(location.search).get('voice');   // ?voice=vosk / ?voice=google — for comparing
+    gOn = force === 'vosk' ? false : navigator.onLine;              // online → Google; offline → the model in the phone
     if (!gOn) await vLoad(LANG);
     if (!micOn) return;
     voiceCard();
