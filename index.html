@@ -154,9 +154,12 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .iconbtn svg{width:26px;height:26px}
 .iconbtn:hover{background:var(--chip)}
 .iconbtn:active{transform:scale(.94)}
+.iconbtn{position:relative}
 .iconbtn.on{color:var(--good)}
-.iconbtn.on svg{animation:mic 1.6s ease-in-out infinite}
-@keyframes mic{50%{opacity:.45}}
+/* mic on: a soft green pad that grows with the voice level (--lvl 0…1) — shows at once that you are heard */
+.iconbtn.on::after{content:"";position:absolute;inset:0;border-radius:12px;background:var(--good);pointer-events:none;
+  opacity:calc(.10 + var(--lvl,0) * .30);transform:scale(calc(.72 + var(--lvl,0) * .28));transition:transform .08s linear,opacity .08s linear}
+.heard{min-height:24px;text-align:center;font-size:16px;color:var(--muted);padding:0 16px}
 .bad{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);height:40px;padding:0 14px;border:0;border-radius:12px;background:none;
   font:400 16px var(--font);color:var(--muted);cursor:pointer;white-space:nowrap}
 .bad:hover{background:var(--chip)}
@@ -227,6 +230,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <div class="top"><button class="backbtn" id="back" type="button" aria-label="Языки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span id="langName">Oʻzbekcha</span></button><span class="tools"><button class="iconbtn" id="mic" type="button" aria-label="Голосом" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button class="iconbtn" id="openAdd" type="button" aria-label="Свои слова"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><button class="folder" id="openArchive" type="button" aria-label="Знаю"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m9 13 2 2 4-4"/></svg><span id="cKnown">0</span></button></span></div>
   <div class="banner" id="banner" hidden><span id="bannerText"></span><button class="link" id="exitArchive" type="button">Выйти</button></div>
   <div class="stage" id="stage"></div>
+  <div class="heard" id="heard" hidden></div>
   <div class="hint" id="hint" hidden><span class="l">← Не знаю</span><span class="tapHint">Тап — перевернуть</span><span class="keyHint">↓ — перевернуть</span><span class="r">Знаю →</span></div>
 </div>
 <div class="tint" id="tint"></div>
@@ -557,6 +561,34 @@ const DONT = { uz: ['bilmayman', 'bilmadim'], es: ['nose', 'nolose'], en: ['idon
 let micOn = false, voiceBusy = false, vModel = null, vLang = '', vCtx = null, vStream = null, rec = null, vTries = 0;
 const vKey = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[ʻʼ’`‘']/g, '')
   .replace(/\(.*?\)/g, '').replace(/[^a-zñ0-9]/g, '');
+// Sounds a listener would not tell apart are merged before comparing (per language).
+function phon(s) {
+  let x = vKey(s);
+  if (LANG === 'uz') x = x.replace(/q/g, 'k').replace(/x/g, 'h').replace(/w/g, 'v').replace(/j/g, 'dj');
+  else if (LANG === 'es') x = x.replace(/v/g, 'b').replace(/z/g, 's').replace(/c(?=[ei])/g, 's').replace(/qu/g, 'k').replace(/c/g, 'k').replace(/ll/g, 'y').replace(/h/g, '');
+  else x = x.replace(/ph/g, 'f').replace(/ck/g, 'k').replace(/c(?=[eiy])/g, 's').replace(/c/g, 'k');
+  return x.replace(/(.)\1+/g, '$1');                             // doubled letters sound like one
+}
+function lev(a, b) {
+  const d = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) { let p = d[0]; d[0] = i;
+    for (let j = 1; j <= b.length; j++) { const t = d[j]; d[j] = Math.min(d[j] + 1, d[j - 1] + 1, p + (a[i - 1] === b[j - 1] ? 0 : 1)); p = t; } }
+  return d[b.length];
+}
+const slack = n => n <= 3 ? 0 : Math.floor(n * 0.35);              // how many sounds may differ: short words must be exact
+function closest(heard) {                                          // the deck word the listener would understand
+  const h = phon(heard); let best = null, bd = 1e9;
+  for (const w of WORDS) for (const t of vTargets(w)) { const d = lev(h, phon(t)); if (d < bd) { bd = d; best = { w, t, d }; } }
+  return best;
+}
+function understood(heard, w) {
+  const h = phon(heard); let mine = 1e9, len = 0;
+  for (const t of vTargets(w)) { const p = phon(t), d = lev(h, p); if (d < mine) { mine = d; len = p.length; } }
+  if (mine === 0) return true;
+  if (mine > slack(len)) return false;
+  const c = closest(heard);                                        // close enough — but not closer to another word of the deck
+  return !c || c.d >= mine || c.w.t === w.t;
+}
 function vTargets(w) {
   const out = new Set();
   for (let v of w.t.split(/[\/,;]/)) {
@@ -593,7 +625,7 @@ function vadFeed(x) {                                             // x: Float32A
   if (!vad.speech) {
     vad.floor = vad.floor * 0.95 + rms * 0.05;
     vad.pre.push(x); if (vad.pre.length > Math.ceil(0.35 * sr / x.length)) vad.pre.shift();   // keep the start of the word
-    if (rms > on) { vad.speech = true; vad.buf = vad.pre.slice(); vad.len = vad.buf.reduce((a, b) => a + b.length, 0); vad.quiet = 0; }
+    if (rms > on) { heard('Слушаю…'); vad.speech = true; vad.buf = vad.pre.slice(); vad.len = vad.buf.reduce((a, b) => a + b.length, 0); vad.quiet = 0; }
     return;
   }
   vad.buf.push(x); vad.len += x.length;
@@ -610,38 +642,46 @@ function to16k(chunks) {
 }
 async function sendClip(chunks) {
   const card = $('cur'); if (!card) return;
-  voiceBusy = true;                                               // don't listen while the answer is on its way
+  voiceBusy = true; heard('Проверяю…');                          // don't listen while the answer is on its way
   try {
     const r = await fetch(SB + '/functions/v1/soz-stt', { method: 'POST', headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify({ code: CODE, lang: LANG, audio: to16k(chunks) }) });
     const j = await r.json().catch(() => ({}));
     voiceBusy = false;
     if (r.status === 503 || r.status === 429) { gOn = false; await vLoad(LANG); voiceCard(); return; }   // no Google key yet / daily cap → offline model
-    if (!r.ok) { toast('Не расслышал — скажи ещё раз'); return; }
+    if (!r.ok) { heard('Не расслышал — скажи ещё раз'); return; }
     if ($('cur') === card) onHeard(j.text || '');
   } catch (e) { voiceBusy = false; gOn = false; try { await vLoad(LANG); voiceCard(); } catch (x) {} }   // offline → offline model
 }
 function voiceCard() {                                            // a fresh recognizer for every card
   if (rec) { try { rec.remove(); } catch (e) {} rec = null; }
-  vTries = 0; vadReset();
+  vTries = 0; vadReset(); heard('Скажи слово');
   if (!micOn || gOn || !vModel || !$('cur')) return;
   const r = rec = new vModel.KaldiRecognizer(vCtx.sampleRate);
+  r.on('partialresult', m => { const p = (m.result.partial || '').trim(); if (rec === r && p) heard(p + '…'); });
   r.on('result', m => { if (rec === r) onHeard((m.result.text || '').trim()); });
 }
 function onHeard(text) {
   const c = $('cur'), w = BY[queue[0]];
   if (!text || !c || !w || voiceBusy || flying || !$('pscrim').hidden || !$('scrim').hidden) return;
   const k = vKey(text); if (k.length < 2) return;                 // a cough or a click
-  if (vTargets(w).has(k)) { fling(c, true); return; }
-  if ((DONT[LANG] || []).includes(k)) { showThenLeft(c); return; }
-  if (++vTries < 2) { toast(`Услышал «${text}». Скажи ещё раз`); return; }
-  toast(`Услышал «${text}»`); showThenLeft(c);
+  if ((DONT[LANG] || []).some(d => lev(phon(text), d) <= 1)) { heard('Не знаешь — смотри ответ'); showThenLeft(c); return; }
+  if (understood(text, w)) { heard('✓ ' + text); fling(c, true); return; }
+  if (++vTries < 2) { heard(`Услышал «${text}» — скажи ещё раз`); return; }
+  heard(`Услышал «${text}»`); showThenLeft(c);
+}
+function heard(t) { const el = $('heard'); el.hidden = !micOn; el.textContent = t || ''; }
+let lvl = 0, lvlRaf = 0;
+function meter(x) {                                               // voice level → the mic button pad
+  let s = 0; for (let i = 0; i < x.length; i += 4) s += x[i] * x[i];
+  const v = Math.min(1, Math.sqrt(s / (x.length / 4)) * 14); lvl = Math.max(v, lvl * 0.8);
+  if (!lvlRaf) lvlRaf = requestAnimationFrame(() => { lvlRaf = 0; $('mic').style.setProperty('--lvl', micOn ? lvl.toFixed(2) : 0); });
 }
 function showThenLeft(c) {                                        // show the answer first, then send it left
   voiceBusy = true; c.classList.add('open');
   setTimeout(() => { voiceBusy = false; if ($('cur') === c) fling(c, false); }, 1500);
 }
 async function setMic(on) {
-  micOn = on; $('mic').classList.toggle('on', on);
+  micOn = on; $('mic').classList.toggle('on', on); heard(on ? 'Включаю микрофон…' : '');
   if (!on) {
     if (rec) { try { rec.remove(); } catch (e) {} rec = null; }
     if (vStream) { vStream.getTracks().forEach(t => t.stop()); vStream = null; }
@@ -652,7 +692,7 @@ async function setMic(on) {
     vStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
     await vCtx.resume();
     const node = vCtx.createScriptProcessor(4096, 1, 1);
-    node.onaudioprocess = e => { if (!micOn || voiceBusy || flying) return; if (gOn) { if (vad) vadFeed(new Float32Array(e.inputBuffer.getChannelData(0))); } else if (rec) try { rec.acceptWaveform(e.inputBuffer); } catch (x) {} };
+    node.onaudioprocess = e => { if (micOn) meter(e.inputBuffer.getChannelData(0)); if (!micOn || voiceBusy || flying) return; if (gOn) { if (vad) vadFeed(new Float32Array(e.inputBuffer.getChannelData(0))); } else if (rec) try { rec.acceptWaveform(e.inputBuffer); } catch (x) {} };
     vCtx.createMediaStreamSource(vStream).connect(node); node.connect(vCtx.destination);
     const force = new URLSearchParams(location.search).get('voice');   // ?voice=vosk / ?voice=google — for comparing
     gOn = force === 'vosk' ? false : navigator.onLine;              // online → Google; offline → the model in the phone
