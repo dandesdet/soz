@@ -186,7 +186,14 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .notice .nx{flex:none;width:44px;height:44px;margin:-10px 0 -10px 0;border:0;background:none;color:var(--muted);border-radius:12px;cursor:pointer;display:grid;place-items:center}
 .notice .nx:hover{background:var(--chip)}
 .notice .nx svg{width:20px;height:20px}
-@media (prefers-reduced-motion:reduce){.card,.flip,.tint{transition:none!important}}
+.streak{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--bg);opacity:0;transition:opacity .3s;cursor:pointer}
+.streak.on{opacity:1}
+.streak canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.streak .star{width:136px;height:136px;transform:scale(.3) rotate(-30deg);transition:transform .55s cubic-bezier(.2,1.6,.4,1)}
+.streak.on .star{transform:none}
+.streak b{font-size:20px;margin-top:12px}
+.streak span{font-size:16px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.card,.flip,.tint,.streak,.streak .star{transition:none!important}}
 </style>
 </head>
 <body>
@@ -235,6 +242,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <div class="hint" id="hint" hidden><span class="l">← Не знаю</span><span class="tapHint">Тап — перевернуть</span><span class="keyHint">↓ — перевернуть</span><span class="r">Знаю →</span></div>
 </div>
 <div class="tint" id="tint"></div>
+<div class="streak" id="streak" hidden><canvas id="confetti"></canvas><svg class="star" viewBox="0 0 24 24"><path fill="#F5B82E" stroke="#E09A12" stroke-width=".8" stroke-linejoin="round" d="M12 2.6l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg><b>10 слов подряд!</b><span id="streakN"></span></div>
 <div class="toast" id="toast" hidden></div>
 <div class="notice out" id="notice" role="status" hidden><div class="nt" id="noticeBody"><b id="noticeTitle"></b><span id="noticeText"></span></div><button class="nx" id="noticeX" type="button" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
 <div class="scrim" id="scrim" hidden><div class="sheet" id="sheet">
@@ -692,7 +700,7 @@ async function sendClip(chunks) {
 }
 function voiceCard() {                                            // a fresh recognizer for every card
   if (rec) { try { rec.remove(); } catch (e) {} rec = null; }
-  vTries = 0; vadReset(); heard('Скажи слово');
+  vTries = 0; cardRun = run; vadReset(); heard('Скажи слово');
   if (!micOn || gOn || !vModel || !$('cur')) return;
   const r = rec = new vModel.KaldiRecognizer(vCtx.sampleRate);
   r.on('partialresult', m => { const p = (m.result.partial || '').trim(); if (rec === r && p) heard(p + '…'); });
@@ -700,11 +708,11 @@ function voiceCard() {                                            // a fresh rec
 }
 function onHeard(text) {
   const c = $('cur'), w = BY[queue[0]];
-  if (!text || !c || !w || voiceBusy || flying || !$('pscrim').hidden || !$('scrim').hidden) return;
+  if (!text || !c || !w || voiceBusy || celebrating || flying || !$('pscrim').hidden || !$('scrim').hidden) return;
   const k = vKey(text); if (k.length < 2) return;                 // a cough or a click
-  if ((DONT[LANG] || []).some(d => lev(phon(text), d) <= 1.2)) { heard('Не знаешь — смотри ответ'); showThenLeft(c); return; }
-  if (understood(text, w)) { heard('✓ ' + text); fling(c, true); teacher('ok'); return; }
-  missed = { c, w, text };
+  if ((DONT[LANG] || []).some(d => lev(phon(text), d) <= 1.2)) { run = 0; heard('Не знаешь — смотри ответ'); showThenLeft(c); return; }
+  if (understood(text, w)) { heard('✓ ' + text); fling(c, true); const first = vTries === 0; teacher('ok').then(() => vStreak(first)); return; }
+  missed = { c, w, text }; run = 0;
   if (++vTries < 2) { heard(`Услышал «${text}» — скажи ещё раз`, true); teacher('again'); return; }
   heard(`Услышал «${text}»`, true); showThenLeft(c, w);
 }
@@ -747,6 +755,36 @@ function flagMiss() {
   missed = null; m.c.dataset.keep = '1';
   rpc('soz_stt_flag', { p_code: CODE, p_lang: LANG, p_expected: m.w.t, p_heard: m.text, p_engine: gOn ? 'google' : 'vosk' }).catch(() => {});
   heard('Отметил — разберусь'); voiceBusy = false; fling(m.c, true);
+  run = cardRun; vStreak(true);                                  // the app's mistake doesn't break the run
+}
+// Ten words in a row said right by voice (first try) → a star and confetti for 5 s. Stars are kept per language.
+let run = 0, cardRun = 0, celebrating = false;
+function vStreak(ok) {
+  run = ok ? run + 1 : 0;
+  if (run < 10) return;
+  run = 0;
+  const k = 'soz-stars-' + LANG, n = (Number(ls.get(k)) || 0) + 1; ls.set(k, String(n));
+  celebrate(n);
+}
+function celebrate(n) {
+  const el = $('streak'), cv = $('confetti'); celebrating = true; voiceBusy = true;
+  $('streakN').textContent = n > 1 ? `Звёзд: ${n}` : 'Первая звезда';
+  el.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('on')));
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches, x = cv.getContext('2d'), dpr = devicePixelRatio || 1;
+  cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; x.scale(dpr, dpr);
+  const C = ['#F5B82E', '#1E9A55', '#17698A', '#D23F3F', '#8E5BD6', '#5DB9DA'];
+  const P = [], burst = (cx, n) => { if (!still) for (let i = 0; i < n; i++) P.push({ x: cx, y: innerHeight * 0.42, vx: (Math.random() - 0.5) * 14, vy: -Math.random() * 14 - 5,
+    s: 6 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.3, w: Math.random() * 6, c: C[i % C.length] }); };
+  burst(innerWidth / 2, 120); setTimeout(() => burst(innerWidth * 0.25, 70), 1300); setTimeout(() => burst(innerWidth * 0.75, 70), 2300);   // three bursts across the 5 s
+  let raf = 0, done = false;
+  const draw = () => { x.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of P) { p.vy = Math.min(p.vy + 0.3, 2.6); p.vx *= 0.97; p.w += 0.08; p.x += p.vx + Math.sin(p.w) * 0.8; p.y += p.vy; p.r += p.vr;   // flutters down like paper
+      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); x.restore(); }
+    if (!done) raf = requestAnimationFrame(draw); };
+  if (!still) draw();
+  const close = () => { if (done) return; done = true; cancelAnimationFrame(raf); el.classList.remove('on');
+    setTimeout(() => { el.hidden = true; x.clearRect(0, 0, innerWidth, innerHeight); celebrating = false; voiceBusy = false; vadReset(); heard('Скажи слово'); }, 300); };
+  el.onclick = close; setTimeout(close, 5000);
 }
 let lvl = 0, lvlRaf = 0;
 function meter(x) {                                               // voice level → the mic button pad
