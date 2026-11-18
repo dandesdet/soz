@@ -189,11 +189,12 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .streak{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--bg);opacity:0;transition:opacity .2s;cursor:pointer}
 .streak.on{opacity:1}
 .streak canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.streak .star{width:136px;height:136px;transform:scale(.3) rotate(-30deg);transition:transform .4s cubic-bezier(.2,1.6,.4,1)}
-.streak.on .star{transform:none}
+.streak .star{width:136px;height:136px;transform:scale(0)}
 .streak b{font-size:20px;margin-top:12px}
+.streak b,.streak span{opacity:0;transition:opacity .25s}
+.streak.text b,.streak.text span{opacity:1}
 .streak span{font-size:16px;color:var(--muted)}
-@media (prefers-reduced-motion:reduce){.card,.flip,.tint,.streak,.streak .star{transition:none!important}}
+@media (prefers-reduced-motion:reduce){.card,.flip,.tint,.streak,.streak b,.streak span{transition:none!important}}
 </style>
 </head>
 <body>
@@ -254,6 +255,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 <script src="words.js"></script>
 <script src="audio.js"></script>
+<script src="lib/confetti.js" defer></script>
 <script>
 const RAW = window.SOZ_WORDS || '';
 
@@ -758,7 +760,7 @@ function flagMiss() {
   run = cardRun; vStreak(true);                                  // the app's mistake doesn't break the run
 }
 // Ten words in a row said right by voice (first try) → a star and confetti for 5 s. Stars are kept per language.
-let run = 0, cardRun = 0, celebrating = false;
+let run = 0, cardRun = 0, celebrating = false, cfx = null;
 function vStreak(ok) {
   run = ok ? run + 1 : 0;
   if (run < 10) return;
@@ -789,25 +791,34 @@ function applause() {
 // ?star — to look at (and hear) the celebration: it opens on the first tap (a phone plays sound only after a tap).
 if (new URLSearchParams(location.search).has('star')) addEventListener('pointerup', () => setTimeout(() => celebrate(Number(ls.get('soz-stars-' + LANG)) || 1), 50), { once: true });
 function celebrate(n) {
-  const el = $('streak'), cv = $('confetti'); celebrating = true; voiceBusy = true;
+  const el = $('streak'), star = el.querySelector('.star'); celebrating = true; voiceBusy = true;
   $('streakN').textContent = n > 1 ? `Звёзд: ${n}` : 'Первая звезда';
   el.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('on')));
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches, x = cv.getContext('2d'), dpr = devicePixelRatio || 1;
-  cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; x.scale(dpr, dpr);
-  const C = ['#F5B82E', '#1E9A55', '#17698A', '#D23F3F', '#8E5BD6', '#5DB9DA'];
-  const P = [], burst = (cx, n) => { if (!still) for (let i = 0; i < n; i++) P.push({ x: cx, y: innerHeight * 0.42, vx: (Math.random() - 0.5) * 22, vy: -Math.random() * 20 - 8,
-    s: 12 + Math.random() * 10, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.35, w: Math.random() * 6, c: C[i % C.length] }); };
-  [[0.5, 110, 0], [0.2, 70, 700], [0.8, 70, 1300], [0.5, 90, 2100], [0.3, 60, 2900]].forEach(([fx, n, t]) => setTimeout(() => !done && burst(innerWidth * fx, n), t));   // bursts across the 5 s
-  applause();
-  let raf = 0, done = false;
-  const draw = () => { x.clearRect(0, 0, innerWidth, innerHeight);
-    for (const p of P) { p.vy = Math.min(p.vy + 0.55, 7); p.vx *= 0.97; p.w += 0.12; p.x += p.vx + Math.sin(p.w) * 1.2; p.y += p.vy; p.r += p.vr;   // falls fast, with a little flutter
-      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 5, p.s, p.s * 0.4); x.restore(); }
-    if (!done) raf = requestAnimationFrame(draw); };
-  if (!still) draw();
-  const close = () => { if (done) return; done = true; cancelAnimationFrame(raf); el.classList.remove('on');
-    setTimeout(() => { el.hidden = true; x.clearRect(0, 0, innerWidth, innerHeight); celebrating = false; voiceBusy = false; vadReset(); heard('Скажи слово'); }, 300); };
-  el.onclick = close; setTimeout(close, 5000);
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches, T = [];
+  // The star flies at you from far away, spinning, overshoots by inertia, swings back and settles.
+  if (still) star.style.transform = 'none';
+  else star.animate([
+    { transform: 'scale(.03) rotate(-900deg)', opacity: 0, easing: 'cubic-bezier(.55,0,.75,.45)' },
+    { transform: 'scale(.4) rotate(-300deg)', opacity: 1, offset: .3, easing: 'cubic-bezier(.2,.5,.4,1)' },
+    { transform: 'scale(1.38) rotate(24deg)', offset: .62, easing: 'cubic-bezier(.45,0,.55,1)' },
+    { transform: 'scale(.9) rotate(-8deg)', offset: .8, easing: 'cubic-bezier(.45,0,.55,1)' },
+    { transform: 'scale(1.05) rotate(3deg)', offset: .91, easing: 'ease-in-out' },
+    { transform: 'scale(1) rotate(0deg)' },
+  ], { duration: 1150, fill: 'forwards' });
+  T.push(setTimeout(() => el.classList.add('text'), still ? 0 : 650));
+  // Confetti (canvas-confetti, «realistic» mix) bursts from the star the moment it arrives, once more a bit later.
+  const fx = window.confetti && (cfx = cfx || confetti.create($('confetti'), { resize: true, disableForReducedMotion: true }));
+  const r = star.getBoundingClientRect(), origin = { x: .5, y: (r.top + r.height / 2) / innerHeight };
+  const realistic = (count, o) => { if (!fx) return; const f = (p, opt) => fx({ origin: o, ...opt, particleCount: Math.floor(count * p) });
+    f(.25, { spread: 26, startVelocity: 55 }); f(.2, { spread: 60 }); f(.35, { spread: 100, decay: .91, scalar: .8 });
+    f(.1, { spread: 120, startVelocity: 25, decay: .92, scalar: 1.2 }); f(.1, { spread: 120, startVelocity: 45 }); };
+  T.push(setTimeout(() => { realistic(220, origin); applause(); }, still ? 0 : 640));
+  T.push(setTimeout(() => { realistic(120, { x: .25, y: .7 }); realistic(120, { x: .75, y: .7 }); }, 2000));
+  let done = false;
+  const close = () => { if (done) return; done = true; T.forEach(clearTimeout); el.classList.remove('on');
+    setTimeout(() => { el.hidden = true; el.classList.remove('text'); star.getAnimations().forEach(a => a.cancel()); if (fx) fx.reset();
+      celebrating = false; voiceBusy = false; vadReset(); heard('Скажи слово'); }, 200); };
+  el.onclick = close; T.push(setTimeout(close, 5000));
 }
 let lvl = 0, lvlRaf = 0;
 function meter(x) {                                               // voice level → the mic button pad

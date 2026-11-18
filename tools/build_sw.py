@@ -1,6 +1,6 @@
 """Regenerate sw.js so every file is cached for offline use. Run after adding words or images."""
 import os, json, time
-files = ['./', 'index.html', 'words.js', 'audio.js', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png']
+files = ['./', 'index.html', 'words.js', 'audio.js', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'lib/confetti.js']
 for d in ('img', 'gen'):
     files += [f'{d}/{f}' for f in sorted(os.listdir(d)) if f.endswith('.webp')]
 v = 'soz-' + time.strftime('%Y%m%d%H%M')
