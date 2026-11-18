@@ -186,10 +186,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .notice .nx{flex:none;width:44px;height:44px;margin:-10px 0 -10px 0;border:0;background:none;color:var(--muted);border-radius:12px;cursor:pointer;display:grid;place-items:center}
 .notice .nx:hover{background:var(--chip)}
 .notice .nx svg{width:20px;height:20px}
-.streak{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--bg);opacity:0;transition:opacity .3s;cursor:pointer}
+.streak{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--bg);opacity:0;transition:opacity .2s;cursor:pointer}
 .streak.on{opacity:1}
 .streak canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.streak .star{width:136px;height:136px;transform:scale(.3) rotate(-30deg);transition:transform .55s cubic-bezier(.2,1.6,.4,1)}
+.streak .star{width:136px;height:136px;transform:scale(.3) rotate(-30deg);transition:transform .4s cubic-bezier(.2,1.6,.4,1)}
 .streak.on .star{transform:none}
 .streak b{font-size:20px;margin-top:12px}
 .streak span{font-size:16px;color:var(--muted)}
@@ -766,6 +766,28 @@ function vStreak(ok) {
   const k = 'soz-stars-' + LANG, n = (Number(ls.get(k)) || 0) + 1; ls.set(k, String(n));
   celebrate(n);
 }
+// Applause, made on the phone (no file to download): a crowd of short claps — dense at first, then dying out over ~3 s.
+function applause() {
+  try {
+    const ac = vCtx || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === 'suspended') ac.resume();
+    const sr = ac.sampleRate, len = Math.floor(sr * 3.2), buf = ac.createBuffer(2, len, sr);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      for (let k = 0; k < 520; k++) {                              // each clap: 6–14 ms of noise with a fast decay
+        const t = Math.pow(Math.random(), 1.6) * 3.0, at = Math.floor(t * sr), dur = Math.floor(sr * (0.006 + Math.random() * 0.008));
+        const amp = (0.25 + Math.random() * 0.35) * Math.min(1, t * 6) * Math.max(0, 1 - t / 3.1);
+        for (let i = 0; i < dur * 4 && at + i < len; i++) d[at + i] += (Math.random() * 2 - 1) * amp * Math.exp(-i / dur);
+      }
+    }
+    let peak = 0; for (let ch = 0; ch < 2; ch++) for (const v of buf.getChannelData(ch)) peak = Math.max(peak, Math.abs(v));
+    if (peak > 0.9) for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < len; i++) d[i] *= 0.9 / peak; }   // never clips
+    const src = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain();
+    src.buffer = buf; bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.6; g.gain.value = 0.9;
+    src.connect(bp).connect(g).connect(ac.destination); src.start();
+  } catch (e) {}
+}
+// ?star — to look at (and hear) the celebration: it opens on the first tap (a phone plays sound only after a tap).
+if (new URLSearchParams(location.search).has('star')) addEventListener('pointerup', () => setTimeout(() => celebrate(Number(ls.get('soz-stars-' + LANG)) || 1), 50), { once: true });
 function celebrate(n) {
   const el = $('streak'), cv = $('confetti'); celebrating = true; voiceBusy = true;
   $('streakN').textContent = n > 1 ? `Звёзд: ${n}` : 'Первая звезда';
@@ -773,13 +795,14 @@ function celebrate(n) {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches, x = cv.getContext('2d'), dpr = devicePixelRatio || 1;
   cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; x.scale(dpr, dpr);
   const C = ['#F5B82E', '#1E9A55', '#17698A', '#D23F3F', '#8E5BD6', '#5DB9DA'];
-  const P = [], burst = (cx, n) => { if (!still) for (let i = 0; i < n; i++) P.push({ x: cx, y: innerHeight * 0.42, vx: (Math.random() - 0.5) * 14, vy: -Math.random() * 14 - 5,
-    s: 6 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.3, w: Math.random() * 6, c: C[i % C.length] }); };
-  burst(innerWidth / 2, 120); setTimeout(() => burst(innerWidth * 0.25, 70), 1300); setTimeout(() => burst(innerWidth * 0.75, 70), 2300);   // three bursts across the 5 s
+  const P = [], burst = (cx, n) => { if (!still) for (let i = 0; i < n; i++) P.push({ x: cx, y: innerHeight * 0.42, vx: (Math.random() - 0.5) * 22, vy: -Math.random() * 20 - 8,
+    s: 12 + Math.random() * 10, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.35, w: Math.random() * 6, c: C[i % C.length] }); };
+  [[0.5, 110, 0], [0.2, 70, 700], [0.8, 70, 1300], [0.5, 90, 2100], [0.3, 60, 2900]].forEach(([fx, n, t]) => setTimeout(() => !done && burst(innerWidth * fx, n), t));   // bursts across the 5 s
+  applause();
   let raf = 0, done = false;
   const draw = () => { x.clearRect(0, 0, innerWidth, innerHeight);
-    for (const p of P) { p.vy = Math.min(p.vy + 0.3, 2.6); p.vx *= 0.97; p.w += 0.08; p.x += p.vx + Math.sin(p.w) * 0.8; p.y += p.vy; p.r += p.vr;   // flutters down like paper
-      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); x.restore(); }
+    for (const p of P) { p.vy = Math.min(p.vy + 0.55, 7); p.vx *= 0.97; p.w += 0.12; p.x += p.vx + Math.sin(p.w) * 1.2; p.y += p.vy; p.r += p.vr;   // falls fast, with a little flutter
+      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 5, p.s, p.s * 0.4); x.restore(); }
     if (!done) raf = requestAnimationFrame(draw); };
   if (!still) draw();
   const close = () => { if (done) return; done = true; cancelAnimationFrame(raf); el.classList.remove('on');
