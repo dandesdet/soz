@@ -559,46 +559,68 @@ function reportPic(w) {
 const VOSK = { uz: 'vosk-model-small-uz-0.22', es: 'vosk-model-small-es-0.42', en: 'vosk-model-small-en-us-0.15' };
 const DONT = { uz: ['bilmayman', 'bilmadim'], es: ['nose', 'nolose'], en: ['idontknow', 'dontknow', 'idunno'] };
 let micOn = false, voiceBusy = false, vModel = null, vLang = '', vCtx = null, vStream = null, rec = null, vTries = 0;
-const vKey = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[ʻʼ’`‘']/g, '')
-  .replace(/\(.*?\)/g, '').replace(/[^a-zñ0-9]/g, '');
-// Sounds a listener would not tell apart are merged before comparing (per language).
+// Recognizers write numbers as digits («8») and sometimes use another alphabet — turn both into letters first.
+const NUM = {
+  uz: { u: 'nol bir ikki uch toʻrt besh olti yetti sakkiz toʻqqiz'.split(' '), t: ' oʻn yigirma oʻttiz qirq ellik oltmish yetmish sakson toʻqson'.split(' '), h: 'yuz', k: 'ming' },
+  es: { u: 'cero uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince dieciséis diecisiete dieciocho diecinueve veinte veintiuno veintidós veintitrés veinticuatro veinticinco veintiséis veintisiete veintiocho veintinueve'.split(' '), t: '  veinte treinta cuarenta cincuenta sesenta setenta ochenta noventa'.split(' '), h: 'cien', k: 'mil' },
+  en: { u: 'zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen'.split(' '), t: '  twenty thirty forty fifty sixty seventy eighty ninety'.split(' '), h: 'hundred', k: 'thousand' },
+};
+function numWords(n) {
+  const L = NUM[LANG] || NUM.en, u = L.u;
+  if (n < u.length) return u[n];
+  if (n < 100) return L.t[Math.floor(n / 10)] + (n % 10 ? (LANG === 'es' ? ' y ' : ' ') + u[n % 10] : '');
+  if (n < 1000) { const h = Math.floor(n / 100), r = n % 100; return (LANG === 'es' ? (h === 1 ? (r ? 'ciento' : 'cien') : u[h] + 'cientos') : (h > 1 || LANG === 'en' ? u[h] + ' ' : '') + L.h) + (r ? ' ' + numWords(r) : ''); }
+  if (n < 1e6) { const k = Math.floor(n / 1000), r = n % 1000; return (k > 1 || LANG === 'en' ? numWords(k) + ' ' : '') + L.k + (r ? ' ' + numWords(r) : ''); }
+  return String(n);
+}
+const CYR = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'yo', ж: 'j', з: 'z', и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'x', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sh', ъ: '', ы: 'i', ь: '', э: 'e', ю: 'yu', я: 'ya', ў: 'o', қ: 'q', ғ: 'g', ҳ: 'h' };
+const vKey = s => s.toLowerCase().replace(/\d+/g, d => ' ' + numWords(+d) + ' ').replace(/[а-яёўқғҳ]/g, c => CYR[c] ?? c)
+  .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[ʻʼ’`‘']/g, '').replace(/\(.*?\)/g, '').replace(/[^a-zñ ]/g, ' ').replace(/\s+/g, ' ').trim();
+// Sounds a listener would not tell apart are merged (per language); sh/ch/ng become one sound each.
 function phon(s) {
-  let x = vKey(s);
-  if (LANG === 'uz') x = x.replace(/q/g, 'k').replace(/x/g, 'h').replace(/w/g, 'v').replace(/j/g, 'dj');
-  else if (LANG === 'es') x = x.replace(/v/g, 'b').replace(/z/g, 's').replace(/c(?=[ei])/g, 's').replace(/qu/g, 'k').replace(/c/g, 'k').replace(/ll/g, 'y').replace(/h/g, '');
-  else x = x.replace(/ph/g, 'f').replace(/ck/g, 'k').replace(/c(?=[eiy])/g, 's').replace(/c/g, 'k');
+  let x = vKey(s).replace(/ /g, '');
+  if (LANG === 'uz') x = x.replace(/q/g, 'k').replace(/x/g, 'h').replace(/w/g, 'v').replace(/sh/g, 'š').replace(/ch/g, 'č').replace(/ng/g, 'ŋ').replace(/j/g, 'ž');
+  else if (LANG === 'es') x = x.replace(/v/g, 'b').replace(/z/g, 's').replace(/c(?=[ei])/g, 's').replace(/qu/g, 'k').replace(/ch/g, 'č').replace(/c/g, 'k').replace(/ll/g, 'y').replace(/h/g, '');
+  else x = x.replace(/ph/g, 'f').replace(/ck/g, 'k').replace(/sh/g, 'š').replace(/ch/g, 'č').replace(/th/g, 'θ').replace(/c(?=[eiy])/g, 's').replace(/c/g, 'k');
   return x.replace(/(.)\1+/g, '$1');                             // doubled letters sound like one
 }
+// Distance "by ear": a vowel for a vowel or a near sound (k/g, t/d, s/z…) costs half; a dropped vowel or h a bit more than half.
+const VOW = 'aeiouy', NEAR = ['kg', 'td', 'pb', 'sz', 'fv', 'šč', 'šs', 'čž', 'hk', 'nŋ', 'ŋg', 'ml', 'rl', 'θt', 'θs', 'θf'];
+const near = (a, b) => VOW.includes(a) && VOW.includes(b) || NEAR.some(p => p.includes(a) && p.includes(b));
+const sub = (a, b) => a === b ? 0 : near(a, b) ? 0.5 : 1, del = c => VOW.includes(c) || c === 'h' ? 0.6 : 1;
 function lev(a, b) {
-  const d = Array.from({ length: b.length + 1 }, (_, i) => i);
-  for (let i = 1; i <= a.length; i++) { let p = d[0]; d[0] = i;
-    for (let j = 1; j <= b.length; j++) { const t = d[j]; d[j] = Math.min(d[j] + 1, d[j - 1] + 1, p + (a[i - 1] === b[j - 1] ? 0 : 1)); p = t; } }
+  const d = [0]; for (let j = 1; j <= b.length; j++) d[j] = d[j - 1] + del(b[j - 1]);
+  for (let i = 1; i <= a.length; i++) { let p = d[0]; d[0] += del(a[i - 1]);
+    for (let j = 1; j <= b.length; j++) { const t = d[j]; d[j] = Math.min(d[j] + del(a[i - 1]), d[j - 1] + del(b[j - 1]), p + sub(a[i - 1], b[j - 1])); p = t; } }
   return d[b.length];
 }
-const slack = n => n <= 3 ? 0 : Math.floor(n * 0.35);              // how many sounds may differ: short words must be exact
-function closest(heard) {                                          // the deck word the listener would understand
-  const h = phon(heard); let best = null, bd = 1e9;
-  for (const w of WORDS) for (const t of vTargets(w)) { const d = lev(h, phon(t)); if (d < bd) { bd = d; best = { w, t, d }; } }
-  return best;
+const slack = n => n <= 3 ? 0.6 : n <= 4 ? 1 : 0.6 + n * 0.25;  // how far a word may drift and still be understood
+function spans(heard) {                                          // «ha, sakkiz» → also «sakkiz»: an extra word around the answer costs a little
+  const ws = vKey(heard).split(' ').filter(Boolean), out = [{ p: phon(heard), x: 0 }];
+  for (let i = 0; i < ws.length; i++) for (let j = i + 1; j <= ws.length; j++)
+    if (j - i < ws.length) out.push({ p: phon(ws.slice(i, j).join('')), x: 0.5 * (ws.length - (j - i)) + 0.25 * phon(ws.slice(0, i).concat(ws.slice(j)).join('')).length });
+  return out.filter(h => h.p);
 }
+const PH = new Map();                                            // phonetic forms of each card, computed once per language
+function forms(w) { const k = LANG + w.id; let f = PH.get(k); if (!f) PH.set(k, f = [...vTargets(w)].map(phon).filter(Boolean)); return f; }
+function dist(hs, w) { let best = 1e9, len = 0; for (const p of forms(w)) for (const h of hs) { const d = lev(h.p, p) + h.x; if (d < best) { best = d; len = p.length; } } return { d: best, len }; }
 function understood(heard, w) {
-  const h = phon(heard); let mine = 1e9, len = 0;
-  for (const t of vTargets(w)) { const p = phon(t), d = lev(h, p); if (d < mine) { mine = d; len = p.length; } }
-  if (mine === 0) return true;
-  if (mine > slack(len)) return false;
-  const c = closest(heard);                                        // close enough — but not closer to another word of the deck
-  return !c || c.d >= mine || c.w.t === w.t;
+  const hs = spans(heard), me = dist(hs, w);
+  if (me.d === 0) return true;
+  if (me.d > slack(me.len)) return false;
+  for (const o of WORDS) if (o !== w && o.t !== w.t && dist(hs, o).d < me.d) return false;   // closer to another word of the deck → it was that word
+  return true;
 }
 function vTargets(w) {
   const out = new Set();
-  for (let v of w.t.split(/[\/,;]/)) {
-    v = v.replace(/[¡!¿?.…]/g, ' ').trim(); if (!v) continue;
+  for (const v of spoken(w)) {
     out.add(vKey(v));
     const bare = LANG === 'es' ? v.replace(/^(el|la|los|las|un|una|unos|unas)\s+/i, '') : LANG === 'en' ? v.replace(/^(the|a|an|to)\s+/i, '') : v;
     out.add(vKey(bare));
   }
   out.delete(''); return out;
 }
+const spoken = w => w.t.replace(/\(.*?\)/g, '').split(/[\/,;]/).map(v => v.replace(/[¡!¿?.…]/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
 function loadScript(src) { return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error('нет сети')); document.head.appendChild(s); }); }
 async function vPrefetch(url) {                                   // shows megabytes; the library then takes the file from the browser cache
   const r = await fetch(url); if (!r.ok) throw new Error('модель не скачалась');
@@ -630,7 +652,7 @@ function vadFeed(x) {                                             // x: Float32A
   }
   vad.buf.push(x); vad.len += x.length;
   vad.quiet = rms < on * 0.6 ? vad.quiet + x.length : 0;
-  if (vad.quiet > 0.6 * sr || vad.len > 5 * sr) { const clip = vad.buf; vadReset(); sendClip(clip); }   // pause after the word, or 5 s max
+  if (vad.quiet > 0.4 * sr || vad.len > 5 * sr) { const clip = vad.buf; vadReset(); sendClip(clip); }   // a short pause after the word (0.4 s), or 5 s max
 }
 function to16k(chunks) {
   const sr = vCtx.sampleRate, all = new Float32Array(chunks.reduce((a, b) => a + b.length, 0)); let o = 0;
@@ -640,11 +662,26 @@ function to16k(chunks) {
   let bin = ''; const u8 = new Uint8Array(out.buffer); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
   return btoa(bin);
 }
+// Google is told which word the card expects (strong lean) and the deck words that sound closest to it (light lean):
+// a near miss is then heard as the word, while a different word of the deck is still heard as itself.
+const hintOf = w => w ? spoken(w) : [];
+const NB = new Map();
+function deckHint(w) {
+  if (!w) return [];
+  const k = LANG + w.id; let list = NB.get(k);
+  if (!list) {
+    const mine = forms(w);
+    list = WORDS.filter(o => o.t !== w.t).map(o => ({ o, d: Math.min(...forms(o).map(p => Math.min(...mine.map(m => lev(m, p))))) }))
+      .sort((a, b) => a.d - b.d).slice(0, 40).flatMap(x => spoken(x.o));
+    NB.set(k, list);
+  }
+  return list;
+}
 async function sendClip(chunks) {
   const card = $('cur'); if (!card) return;
   voiceBusy = true; heard('Проверяю…');                          // don't listen while the answer is on its way
   try {
-    const r = await fetch(SB + '/functions/v1/soz-stt', { method: 'POST', headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify({ code: CODE, lang: LANG, audio: to16k(chunks) }) });
+    const r = await fetch(SB + '/functions/v1/soz-stt', { method: 'POST', headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify({ code: CODE, lang: LANG, audio: to16k(chunks), hint: hintOf(BY[queue[0]]), deck: deckHint(BY[queue[0]]) }) });
     const j = await r.json().catch(() => ({}));
     voiceBusy = false;
     if (r.status === 503 || r.status === 429) { gOn = false; await vLoad(LANG); voiceCard(); return; }   // no Google key yet / daily cap → offline model
@@ -664,7 +701,7 @@ function onHeard(text) {
   const c = $('cur'), w = BY[queue[0]];
   if (!text || !c || !w || voiceBusy || flying || !$('pscrim').hidden || !$('scrim').hidden) return;
   const k = vKey(text); if (k.length < 2) return;                 // a cough or a click
-  if ((DONT[LANG] || []).some(d => lev(phon(text), d) <= 1)) { heard('Не знаешь — смотри ответ'); showThenLeft(c); return; }
+  if ((DONT[LANG] || []).some(d => lev(phon(text), d) <= 1.2)) { heard('Не знаешь — смотри ответ'); showThenLeft(c); return; }
   if (understood(text, w)) { heard('✓ ' + text); fling(c, true); teacher('ok'); return; }
   if (++vTries < 2) { heard(`Услышал «${text}» — скажи ещё раз`); teacher('again'); return; }
   heard(`Услышал «${text}»`); showThenLeft(c, w);
@@ -733,6 +770,9 @@ async function setMic(on) {
   }
 }
 if (navigator.mediaDevices && window.WebAssembly && VOSK) { $('mic').hidden = false; $('mic').onclick = () => setMic(!micOn); }
+// Leaving the app, switching away or locking the phone turns the microphone off (it is never left listening in the background).
+document.addEventListener('visibilitychange', () => { if (document.hidden && micOn) setMic(false); });
+window.addEventListener('pagehide', () => { if (micOn) setMic(false); });
 let flying = false;
 function fling(card, know) {
   if (flying) return; flying = true;
