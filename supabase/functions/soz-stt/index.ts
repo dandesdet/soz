@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
     const text = (g.results || []).map((x: any) => x.alternatives?.[0]?.transcript || "").join(" ").trim();
     const ms = Date.now() - t0;
     const log = (async () => {                                          // written after the answer is sent
-      await db.from("soz_stt_log").insert({ code, lang: body.lang, expected: hint[0] || null, heard: text, alts, biased, region: LOCATIONS[loc], ms });
+      await db.from("soz_stt_log").insert({ code, lang: body.lang, expected: hint[0] || null, heard: text, alts, biased, region: LOCATIONS[loc], ms, sec: Math.round(sec * 100) / 100 });
       if (Math.random() < 0.02) await db.from("soz_stt_log").delete().lt("at", new Date(Date.now() - 14 * 864e5).toISOString());
     })();
     // deno-lint-ignore no-explicit-any

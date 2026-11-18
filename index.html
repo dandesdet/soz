@@ -663,7 +663,8 @@ function vadFeed(x) {                                             // x: Float32A
   }
   vad.buf.push(x); vad.len += x.length;
   vad.quiet = rms < on * 0.6 ? vad.quiet + x.length : 0;
-  if (vad.quiet > 0.4 * sr || vad.len > 5 * sr) { const clip = vad.buf; vadReset(); sendClip(clip); }   // a short pause after the word (0.4 s), or 5 s max
+  const w = BY[queue[0]], gap = w && spoken(w).some(v => v.includes(' ')) ? 0.8 : 0.4;   // a phrase has pauses between its words — wait longer
+  if (vad.quiet > gap * sr || vad.len > 5 * sr) { const clip = vad.buf; vadReset(); sendClip(clip); }   // a short pause after the word (0.4 s; phrase 0.8 s), or 5 s max
 }
 function to16k(chunks) {
   const sr = vCtx.sampleRate, all = new Float32Array(chunks.reduce((a, b) => a + b.length, 0)); let o = 0;
