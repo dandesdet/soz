@@ -160,6 +160,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .iconbtn.on::after{content:"";position:absolute;inset:0;border-radius:12px;background:var(--good);pointer-events:none;
   opacity:calc(.10 + var(--lvl,0) * .30);transform:scale(calc(.72 + var(--lvl,0) * .28));transition:transform .08s linear,opacity .08s linear}
 .heard{min-height:24px;text-align:center;font-size:16px;color:var(--muted);padding:0 16px}
+.heard .flag{font-size:16px;padding:4px 2px}
 .bad{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);height:40px;padding:0 14px;border:0;border-radius:12px;background:none;
   font:400 16px var(--font);color:var(--muted);cursor:pointer;white-space:nowrap}
 .bad:hover{background:var(--chip)}
@@ -703,8 +704,9 @@ function onHeard(text) {
   const k = vKey(text); if (k.length < 2) return;                 // a cough or a click
   if ((DONT[LANG] || []).some(d => lev(phon(text), d) <= 1.2)) { heard('Не знаешь — смотри ответ'); showThenLeft(c); return; }
   if (understood(text, w)) { heard('✓ ' + text); fling(c, true); teacher('ok'); return; }
-  if (++vTries < 2) { heard(`Услышал «${text}» — скажи ещё раз`); teacher('again'); return; }
-  heard(`Услышал «${text}»`); showThenLeft(c, w);
+  missed = { c, w, text };
+  if (++vTries < 2) { heard(`Услышал «${text}» — скажи ещё раз`, true); teacher('again'); return; }
+  heard(`Услышал «${text}»`, true); showThenLeft(c, w);
 }
 // The teacher: a short spoken praise on a right answer, «once more» on a miss, the right word after two misses.
 // Listening pauses while the phone speaks, so its own voice is never taken for an answer.
@@ -732,7 +734,20 @@ function sayAnswer(w) {                                           // the right w
   });
   return Promise.resolve();
 }
-function heard(t) { const el = $('heard'); el.hidden = !micOn; el.textContent = t || ''; }
+// While voice is being tested: after a miss, «Я сказал верно» — the card counts as known and the miss is logged for tuning.
+let missed = null;
+function heard(t, miss) {
+  const el = $('heard'); el.hidden = !micOn; el.textContent = t || '';
+  if (!miss) { missed = null; return; }
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'link flag'; b.textContent = 'Я сказал верно';
+  b.onclick = flagMiss; el.append(' ', b);
+}
+function flagMiss() {
+  const m = missed; if (!m || $('cur') !== m.c) return;
+  missed = null; m.c.dataset.keep = '1';
+  rpc('soz_stt_flag', { p_code: CODE, p_lang: LANG, p_expected: m.w.t, p_heard: m.text, p_engine: gOn ? 'google' : 'vosk' }).catch(() => {});
+  heard('Отметил — разберусь'); voiceBusy = false; fling(m.c, true);
+}
 let lvl = 0, lvlRaf = 0;
 function meter(x) {                                               // voice level → the mic button pad
   let s = 0; for (let i = 0; i < x.length; i += 4) s += x[i] * x[i];
@@ -742,7 +757,7 @@ function meter(x) {                                               // voice level
 function showThenLeft(c, w) {                                     // show the answer (and say it), then send it left
   voiceBusy = true; c.classList.add('open');
   const t0 = Date.now();
-  sayAnswer(w || BY[queue[0]]).then(() => { voiceBusy = true; setTimeout(() => { voiceBusy = false; vadReset(); if ($('cur') === c) fling(c, false); }, Math.max(300, 1500 - (Date.now() - t0))); });
+  sayAnswer(w || BY[queue[0]]).then(() => { voiceBusy = true; setTimeout(() => { voiceBusy = false; vadReset(); if ($('cur') === c && !c.dataset.keep) fling(c, false); }, Math.max(300, (missed ? 2500 : 1500) - (Date.now() - t0))); });
 }
 async function setMic(on) {
   micOn = on; $('mic').classList.toggle('on', on); heard(on ? 'Включаю микрофон…' : '');
