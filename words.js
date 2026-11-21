@@ -386,6 +386,56 @@ Navroʻz|Навруз|🌷|Праздники|Navruz (spring new year)|4
 sovgʻa|подарок|🎁|Праздники|gift|4
 mehmon|гость|🧕|Праздники|guest|4
 Mehmonga keling|Приходите в гости|🏡|Праздники|Come visit us|4
+retsept|рецепт|📝|Клиника|prescription|2
+tabletka|таблетка|💊|Клиника|pill|2
+qon|кровь|🩸|Клиника|blood|2
+ukol|укол|💉|Клиника|injection|2
+bint|бинт|🩹|Клиника|bandage|2
+bosim|давление|🩺|Клиника|blood pressure|3
+tahlil|анализ|🧪|Клиника|medical test|3
+Tumov boʻldim|Я простыл (насморк)|🤧|Клиника|I have a cold|3
+Boshim aylanyapti|Голова кружится|😵‍💫|Клиника|I feel dizzy|3
+Koʻnglim aynayapti|Меня тошнит|🤢|Клиника|I feel nauseous|3
+Qayeringiz ogʻriyapti?|Где у вас болит?|🤕|Клиника|Where does it hurt?|3
+Ovqatdan keyin|После еды|🍽️|Клиника|after meals|3
+Kuniga uch mahal|Три раза в день|🕒|Клиника|three times a day|4
+Qabulga yozilmoqchiman|Хочу записаться на приём|📅|Клиника|I'd like to make an appointment|4
+Oʻzimni yomon his qilyapman|Я плохо себя чувствую|😞|Клиника|I feel unwell|4
+sugʻurta|страховка|📄|Клиника|insurance|4
+Tezroq tuzalib keting!|Скорее выздоравливайте!|💐|Клиника|Get well soon!|4
+poyezd|поезд|🚆|Поездки|train|2
+chipta|билет|🎫|Поездки|ticket|2
+vokzal|вокзал|🚉|Поездки|train station|2
+haydovchi|водитель|🧑‍✈️|Поездки|driver|2
+metro bekati|станция метро|🚇|Поездки|metro station|2
+togʻ|гора|⛰️|Поездки|mountain|2
+yuk|багаж, груз|🧳|Поездки|luggage|3
+yoʻlovchi|пассажир|🧍|Поездки|passenger|3
+sayohat|путешествие|🗺️|Поездки|trip, travel|3
+Keyingi bekat qaysi?|Какая следующая остановка?|🚏|Поездки|What's the next stop?|3
+Yoʻldaman|Я в пути|🚶|Поездки|I'm on my way|3
+Yetib keldim|Я доехал (прибыл)|📍|Поездки|I've arrived|3
+tirbandlik|пробка (на дороге)|🚗|Поездки|traffic jam|4
+Bu avtobus bozorga boradimi?|Этот автобус идёт до базара?|🚌|Поездки|Does this bus go to the bazaar?|4
+Qayerda tushishim kerak?|Где мне выходить?|🚪|Поездки|Where should I get off?|4
+Poyezd soat nechada joʻnaydi?|Во сколько отправляется поезд?|🕗|Поездки|What time does the train leave?|4
+Samarqandgacha ikkita chipta|Два билета до Самарканда|🎟️|Поездки|two tickets to Samarkand|4
+Rostdanmi?|Правда?|😮|Разговор|Really?|2
+Qiziq|Интересно|🤔|Разговор|Interesting|2
+Toʻgʻri|Верно, правильно|✔️|Разговор|Right, correct|2
+Nima boʻldi?|Что случилось?|❓|Разговор|What happened?|2
+Menimcha|По-моему|💭|Разговор|I think|3
+Roziman|Я согласен|🙆|Разговор|I agree|3
+Ishonmayman|Не верю|🤨|Разговор|I don't believe it|3
+Afsus|Жаль|😕|Разговор|What a pity|3
+Omad tilayman!|Желаю удачи!|🍀|Разговор|Good luck!|3
+Hammasi joyida|Всё в порядке|👌|Разговор|Everything's fine|3
+Qoyil!|Молодец! Здорово!|👏|Разговор|Well done!|3
+Rozi emasman|Я не согласен|🙅|Разговор|I don't agree|4
+Shunaqami?|Вот как?|😯|Разговор|Is that so?|4
+Gapingiz toʻgʻri|Вы правы|👍|Разговор|You're right|4
+Aytmoqchi|Кстати|☝️|Разговор|By the way|4
+Xudo xohlasa|Если Бог даст|🤲|Разговор|God willing|4
 `;
 // Generated illustrations (from 5×5 sheets): uz word → file in gen/
 window.SOZ_GEN = {
@@ -757,7 +807,56 @@ window.SOZ_GEN = {
  "Navroʻz": "g278816f4.webp",
  "sovgʻa": "ga15945bb.webp",
  "mehmon": "g31bc4026.webp",
- "Mehmonga keling": "gd8617077.webp"
+ "Mehmonga keling": "gd8617077.webp",
+ "retsept": "gd8be7ae376b2.webp",
+ "tabletka": "g0f87f6de76b2.webp",
+ "qon": "g1e19139d76b2.webp",
+ "ukol": "g21f4dc4476b2.webp",
+ "bint": "g8833442e76b2.webp",
+ "bosim": "ga9c8a2a276b2.webp",
+ "tahlil": "gcc58a0c276b2.webp",
+ "Tumov boʻldim": "g40e5091276b2.webp",
+ "Boshim aylanyapti": "g6386d08476b2.webp",
+ "Koʻnglim aynayapti": "g830847f576b2.webp",
+ "Qayeringiz ogʻriyapti?": "g7cd9fab676b2.webp",
+ "Ovqatdan keyin": "g11192e5176b2.webp",
+ "Kuniga uch mahal": "gb4c8021176b2.webp",
+ "Qabulga yozilmoqchiman": "g9978784e76b2.webp",
+ "Oʻzimni yomon his qilyapman": "gd8bd8a5b76b2.webp",
+ "sugʻurta": "gee80a94d76b2.webp",
+ "Tezroq tuzalib keting!": "g7c6af05276b2.webp",
+ "poyezd": "g7df4ac1c76b2.webp",
+ "chipta": "g1edfa6c176b2.webp",
+ "vokzal": "gb34c694d76b2.webp",
+ "haydovchi": "gc9cd4b6076b2.webp",
+ "metro bekati": "gaf8a2a7476b2.webp",
+ "togʻ": "gd5adb71676b2.webp",
+ "yuk": "ga4ff15fe76b2.webp",
+ "yoʻlovchi": "g64d9591476b2.webp",
+ "sayohat": "g14a416539e3a.webp",
+ "Keyingi bekat qaysi?": "g20216ccd9e3a.webp",
+ "Yoʻldaman": "geb36212b9e3a.webp",
+ "Yetib keldim": "g2625cdb39e3a.webp",
+ "tirbandlik": "g929865f69e3a.webp",
+ "Bu avtobus bozorga boradimi?": "g972184119e3a.webp",
+ "Qayerda tushishim kerak?": "g13bc620a9e3a.webp",
+ "Poyezd soat nechada joʻnaydi?": "gcc5790f49e3a.webp",
+ "Rostdanmi?": "g5a66d3c29e3a.webp",
+ "Qiziq": "g350d21fe9e3a.webp",
+ "Toʻgʻri": "gd55eb6729e3a.webp",
+ "Nima boʻldi?": "g5a175aed9e3a.webp",
+ "Menimcha": "g3087c8709e3a.webp",
+ "Roziman": "g35365be39e3a.webp",
+ "Ishonmayman": "gbef841039e3a.webp",
+ "Afsus": "g57bd7cea9e3a.webp",
+ "Omad tilayman!": "g32b09a779e3a.webp",
+ "Hammasi joyida": "gaad1746b9e3a.webp",
+ "Qoyil!": "g62656a369e3a.webp",
+ "Rozi emasman": "geecc8c4d9e3a.webp",
+ "Shunaqami?": "g9d0409559e3a.webp",
+ "Gapingiz toʻgʻri": "g82a6c6fd9e3a.webp",
+ "Aytmoqchi": "g654b026b9e3a.webp",
+ "Xudo xohlasa": "gd262a8df9e3a.webp"
 };
 // Same words in other languages, keyed by the uz word (same pictures, same order).
 window.SOZ_TR = {
@@ -1146,7 +1245,57 @@ window.SOZ_TR = {
   "Navroʻz": "el Navruz (Año Nuevo de primavera)",
   "sovgʻa": "el regalo",
   "mehmon": "el invitado",
-  "Mehmonga keling": "Venga a visitarnos"
+  "Mehmonga keling": "Venga a visitarnos",
+  "retsept": "la receta",
+  "tabletka": "la pastilla",
+  "qon": "la sangre",
+  "ukol": "la inyección",
+  "bint": "la venda",
+  "bosim": "la presión",
+  "tahlil": "el análisis",
+  "Tumov boʻldim": "Estoy resfriado",
+  "Boshim aylanyapti": "Estoy mareado",
+  "Koʻnglim aynayapti": "Tengo náuseas",
+  "Qayeringiz ogʻriyapti?": "¿Dónde le duele?",
+  "Ovqatdan keyin": "Después de comer",
+  "Kuniga uch mahal": "Tres veces al día",
+  "Qabulga yozilmoqchiman": "Quiero pedir cita",
+  "Oʻzimni yomon his qilyapman": "Me encuentro mal",
+  "sugʻurta": "el seguro",
+  "Tezroq tuzalib keting!": "¡Que te mejores pronto!",
+  "poyezd": "el tren",
+  "chipta": "el billete",
+  "vokzal": "la estación de tren",
+  "haydovchi": "el conductor",
+  "metro bekati": "la estación de metro",
+  "togʻ": "la montaña",
+  "yuk": "el equipaje",
+  "yoʻlovchi": "el pasajero",
+  "sayohat": "el viaje",
+  "Keyingi bekat qaysi?": "¿Cuál es la próxima parada?",
+  "Yoʻldaman": "Estoy de camino",
+  "Yetib keldim": "Ya he llegado",
+  "tirbandlik": "el atasco",
+  "Bu avtobus bozorga boradimi?": "¿Este autobús va al mercado?",
+  "Qayerda tushishim kerak?": "¿Dónde tengo que bajarme?",
+  "Poyezd soat nechada joʻnaydi?": "¿A qué hora sale el tren?",
+  "Samarqandgacha ikkita chipta": "Dos billetes para Samarcanda",
+  "Rostdanmi?": "¿En serio?",
+  "Qiziq": "Qué interesante",
+  "Toʻgʻri": "Correcto",
+  "Nima boʻldi?": "¿Qué ha pasado?",
+  "Menimcha": "Creo que…",
+  "Roziman": "Estoy de acuerdo",
+  "Ishonmayman": "No me lo creo",
+  "Afsus": "Qué pena",
+  "Omad tilayman!": "¡Mucha suerte!",
+  "Hammasi joyida": "Todo está bien",
+  "Qoyil!": "¡Bravo!",
+  "Rozi emasman": "No estoy de acuerdo",
+  "Shunaqami?": "¿Ah, sí?",
+  "Gapingiz toʻgʻri": "Tiene razón",
+  "Aytmoqchi": "Por cierto",
+  "Xudo xohlasa": "Si Dios quiere"
  },
  "en": {
   "Salom": "Hi!",
@@ -1533,7 +1682,57 @@ window.SOZ_TR = {
   "Navroʻz": "Navruz (spring New Year)",
   "sovgʻa": "gift",
   "mehmon": "guest",
-  "Mehmonga keling": "Come and visit us"
+  "Mehmonga keling": "Come and visit us",
+  "retsept": "prescription",
+  "tabletka": "pill",
+  "qon": "blood",
+  "ukol": "injection",
+  "bint": "bandage",
+  "bosim": "blood pressure",
+  "tahlil": "medical test",
+  "Tumov boʻldim": "I've got a cold",
+  "Boshim aylanyapti": "I feel dizzy",
+  "Koʻnglim aynayapti": "I feel sick",
+  "Qayeringiz ogʻriyapti?": "Where does it hurt?",
+  "Ovqatdan keyin": "After meals",
+  "Kuniga uch mahal": "Three times a day",
+  "Qabulga yozilmoqchiman": "I'd like to make an appointment",
+  "Oʻzimni yomon his qilyapman": "I don't feel well",
+  "sugʻurta": "insurance",
+  "Tezroq tuzalib keting!": "Get well soon!",
+  "poyezd": "train",
+  "chipta": "ticket",
+  "vokzal": "train station",
+  "haydovchi": "driver",
+  "metro bekati": "metro station",
+  "togʻ": "mountain",
+  "yuk": "luggage",
+  "yoʻlovchi": "passenger",
+  "sayohat": "trip",
+  "Keyingi bekat qaysi?": "What's the next stop?",
+  "Yoʻldaman": "I'm on my way",
+  "Yetib keldim": "I've arrived",
+  "tirbandlik": "traffic jam",
+  "Bu avtobus bozorga boradimi?": "Does this bus go to the bazaar?",
+  "Qayerda tushishim kerak?": "Where do I get off?",
+  "Poyezd soat nechada joʻnaydi?": "What time does the train leave?",
+  "Samarqandgacha ikkita chipta": "Two tickets to Samarkand",
+  "Rostdanmi?": "Really?",
+  "Qiziq": "Interesting",
+  "Toʻgʻri": "That's right",
+  "Nima boʻldi?": "What happened?",
+  "Menimcha": "I think…",
+  "Roziman": "I agree",
+  "Ishonmayman": "I don't believe it",
+  "Afsus": "What a pity",
+  "Omad tilayman!": "Good luck!",
+  "Hammasi joyida": "Everything's fine",
+  "Qoyil!": "Well done!",
+  "Rozi emasman": "I don't agree",
+  "Shunaqami?": "Is that so?",
+  "Gapingiz toʻgʻri": "You're right",
+  "Aytmoqchi": "By the way",
+  "Xudo xohlasa": "God willing"
  }
 };
 
