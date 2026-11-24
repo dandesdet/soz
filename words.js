@@ -636,7 +636,7 @@ window.SOZ_GEN = {
  "oyoq": "g7d823f1c.webp",
  "qoʻl": "g2e99fcd8.webp",
  "tomoq": "gcc6a40c4.webp",
- "yoʻtal": "g88b51f6a.webp",
+ "yoʻtal": "g88b51f6acd64.webp",
  "Allergiyam bor": "gaa8c45a9.webp",
  "Oʻynaymizmi?": "gbc4e7209.webp",
  "Kim boshlaydi?": "g9e9f5bfe.webp",
