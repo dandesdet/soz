@@ -570,7 +570,10 @@ function reportPic(w) {
 // also in the home-screen app. Right word → right. «bilmayman / no sé / I don't know» → answer, then left.
 // Wrong word → one more try; wrong twice → answer, then left.
 const VOSK = { uz: 'vosk-model-small-uz-0.22', es: 'vosk-model-small-es-0.42', en: 'vosk-model-small-en-us-0.15' };
-const DONT = { uz: ['bilmayman', 'bilmadim'], es: ['nose', 'nolose'], en: ['idontknow', 'dontknow', 'idunno'] };
+// «I don't know» is understood in any language, whatever deck is open: Uzbek, Russian, English, Spanish.
+// Google is also nudged towards these phrases, so a Russian «не знаю» in the Uzbek deck comes back as «ne znayu», not as noise.
+const DONT_SAY = ['bilmayman', 'bilmadim', 'bilmiman', 'не знаю', 'ne znayu', 'ne znaju', 'незнаю', "I don't know", "don't know", 'I dunno', 'ay dont nou', 'no sé', 'no lo sé'];
+const isDont = text => { const h = phon(text); return h.length > 2 && DONT_SAY.some(d => { const p = phon(d); return lev(h, p) <= (/ /.test(d) && p.length > 8 ? 1.6 : 1.2); }); };   // one-word «bilmayman» stays strict: «bilaman» (I know) is close
 let micOn = false, voiceBusy = false, vModel = null, vLang = '', vCtx = null, vStream = null, rec = null, vTries = 0;
 // Recognizers write numbers as digits («8») and sometimes use another alphabet — turn both into letters first.
 const NUM = {
@@ -695,7 +698,7 @@ async function sendClip(chunks) {
   const card = $('cur'); if (!card) return;
   voiceBusy = true; heard('Проверяю…');                          // don't listen while the answer is on its way
   try {
-    const r = await fetch(SB + '/functions/v1/soz-stt', { method: 'POST', headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify({ code: CODE, lang: LANG, audio: to16k(chunks), hint: hintOf(BY[queue[0]]), deck: deckHint(BY[queue[0]]) }) });
+    const r = await fetch(SB + '/functions/v1/soz-stt', { method: 'POST', headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify({ code: CODE, lang: LANG, audio: to16k(chunks), hint: hintOf(BY[queue[0]]), deck: deckHint(BY[queue[0]]).concat(DONT_SAY) }) });
     const j = await r.json().catch(() => ({}));
     voiceBusy = false;
     if (r.status === 503 || r.status === 429) { gOn = false; await vLoad(LANG); voiceCard(); return; }   // no Google key yet / daily cap → offline model
@@ -715,11 +718,11 @@ function onHeard(text) {
   const c = $('cur'), w = BY[queue[0]];
   if (!text || !c || !w || voiceBusy || celebrating || flying || !$('pscrim').hidden || !$('scrim').hidden) return;
   const k = vKey(text); if (k.length < 2) return;                 // a cough or a click
-  if ((DONT[LANG] || []).some(d => lev(phon(text), d) <= 1.2)) { run = 0; heard('Не знаешь — смотри ответ'); showThenLeft(c); return; }
   if (understood(text, w)) {                                      // right: turn the card over for a moment (see the word), then send it right
     heard('✓ ' + text); voiceBusy = true; c.classList.add('open'); const first = vTries === 0; teacher('ok').then(() => vStreak(first));
     setTimeout(() => { voiceBusy = false; vadReset(); if ($('cur') === c) fling(c, true); }, 850); return;
   }
+  if (isDont(text)) { run = 0; heard('Не знаешь — смотри ответ'); showThenLeft(c); return; }   // after the card check: «nose» in the English deck is a word, not «no sé»
   missed = { c, w, text }; run = 0; nope(c);
   if (++vTries < 2) { heard(`Услышал «${text}» — скажи ещё раз`, true); teacher('again'); return; }
   heard(`Услышал «${text}»`, true); voiceBusy = true; setTimeout(() => showThenLeft(c, w), 360);
@@ -857,7 +860,7 @@ async function setMic(on) {
     if (!gOn) await vLoad(LANG);
     if (!micOn) return;
     voiceCard();
-    toast({ uz: 'Говори слово. Не знаешь — скажи «bilmayman»', es: 'Говори слово. Не знаешь — скажи «no sé»', en: 'Говори слово. Не знаешь — скажи «I don’t know»' }[LANG]);
+    toast('Говори слово. Не знаешь — скажи «не знаю» на любом языке');
   } catch (e) {
     setMic(false);
     toast(e && e.name === 'NotAllowedError' ? 'Нет доступа к микрофону — разреши его в настройках.' : 'Голос не запустился: ' + ((e && e.message) || e));
