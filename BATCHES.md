@@ -10,3 +10,4 @@ Goal: speak with locals in Tashkent — market, taxi, clinic, tennis court, smal
 | 2026-11-07 | 50 | phone calls, renting & home repairs (rooms, appliances, landlord), bank (ATM, card, exchange), directions (crossroads, next to, opposite, lost) |
 | 2026-11-14 | 50 | clothes shopping & barber (sizes, try on, haircut), polite requests (can you…, turn on/off, close), future tense (-aman), work & hobbies small talk, celebrations (toʻy, birthday, Navroʻz, guests) |
 | 2026-11-21 | 50 | clinic 2 & pharmacy (prescription, pills, symptoms, appointment, dosage), trips & public transport (train, tickets, station, next stop, traffic jam), small-talk reactions (really?, I agree, by the way, well done, God willing) |
+| 2026-11-28 | 50 | weather & seasons (spring…winter, rain/snow, umbrella, degrees, forecast), market 2 (fruit, half a kilo, ripe, spices, tasting, final price, bargaining), home & chores (dishes, kazan, carpet, cook/wash/clean, rubbish, laundry, tea for guests) |

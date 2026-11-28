@@ -436,6 +436,56 @@ Shunaqami?|Вот как?|😯|Разговор|Is that so?|4
 Gapingiz toʻgʻri|Вы правы|👍|Разговор|You're right|4
 Aytmoqchi|Кстати|☝️|Разговор|By the way|4
 Xudo xohlasa|Если Бог даст|🤲|Разговор|God willing|4
+bahor|весна|🌸|Погода|spring|2
+yoz|лето|🏖️|Погода|summer|2
+kuz|осень|🍂|Погода|autumn|2
+qish|зима|⛄|Погода|winter|2
+bulut|облако|☁️|Погода|cloud|2
+Bugun issiq|Сегодня жарко|🥵|Погода|It's hot today|2
+Havo qanday?|Какая погода?|🌤️|Погода|What's the weather like?|3
+Yomgʻir yogʻyapti|Идёт дождь|🌧️|Погода|It's raining|3
+Qor yogʻyapti|Идёт снег|🌨️|Погода|It's snowing|3
+soyabon|зонт|☂️|Погода|umbrella|3
+daraja|градус|🌡️|Погода|degree (temperature)|3
+bulutli|облачно|🌥️|Погода|cloudy|3
+Ertaga havo qanday boʻladi?|Какая погода будет завтра?|📅|Погода|What will the weather be like tomorrow?|4
+Issiqdan charchadim|Я устал от жары|😓|Погода|I'm tired of the heat|4
+Havo ochiq|Ясная погода|🌞|Погода|clear sky|4
+Issiqroq kiyining|Оденьтесь потеплее|🧣|Погода|Dress warmly|4
+meva|фрукты|🍇|Рынок|fruit|2
+limon|лимон|🍋|Рынок||2
+anor|гранат|🍎|Рынок|pomegranate|2
+shaftoli|персик|🍑|Рынок|peach|2
+oʻrik|абрикос|🟠|Рынок|apricot|2
+gilos|черешня|🍒|Рынок|sweet cherry|2
+yongʻoq|грецкий орех|🌰|Рынок|walnut|2
+yarim kilo|полкило|⚖️|Рынок|half a kilo|3
+pishgan|спелый|🥭|Рынок|ripe|3
+paket|пакет|🛍️|Рынок|plastic bag|3
+ziravor|специи|🧂|Рынок|spices|3
+Bir kilo bering|Дайте килограмм|⚖️|Рынок|One kilo, please|3
+Kilosi necha pul?|Почём килограмм?|🏷️|Рынок|How much per kilo?|3
+Tatib koʻrsam boʻladimi?|Можно попробовать?|😋|Рынок|Can I taste it?|4
+Hammasi qancha boʻldi?|Сколько всего?|🧾|Рынок|How much is it altogether?|4
+Oxirgi narxi qancha?|Какая окончательная цена?|🤝|Рынок|What's your final price?|4
+Yaxshisini tanlab bering|Выберите получше|👌|Рынок|Pick me good ones|4
+Boshqa joyda arzonroq|В другом месте дешевле|↔️|Рынок|It's cheaper elsewhere|4
+idish|посуда|🍽️|Дом|dishes|2
+choynak|чайник|🫖|Дом|teapot|2
+qozon|казан|🍲|Дом|kazan (cooking pot)|2
+gilam|ковёр|🧶|Дом|carpet|2
+karavot|кровать|🛏️|Дом||2
+pishirmoq|готовить (еду)|👩‍🍳|Дом|to cook|3
+yuvmoq|мыть, стирать|🧼|Дом|to wash|3
+tozalamoq|убирать, чистить|🧹|Дом|to clean|3
+axlat|мусор|🗑️|Дом|rubbish|3
+Idish yuvdim|Я помыл посуду|🍽️|Дом|I washed the dishes|3
+Choy damlang|Заварите чай|🍵|Дом|Brew some tea|4
+Kir yuvdim|Я постирал|👕|Дом|I did the laundry|4
+Uyni yigʻishtirdim|Я убрался дома|🏠|Дом|I tidied up the house|4
+Ovqat pishiryapman|Я готовлю еду|🍳|Дом|I'm cooking|4
+Axlatni chiqarib tashlang|Вынесите мусор|🚮|Дом|Take out the rubbish|4
+Choy ichib keting|Попейте чаю перед уходом|☕|Дом|Have some tea before you go|4
 `;
 // Generated illustrations (from 5×5 sheets): uz word → file in gen/
 window.SOZ_GEN = {
@@ -856,7 +906,55 @@ window.SOZ_GEN = {
  "Shunaqami?": "g9d0409559e3a.webp",
  "Gapingiz toʻgʻri": "g82a6c6fd9e3a.webp",
  "Aytmoqchi": "g654b026b9e3a.webp",
- "Xudo xohlasa": "gd262a8df9e3a.webp"
+ "Xudo xohlasa": "gd262a8df9e3a.webp",
+ "bahor": "g42c2d1d866ac.webp",
+ "yoz": "g34ac9cd266ac.webp",
+ "kuz": "g9313b09866ac.webp",
+ "qish": "g1a9fb30a66ac.webp",
+ "bulut": "g84ad830d66ac.webp",
+ "Bugun issiq": "g79666a4c66ac.webp",
+ "Havo qanday?": "g2bdcc16c66ac.webp",
+ "Yomgʻir yogʻyapti": "g75fafeb666ac.webp",
+ "Qor yogʻyapti": "g0bed87aa66ac.webp",
+ "soyabon": "g1d24d1d466ac.webp",
+ "daraja": "g96a5882466ac.webp",
+ "bulutli": "g692aabdd66ac.webp",
+ "Ertaga havo qanday boʻladi?": "gcbadcc8766ac.webp",
+ "Havo ochiq": "g8172ca0266ac.webp",
+ "Issiqroq kiyining": "g826165f366ac.webp",
+ "meva": "ge62acac366ac.webp",
+ "limon": "g01a5480f66ac.webp",
+ "anor": "g2aa4421a66ac.webp",
+ "shaftoli": "g46503d4066ac.webp",
+ "oʻrik": "g9a5aefeb66ac.webp",
+ "gilos": "g3417380866ac.webp",
+ "yongʻoq": "gc43f449a66ac.webp",
+ "yarim kilo": "g04cb7d8266ac.webp",
+ "pishgan": "g784387e066ac.webp",
+ "paket": "gec8527e6d257.webp",
+ "ziravor": "g1826c553d257.webp",
+ "Bir kilo bering": "g1c4425b4d257.webp",
+ "Kilosi necha pul?": "g116f4839d257.webp",
+ "Tatib koʻrsam boʻladimi?": "gb617c820d257.webp",
+ "Hammasi qancha boʻldi?": "g766de4b5d257.webp",
+ "Oxirgi narxi qancha?": "g4b8a73b8d257.webp",
+ "Yaxshisini tanlab bering": "g5155b602d257.webp",
+ "Boshqa joyda arzonroq": "g37150fa8d257.webp",
+ "idish": "g62c082aed257.webp",
+ "choynak": "g6f892f3cd257.webp",
+ "qozon": "g90767c9dd257.webp",
+ "gilam": "g6a3e21fbd257.webp",
+ "karavot": "g190ee9a5d257.webp",
+ "pishirmoq": "g5599b14ed257.webp",
+ "yuvmoq": "g6d0d1b65d257.webp",
+ "tozalamoq": "g2761e7a3d257.webp",
+ "axlat": "gd0f143b2d257.webp",
+ "Idish yuvdim": "geaff05b9d257.webp",
+ "Choy damlang": "gf5d5f9a3d257.webp",
+ "Kir yuvdim": "gc9e3c3ced257.webp",
+ "Ovqat pishiryapman": "gd2d3aa9fd257.webp",
+ "Axlatni chiqarib tashlang": "gad4cb9d4d257.webp",
+ "Choy ichib keting": "ga1accf87d257.webp"
 };
 // Same words in other languages, keyed by the uz word (same pictures, same order).
 window.SOZ_TR = {
@@ -1295,7 +1393,57 @@ window.SOZ_TR = {
   "Shunaqami?": "¿Ah, sí?",
   "Gapingiz toʻgʻri": "Tiene razón",
   "Aytmoqchi": "Por cierto",
-  "Xudo xohlasa": "Si Dios quiere"
+  "Xudo xohlasa": "Si Dios quiere",
+  "bahor": "la primavera",
+  "yoz": "el verano",
+  "kuz": "el otoño",
+  "qish": "el invierno",
+  "bulut": "la nube",
+  "Bugun issiq": "Hoy hace calor",
+  "Havo qanday?": "¿Qué tiempo hace?",
+  "Yomgʻir yogʻyapti": "Está lloviendo",
+  "Qor yogʻyapti": "Está nevando",
+  "soyabon": "el paraguas",
+  "daraja": "el grado",
+  "bulutli": "nublado",
+  "Ertaga havo qanday boʻladi?": "¿Qué tiempo hará mañana?",
+  "Issiqdan charchadim": "Estoy harto del calor",
+  "Havo ochiq": "Está despejado",
+  "Issiqroq kiyining": "Abríguese bien",
+  "meva": "la fruta",
+  "limon": "el limón",
+  "anor": "la granada",
+  "shaftoli": "el melocotón",
+  "oʻrik": "el albaricoque",
+  "gilos": "la cereza",
+  "yongʻoq": "la nuez",
+  "yarim kilo": "medio kilo",
+  "pishgan": "maduro",
+  "paket": "la bolsa",
+  "ziravor": "las especias",
+  "Bir kilo bering": "Póngame un kilo",
+  "Kilosi necha pul?": "¿A cuánto está el kilo?",
+  "Tatib koʻrsam boʻladimi?": "¿Puedo probarlo?",
+  "Hammasi qancha boʻldi?": "¿Cuánto es todo?",
+  "Oxirgi narxi qancha?": "¿Cuál es el último precio?",
+  "Yaxshisini tanlab bering": "Escójame los mejores",
+  "Boshqa joyda arzonroq": "En otro sitio es más barato",
+  "idish": "los platos",
+  "choynak": "la tetera",
+  "qozon": "el caldero",
+  "gilam": "la alfombra",
+  "karavot": "la cama",
+  "pishirmoq": "cocinar",
+  "yuvmoq": "lavar",
+  "tozalamoq": "limpiar",
+  "axlat": "la basura",
+  "Idish yuvdim": "He fregado los platos",
+  "Choy damlang": "Prepare el té",
+  "Kir yuvdim": "He puesto la lavadora",
+  "Uyni yigʻishtirdim": "He ordenado la casa",
+  "Ovqat pishiryapman": "Estoy cocinando",
+  "Axlatni chiqarib tashlang": "Saque la basura",
+  "Choy ichib keting": "Tómese un té antes de irse"
  },
  "en": {
   "Salom": "Hi!",
@@ -1732,7 +1880,57 @@ window.SOZ_TR = {
   "Shunaqami?": "Is that so?",
   "Gapingiz toʻgʻri": "You're right",
   "Aytmoqchi": "By the way",
-  "Xudo xohlasa": "God willing"
+  "Xudo xohlasa": "God willing",
+  "bahor": "spring",
+  "yoz": "summer",
+  "kuz": "autumn",
+  "qish": "winter",
+  "bulut": "cloud",
+  "Bugun issiq": "It's hot today",
+  "Havo qanday?": "What's the weather like?",
+  "Yomgʻir yogʻyapti": "It's raining",
+  "Qor yogʻyapti": "It's snowing",
+  "soyabon": "umbrella",
+  "daraja": "degree",
+  "bulutli": "cloudy",
+  "Ertaga havo qanday boʻladi?": "What will the weather be like tomorrow?",
+  "Issiqdan charchadim": "I'm tired of the heat",
+  "Havo ochiq": "The sky is clear",
+  "Issiqroq kiyining": "Dress warmly",
+  "meva": "fruit",
+  "limon": "lemon",
+  "anor": "pomegranate",
+  "shaftoli": "peach",
+  "oʻrik": "apricot",
+  "gilos": "cherry",
+  "yongʻoq": "walnut",
+  "yarim kilo": "half a kilo",
+  "pishgan": "ripe",
+  "paket": "bag",
+  "ziravor": "spices",
+  "Bir kilo bering": "One kilo, please",
+  "Kilosi necha pul?": "How much per kilo?",
+  "Tatib koʻrsam boʻladimi?": "Can I try it?",
+  "Hammasi qancha boʻldi?": "How much is it altogether?",
+  "Oxirgi narxi qancha?": "What's your final price?",
+  "Yaxshisini tanlab bering": "Pick me the good ones",
+  "Boshqa joyda arzonroq": "It's cheaper elsewhere",
+  "idish": "dishes",
+  "choynak": "teapot",
+  "qozon": "cauldron (kazan)",
+  "gilam": "carpet",
+  "karavot": "bed",
+  "pishirmoq": "to cook",
+  "yuvmoq": "to wash",
+  "tozalamoq": "to clean",
+  "axlat": "rubbish",
+  "Idish yuvdim": "I washed the dishes",
+  "Choy damlang": "Brew some tea",
+  "Kir yuvdim": "I did the laundry",
+  "Uyni yigʻishtirdim": "I tidied up the house",
+  "Ovqat pishiryapman": "I'm cooking",
+  "Axlatni chiqarib tashlang": "Take out the rubbish",
+  "Choy ichib keting": "Have some tea before you go"
  }
 };
 
